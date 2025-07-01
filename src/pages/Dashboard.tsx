@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { X, Users } from "lucide-react"
+import { X, Users, ClipboardPenIcon } from "lucide-react"
 import { ToastContainer, useToast } from "../components/toast"
 import { formatDateTime } from "../utils/utils"
 import { TimeLeftDial } from "../components/TimeLeftDial"
@@ -24,11 +24,8 @@ export default function Dashboard() {
     selectedPool,
     setSelectedPool,
     totalPools,
-    setTotalPools,
     activePools,
-    setActivePools,
     fetchBalance,
-    loadPools,
     handleCreatePool,
     handleEditPool,
     handleDeletePool,
@@ -37,7 +34,14 @@ export default function Dashboard() {
     handleTopUp,
     handleSponsorCredits,
     handleRefreshBalance,
-  } = usePoolManager(walletAddress, isWalletConnected, setShowPoolActions, setShowCreateModal, setShowEditModal)
+  } = usePoolManager(
+    walletAddress,
+    isWalletConnected,
+    setShowPoolActions,
+    setShowCreateModal,
+    setShowEditModal,
+    { showSuccess, showError, showWarning, showInfo }
+  )
 
   // Initialize wallet strategies only on the client side
   const [browserWalletStrategy, setBrowserWalletStrategy] = useState<Strategy | null>(null)
@@ -164,8 +168,7 @@ export default function Dashboard() {
     if (pool.balance === null) {
       const balance = await fetchBalance(pool.id)
       if (balance !== null) {
-        // Note: In Vite, we need to handle state updates differently
-        // This would need to be implemented with proper state management
+        setPools((prev: Pool[]) => prev.map((p: Pool) => (p.id === pool.id ? { ...p, balance } : p)))
         setSelectedPool((prev) => (prev ? { ...prev, balance } : prev))
       }
     }
@@ -186,12 +189,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div
-      className="min-h-screen bg-gray-50 text-gray-900 font-inter antialiased flex"
-      style={{
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-      }}
-    >
+    <div className="min-h-screen bg-gray-50 text-gray-900 font-inter antialiased flex">
       <ToastContainer toasts={toasts} onRemove={removeToast} />
 
       {/* Left Sidebar - Pools */}
@@ -204,7 +202,7 @@ export default function Dashboard() {
           + NEW POOL
         </button>
         <div className="space-y-4">
-          {pools.map((pool) => (
+          {pools.map((pool: Pool) => (
             <div
               key={pool.id}
               onClick={() => handlePoolSelect(pool)}
@@ -442,7 +440,264 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* Modals would continue here - truncated for brevity but would include all the same modal components */}
+      {/* Wallet Choice Modal */}
+      {showWalletModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white border-2 border-gray-300 shadow-xl p-8 min-w-80 text-center rounded-xl">
+            <h2 className="text-lg font-semibold mb-6 text-gray-900">CHOOSE WALLET</h2>
+            <div className="space-y-3">
+              <button
+                onClick={() => handleWalletConnect("beacon")}
+                className="w-full bg-white text-black border-2 border-black p-3 rounded-xl text-sm font-medium hover:bg-black hover:text-white transition-colors"
+                disabled={!beaconStrategy}
+              >
+                CONNECT WITH BEACON
+              </button>
+              <button
+                onClick={() => handleWalletConnect("wander")}
+                className="w-full bg-white text-black border-2 border-black p-3 rounded-xl text-sm font-medium hover:bg-black hover:text-white transition-colors"
+                disabled={!browserWalletStrategy}
+              >
+                CONNECT WITH WANDER
+              </button>
+              <button
+                onClick={() => setShowWalletModal(false)}
+                className="w-full bg-white text-gray-700 border-2 border-gray-300 p-3 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
+              >
+                CANCEL
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Whitelisted Addresses Modal */}
+      {showAddressesModal && selectedPool && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white border-2 border-gray-300 shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 relative rounded-xl">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-semibold text-gray-900">
+                Whitelisted Addresses ({selectedPool.addresses.length})
+              </h3>
+              <button onClick={() => setShowAddressesModal(false)} className="text-gray-400 hover:text-gray-600">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="space-y-3">
+              {selectedPool.addresses.map((address, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between bg-gray-50 border-2 border-gray-300 p-4 rounded-xl"
+                >
+                  <span className="text-sm break-all">{address}</span>
+                  <button
+                    onClick={() => handleCopyAddress(address)}
+                    className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-xl text-sm font-medium transition-colors ml-4 flex-shrink-0"
+                  >
+                    <ClipboardPenIcon className="w-4 h-4" />
+                    Copy
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Pool Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white border-2 border-gray-300 shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 relative rounded-xl">
+            <button
+              onClick={() => setShowCreateModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <h3 className="text-xl font-semibold mb-6 text-gray-900">CREATE NEW POOL</h3>
+            <form onSubmit={handleCreatePool} className="space-y-5">
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-700">POOL NAME</label>
+                <input
+                  name="poolName"
+                  type="text"
+                  className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-700">POOL PASSWORD</label>
+                <input
+                  name="poolPassword"
+                  type="password"
+                  className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-700">CONFIRM PASSWORD</label>
+                <input
+                  name="confirmPassword"
+                  type="password"
+                  className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-700">START TIME</label>
+                  <input
+                    name="startTime"
+                    type="datetime-local"
+                    className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-700">END TIME</label>
+                  <input
+                    name="endTime"
+                    type="datetime-local"
+                    className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-700">
+                  MAX CREDITS PER WALLET (USAGE CAP)
+                </label>
+                <input
+                  name="usageCap"
+                  type="number"
+                  step="0.000000000001"
+                  min="0"
+                  className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-700">WHITELISTED ADDRESSES</label>
+                <textarea
+                  name="addresses"
+                  rows={4}
+                  placeholder="Enter one Arweave address per line"
+                  className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
+                ></textarea>
+              </div>
+              <div className="flex gap-4">
+                <button
+                  type="submit"
+                  className="flex-1 bg-white text-black border-2 border-black p-3 rounded-xl text-sm font-medium hover:bg-black hover:text-white transition-colors"
+                >
+                  CREATE POOL
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowCreateModal(false)}
+                  className="bg-white text-gray-700 border-2 border-gray-300 p-3 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
+                >
+                  CANCEL
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Pool Modal */}
+{showEditModal && selectedPool && (
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div className="bg-white border-2 border-gray-300 shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 relative rounded-xl">
+      <button
+        onClick={() => setShowEditModal(false)}
+        className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+      >
+        <X className="w-6 h-6" />
+      </button>
+      <h3 className="text-xl font-semibold mb-6 text-gray-900">EDIT POOL - {selectedPool.name}</h3>
+      <form onSubmit={handleEditPool} className="space-y-5">
+        <div>
+          <label className="block text-sm font-semibold mb-2 text-gray-700">POOL NAME</label>
+          <input
+            name="poolName"
+            type="text"
+            defaultValue={selectedPool.name}
+            className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
+            required
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-semibold mb-2 text-gray-700">START TIME (UTC)</label>
+            <input
+              name="startTime"
+              type="datetime-local"
+              defaultValue={new Date(selectedPool.startTime).toISOString().slice(0, 16)}
+              step="1"
+              className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold mb-2 text-gray-700">END TIME (UTC)</label>
+            <input
+              name="endTime"
+              type="datetime-local"
+              defaultValue={new Date(selectedPool.endTime).toISOString().slice(0, 16)}
+              step="1"
+              className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
+              required
+            />
+          </div>
+        </div>
+        <div>
+          <label className="block text-sm font-semibold mb-2 text-gray-700">
+            MAX CREDITS PER WALLET (USAGE CAP)
+          </label>
+          <input
+            name="usageCap"
+            type="number"
+            step="0.000000000001"
+            min="0"
+            defaultValue={selectedPool.usageCap}
+            className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-semibold mb-2 text-gray-700">WHITELISTED ADDRESSES</label>
+          <textarea
+            name="addresses"
+            rows={4}
+            defaultValue={selectedPool.addresses.join("\n")}
+            placeholder="Enter one Arweave address per line"
+            className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
+          ></textarea>
+        </div>
+        <div className="flex gap-4">
+          <button
+            type="submit"
+            className="flex-1 bg-white text-black border-2 border-black p-3 rounded-xl text-sm font-medium hover:bg-black hover:text-white transition-colors"
+          >
+            SAVE CHANGES
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowEditModal(false)}
+            className="bg-white text-gray-700 border-2 border-gray-300 p-3 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
+          >
+            CANCEL
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
     </div>
   )
+}
+
+function setPools(_arg0: (prev: Pool[]) => Pool[]) {
+  throw new Error("Function not implemented.")
 }

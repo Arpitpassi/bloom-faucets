@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { X, ExternalLink, Calculator, FileText, Database, Shield, BarChart3 } from "lucide-react"
 import SplitText from "../components/SplitText"
-import logo from "../assets/logo.png"
+
 
 export default function HomePage() {
   const [showSetupGuide, setShowSetupGuide] = useState(false)
@@ -30,7 +30,6 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <img src={logo || "/placeholder.svg"} alt="Logo" width={180} height={90} className="mr-3" />
             </div>
             <button
               onClick={() => setShowContactModal(true)}

@@ -1,10 +1,6 @@
-"use client"
-
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import type { Pool } from "../types/types"
-import { useToast } from "../components/toast"
 import { localToZulu, isValidArweaveAddress } from "../utils/utils"
 import { useApiService } from "./useApiService"
 import { DEPLOY_API_KEY, SERVER_URL } from "../constants/constants"
@@ -15,13 +11,19 @@ export function usePoolManager(
   setShowPoolActions: (value: boolean) => void,
   setShowCreateModal: (value: boolean) => void,
   setShowEditModal: (value: boolean) => void,
+  toastFunctions: {
+    showSuccess: (title: string, message: string) => void
+    showError: (title: string, message: string) => void
+    showWarning: (title: string, message: string) => void
+    showInfo: (title: string, message: string) => void
+  }
 ) {
   const [pools, setPools] = useState<Pool[]>([])
   const [selectedPool, setSelectedPool] = useState<Pool | null>(null)
   const [totalPools, setTotalPools] = useState(0)
   const [activePools, setActivePools] = useState(0)
-  const { showSuccess, showError, showWarning, showInfo } = useToast()
   const { apiCall, fetchBalance } = useApiService(walletAddress)
+  const { showSuccess, showError, showWarning } = toastFunctions
 
   useEffect(() => {
     if (isWalletConnected) {
@@ -86,7 +88,7 @@ export function usePoolManager(
     }
   }
 
-  const handleCreatePool = async (e: React.FormEvent) => {
+  const handleCreatePool = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.target as HTMLFormElement)
     const poolName = formData.get("poolName") as string
@@ -121,7 +123,7 @@ export function usePoolManager(
     }
 
     try {
-      const { result } = await apiCall(`${SERVER_URL}/create-pool`, {
+      await apiCall(`${SERVER_URL}/create-pool`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-API-Key": DEPLOY_API_KEY },
         body: JSON.stringify(poolData),
@@ -136,56 +138,56 @@ export function usePoolManager(
     }
   }
 
-  const handleEditPool = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!selectedPool) return showError("No Pool Selected", "Please select a pool to edit")
-    const formData = new FormData(e.target as HTMLFormElement)
-    const poolName = formData.get("poolName") as string
-    const startTime = formData.get("startTime") as string
-    const endTime = formData.get("endTime") as string
-    const usageCap = Number.parseFloat(formData.get("usageCap") as string)
-    const addresses = (formData.get("addresses") as string)
-      .split("\n")
-      .map((a) => a.trim())
-      .filter((a) => a)
-    const password = window.prompt("Enter the pool password to confirm changes:")
-    if (!password) return showError("Password Required", "Password required to edit pool")
+  const handleEditPool = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault()
+  if (!selectedPool) return showError("No Pool Selected", "Please select a pool to edit")
+  const formData = new FormData(e.target as HTMLFormElement)
+  const poolName = formData.get("poolName") as string
+  const startTime = formData.get("startTime") as string
+  const endTime = formData.get("endTime") as string
+  const usageCap = Number.parseFloat(formData.get("usageCap") as string)
+  const addresses = (formData.get("addresses") as string)
+    .split("\n")
+    .map((a) => a.trim())
+    .filter((a) => a)
+  const password = window.prompt("Enter the pool password to confirm changes:")
+  if (!password) return showError("Password Required", "Password required to edit pool")
 
-    if (!poolName.trim()) return showError("Invalid Pool Name", "Please enter a valid pool name")
-    const invalidAddresses = addresses.filter((a) => !isValidArweaveAddress(a))
-    if (invalidAddresses.length > 0)
-      return showError("Invalid Addresses", `Please fix invalid addresses: ${invalidAddresses.join(", ")}`)
-    const startDateTime = new Date(startTime)
-    const endDateTime = new Date(endTime)
-    if (startDateTime >= endDateTime) return showError("Invalid Dates", "Start time must be before end time")
+  if (!poolName.trim()) return showError("Invalid Pool Name", "Please enter a valid pool name")
+  const invalidAddresses = addresses.filter((a) => !isValidArweaveAddress(a))
+  if (invalidAddresses.length > 0)
+    return showError("Invalid Addresses", `Please fix invalid addresses: ${invalidAddresses.join(", ")}`)
+  const startDateTime = new Date(startTime)
+  const endDateTime = new Date(endTime)
+  if (startDateTime >= endDateTime) return showError("Invalid Dates", "Start time must be before end time")
 
-    const poolData = {
-      name: poolName,
-      startTime: localToZulu(startTime),
-      endTime: localToZulu(endTime),
-      usageCap,
-      whitelist: addresses,
-      creatorAddress: walletAddress,
-    }
-
-    try {
-      console.log("Editing pool with ID:", selectedPool.id, "Payload:", poolData)
-      const editUrl = new URL(`${SERVER_URL}/pool/${encodeURIComponent(selectedPool.id)}/edit`)
-      editUrl.searchParams.append("password", password)
-      editUrl.searchParams.append("creatorAddress", walletAddress)
-      const { result } = await apiCall(editUrl.toString(), {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json", "X-API-Key": DEPLOY_API_KEY },
-        body: JSON.stringify(poolData),
-      })
-      setShowEditModal(false)
-      showSuccess("Pool Updated", `Pool "${poolName}" has been updated successfully`)
-      await loadPools()
-    } catch (error) {
-      console.error("Edit pool error:", error)
-      showError("Update Failed", `Error updating pool: ${error instanceof Error ? error.message : String(error)}`)
-    }
+  const poolData = {
+    name: poolName,
+    startTime: localToZulu(startTime + ":00Z"), // Append seconds to ensure UTC parsing
+    endTime: localToZulu(endTime + ":00Z"), // Append seconds to ensure UTC parsing
+    usageCap,
+    whitelist: addresses,
+    creatorAddress: walletAddress,
   }
+
+  try {
+    console.log("Editing pool with ID:", selectedPool.id, "Payload:", poolData)
+    const editUrl = new URL(`${SERVER_URL}/pool/${encodeURIComponent(selectedPool.id)}/edit`)
+    editUrl.searchParams.append("password", password)
+    editUrl.searchParams.append("creatorAddress", walletAddress)
+    await apiCall(editUrl.toString(), {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", "X-API-Key": DEPLOY_API_KEY },
+      body: JSON.stringify(poolData),
+    })
+    setShowEditModal(false)
+    showSuccess("Pool Updated", `Pool "${poolName}" has been updated successfully`)
+    await loadPools()
+  } catch (error) {
+    console.error("Edit pool error:", error)
+    showError("Update Failed", `Error updating pool: ${error instanceof Error ? error.message : String(error)}`)
+  }
+}
 
   const handleDeletePool = async () => {
     if (!selectedPool) return showError("No Pool Selected", "Please select a pool to delete")
@@ -195,7 +197,7 @@ export function usePoolManager(
     if (!password) return showError("Password Required", "Password is required to delete the pool")
 
     try {
-      const { result } = await apiCall(`${SERVER_URL}/pool/${encodeURIComponent(selectedPool.id)}`, {
+      await apiCall(`${SERVER_URL}/pool/${encodeURIComponent(selectedPool.id)}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json", "X-API-Key": DEPLOY_API_KEY },
         body: JSON.stringify({ password, creatorAddress: walletAddress }),
@@ -224,7 +226,7 @@ export function usePoolManager(
       const revokeUrl = new URL(`${SERVER_URL}/pool/${encodeURIComponent(selectedPool.id)}/revoke`)
       revokeUrl.searchParams.append("password", password)
       revokeUrl.searchParams.append("creatorAddress", walletAddress)
-      const { result: revokeResult } = await apiCall(revokeUrl.toString(), {
+      await apiCall(revokeUrl.toString(), {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-API-Key": DEPLOY_API_KEY },
         body: JSON.stringify({ walletAddress: revokeAddress }),
@@ -282,22 +284,20 @@ export function usePoolManager(
     const password = window.prompt("Enter the pool password to top up:")
     if (!password) return showError("Password Required", "Password required to top up pool")
     const amount = window.prompt("Enter AR amount to top up:")
-    if (!amount || Number.parseFloat(amount) <= 0) return showError("Invalid Amount", "Amount must be greater than 0")
+    if (!amount || Number.parseFloat(amount) <= 0) return showError("Invalid Amount", "Please enter a valid amount")
 
     try {
-      const url = new URL(`${SERVER_URL}/pool/${encodeURIComponent(selectedPool.id)}/topup`)
-      url.searchParams.append("creatorAddress", walletAddress)
-      const { result } = await apiCall(url.toString(), {
+      await apiCall(`${SERVER_URL}/pool/${encodeURIComponent(selectedPool.id)}/topup`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "X-API-Key": DEPLOY_API_KEY },
-        body: JSON.stringify({ password, amount }),
+        body: JSON.stringify({ amount: Number.parseFloat(amount), password, creatorAddress: walletAddress }),
       })
-      showSuccess("Pool Topped Up", `Pool topped up successfully! Transaction ID: ${result.transactionId}`)
       const balance = await fetchBalance(selectedPool.id)
       if (balance !== null) {
         setPools((prev) => prev.map((p) => (p.id === selectedPool.id ? { ...p, balance } : p)))
         setSelectedPool((prev) => (prev ? { ...prev, balance } : prev))
       }
+      showSuccess("Pool Topped Up", `Successfully topped up pool "${selectedPool.name}" with ${amount} AR`)
     } catch (error) {
       console.error("Top up pool error:", error)
       showError("Top Up Failed", `Error topping up pool: ${error instanceof Error ? error.message : String(error)}`)
