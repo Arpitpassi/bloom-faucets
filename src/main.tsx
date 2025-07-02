@@ -1,27 +1,30 @@
-import React from "react"
-import ReactDOM from "react-dom/client"
-import { BrowserRouter } from "react-router-dom"
-import App from "./App.tsx"
-import "./globals.css"
-import { ArweaveWalletKit } from "arweave-wallet-kit"
-import { UserProvider } from "./hooks/useUser.tsx"
+
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import App from "./App.tsx";
+import "./globals.css";
+import { ArweaveWalletKit } from "arweave-wallet-kit";
+import { UserProvider } from "./hooks/useUser.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <ArweaveWalletKit
-      config={{
-        permissions: ["ACCESS_ADDRESS", "SIGN_TRANSACTION", "DISPATCH", "SIGNATURE"],
-        ensurePermissions: true,
-        appInfo: {
-          name: "Bloom Pool Manager",
-        },
-      }}
-    >
-      <UserProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </UserProvider>
-    </ArweaveWalletKit>
-  </React.StrictMode>
-)
+  <ArweaveWalletKit
+    config={{
+      permissions: [
+        "ACCESS_ADDRESS",
+        "SIGN_TRANSACTION",
+        "ACCESS_PUBLIC_KEY",
+        "SIGNATURE",
+      ],
+      ensurePermissions: true,
+      appInfo: {
+        name: "TurboUploadApp",
+      },
+    }}
+  >
+    <UserProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </UserProvider>
+  </ArweaveWalletKit>
+);
