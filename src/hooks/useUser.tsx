@@ -1,7 +1,7 @@
 "use client";
 
 import { User, UserProviderProps } from "../types/context";
-import { useActiveAddress, useConnection } from "arweave-wallet-kit";
+import { useActiveAddress, useConnection } from "@arweave-wallet-kit/react";
 import React, { createContext, useContext } from "react";
 
 const UserContext = createContext<User | undefined>(undefined);
