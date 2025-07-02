@@ -1,4 +1,3 @@
-// src/pages/Dashboard.tsx
 "use client"
 
 import { useState } from "react"
@@ -415,7 +414,9 @@ export default function Dashboard() {
                 <Input
                   name="usageCap"
                   type="number"
-                  step="0.0001"
+                  step="0.000001"
+                  min="0"
+                  pattern="^\d*(\.\d{0,6})?$"
                   className="w-full p-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                 />
               </div>
@@ -492,7 +493,9 @@ export default function Dashboard() {
                 <Input
                   name="usageCap"
                   type="number"
-                  step="0.0001"
+                  step="0.000001"
+                  min="0"
+                  pattern="^\d*(\.\d{0,6})?$"
                   defaultValue={selectedPool.usageCap}
                   className="w-full p-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                 />
