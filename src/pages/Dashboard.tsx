@@ -1,24 +1,29 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { X, Users, ClipboardPenIcon } from "lucide-react"
 import { ToastContainer, useToast } from "../components/toast"
 import { formatDateTime } from "../utils/utils"
 import { TimeLeftDial } from "../components/TimeLeftDial"
-import type { Pool, Strategy } from "../types/types"
+import { Pool } from "../types/types"
 import { usePoolManager } from "../hooks/usePoolManager"
+import { ConnectButton } from "arweave-wallet-kit" // Removed useWallet
+import { useUser } from "../hooks/useUser"
+import TurboUploadModal from "../components/TurboUploadModal"
+import { Button } from "../components/ui/button"
+import { Input } from "../components/ui/input"
+import { Textarea } from "../components/ui/textarea"
+import { Badge } from "../components/ui/badge"
 
 export default function Dashboard() {
-  const [isWalletConnected, setIsWalletConnected] = useState(false)
-  const [walletAddress, setWalletAddress] = useState("")
-  const [activeStrategy, setActiveStrategy] = useState<Strategy | null>(null)
-  const [showWalletModal, setShowWalletModal] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [showPoolActions, setShowPoolActions] = useState(false)
   const [showAddressesModal, setShowAddressesModal] = useState(false)
+  const [showUploadModal, setShowUploadModal] = useState(false)
   const [revokeAddress, setRevokeAddress] = useState("")
   const { toasts, removeToast, showSuccess, showError, showWarning, showInfo } = useToast()
+  const { connected, address } = useUser()
   const {
     pools,
     selectedPool,
@@ -35,131 +40,47 @@ export default function Dashboard() {
     handleSponsorCredits,
     handleRefreshBalance,
   } = usePoolManager(
-    walletAddress,
-    isWalletConnected,
+    address || "",
+    connected,
     setShowPoolActions,
     setShowCreateModal,
     setShowEditModal,
     { showSuccess, showError, showWarning, showInfo }
   )
 
-  // Initialize wallet strategies only on the client side
-  const [browserWalletStrategy, setBrowserWalletStrategy] = useState<Strategy | null>(null)
-  const [beaconStrategy, setBeaconStrategy] = useState<Strategy | null>(null)
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      // Dynamically import wallet strategies to ensure client-side execution
-      import("@arweave-wallet-kit/browser-wallet-strategy")
-        .then(({ default: BrowserWalletStrategy }) => {
-          class BrowserWalletStrategyAdapter implements Strategy {
-            private browserWallet: typeof BrowserWalletStrategy.prototype
-
-            constructor() {
-              this.browserWallet = new BrowserWalletStrategy()
-            }
-
-            async connect(permissions: string[]) {
-              return this.browserWallet.connect(permissions as any)
-            }
-
-            async disconnect() {
-              return this.browserWallet.disconnect()
-            }
-
-            async getActiveAddress() {
-              return this.browserWallet.getActiveAddress()
-            }
-          }
-          setBrowserWalletStrategy(new BrowserWalletStrategyAdapter())
-        })
-        .catch((error) => {
-          console.error("Failed to load BrowserWalletStrategy:", error)
-          showError("Initialization Failed", "Unable to load BrowserWalletStrategy")
-        })
-
-      import("@vela-ventures/aosync-strategy")
-        .then(({ default: AoSyncStrategy }) => {
-          class AoSyncStrategyAdapter implements Strategy {
-            private aoSync: typeof AoSyncStrategy.prototype
-
-            constructor() {
-              this.aoSync = new AoSyncStrategy()
-            }
-
-            async connect(permissions: string[]) {
-              return this.aoSync.connect(permissions as any)
-            }
-
-            async disconnect() {
-              return this.aoSync.disconnect()
-            }
-
-            async getActiveAddress() {
-              return this.aoSync.getActiveAddress()
-            }
-          }
-          setBeaconStrategy(new AoSyncStrategyAdapter())
-        })
-        .catch((error) => {
-          console.error("Failed to load AoSyncStrategy:", error)
-          showError("Initialization Failed", "Unable to load AoSyncStrategy")
-        })
-    }
-  }, [])
-
-  const handleConnectWallet = () => {
-    if (!browserWalletStrategy || !beaconStrategy) {
-      showError("Initialization Error", "Wallet strategies are not yet loaded. Please try again.")
-      return
-    }
-    setShowWalletModal(true)
-  }
-
-  const handleWalletConnect = async (type: "beacon" | "wander") => {
-    try {
-      let strategy: Strategy
-      if (type === "beacon") {
-        if (!beaconStrategy) throw new Error("Beacon strategy not initialized")
-        strategy = beaconStrategy
-      } else {
-        if (!browserWalletStrategy) throw new Error("Browser wallet strategy not initialized")
-        strategy = browserWalletStrategy
-      }
-      await strategy.connect(["ACCESS_ADDRESS"])
-      const address = await strategy.getActiveAddress()
-      setWalletAddress(address)
-      setActiveStrategy(strategy)
-      setIsWalletConnected(true)
-      setShowWalletModal(false)
-      showSuccess("Wallet Connected", `Successfully connected with ${type === "beacon" ? "Beacon" : "Wander"} wallet`)
-    } catch (error) {
-      console.error("Wallet connection error:", error)
-      showError(
-        "Connection Failed",
-        `Error connecting wallet: ${error instanceof Error ? error.message : String(error)}`,
+  const WalletStatus = () => {
+    if (!connected) {
+      return (
+        <div className="text-center">
+          <p className="text-base mb-6 text-gray-600">Connect your Arweave wallet to continue</p>
+          <ConnectButton
+            className="bg-white text-black border-2 border-black px-8 py-3 rounded-xl text-sm font-medium hover:bg-black hover:text-white transition-colors"
+            showBalance={false}
+            showProfilePicture={false}
+          />
+        </div>
       )
     }
-  }
-
-  const handleDisconnect = async () => {
-    try {
-      if (activeStrategy) {
-        await activeStrategy.disconnect()
-        setActiveStrategy(null)
-      }
-      setIsWalletConnected(false)
-      setWalletAddress("")
-      setSelectedPool(null)
-      setShowPoolActions(false)
-      showInfo("Wallet Disconnected", "Your wallet has been disconnected")
-    } catch (error) {
-      console.error("Wallet disconnection error:", error)
-      showError(
-        "Disconnection Failed",
-        `Error disconnecting wallet: ${error instanceof Error ? error.message : String(error)}`,
-      )
-    }
+    return (
+      <div className="text-center">
+        <p className="text-base mb-4 text-gray-600">
+          Connected: <span className="font-medium">{address?.slice(0, 8)}...{address?.slice(-8)}</span>
+        </p>
+        <Button
+          onClick={async () => {
+            try {
+              await window.arweaveWallet.disconnect() // Use window.arweaveWallet for disconnection
+              showSuccess("Disconnected", "Wallet disconnected successfully")
+            } catch (error) {
+              showError("Disconnect Failed", `Failed to disconnect wallet: ${error instanceof Error ? error.message : String(error)}`)
+            }
+          }}
+          className="bg-red-500 text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-red-600 transition-colors"
+        >
+          Disconnect
+        </Button>
+      </div>
+    )
   }
 
   const handlePoolSelect = async (pool: Pool) => {
@@ -188,6 +109,7 @@ export default function Dashboard() {
     }
   }
 
+  // Rest of the component remains unchanged
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 font-inter antialiased flex">
       <ToastContainer toasts={toasts} onRemove={removeToast} />
@@ -195,12 +117,12 @@ export default function Dashboard() {
       {/* Left Sidebar - Pools */}
       <div className="w-80 bg-white rounded-r-xl shadow-sm border-r border-gray-200 p-6 overflow-y-auto">
         <h2 className="text-lg font-semibold mb-6 pb-3 border-b border-gray-200">POOLS</h2>
-        <button
+        <Button
           onClick={() => setShowCreateModal(true)}
           className="w-full bg-white text-black border-2 border-black p-3 rounded-xl text-sm font-medium mb-6 hover:bg-black hover:text-white transition-colors"
         >
-          + NEW POOL
-        </button>
+          + New Pool
+        </Button>
         <div className="space-y-4">
           {pools.map((pool: Pool) => (
             <div
@@ -212,13 +134,13 @@ export default function Dashboard() {
             >
               <div className="flex justify-between items-center mb-3">
                 <div className="font-semibold text-base">{pool.name}</div>
-                <span
+                <Badge
                   className={`text-xs font-medium px-2 py-1 rounded-full ${
                     pool.status === "Active" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
                   }`}
                 >
                   {pool.status}
-                </span>
+                </Badge>
               </div>
               <div className="text-sm text-gray-600 space-y-1">
                 <div>
@@ -238,7 +160,7 @@ export default function Dashboard() {
                 </div>
               </div>
               {selectedPool?.id === pool.id && (
-                <button
+                <Button
                   onClick={(e) => {
                     e.stopPropagation()
                     handlePoolActions()
@@ -246,7 +168,7 @@ export default function Dashboard() {
                   className="w-full bg-white text-black border-2 border-black p-2 mt-3 rounded-xl text-sm font-medium hover:bg-black hover:text-white transition-colors"
                 >
                   Pool Actions
-                </button>
+                </Button>
               )}
             </div>
           ))}
@@ -257,115 +179,102 @@ export default function Dashboard() {
       <div className="flex-1 p-6 overflow-y-auto">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 text-center mb-6">
           <h2 className="text-xl font-bold mb-4 text-gray-900">FAUCET MANAGER</h2>
-          {isWalletConnected ? (
-            <div className="flex items-center justify-between">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-gray-900">{totalPools}</div>
-                <div className="text-sm text-gray-500 font-medium">TOTAL POOLS</div>
-              </div>
-              <div className="text-center">
-                <p className="text-base mb-4 text-gray-600">
-                  Connected:{" "}
-                  <span className="font-medium">
-                    {walletAddress.slice(0, 8)}...{walletAddress.slice(-8)}
-                  </span>
-                </p>
-                <button
-                  onClick={handleDisconnect}
-                  className="bg-red-500 text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-red-600 transition-colors"
-                >
-                  DISCONNECT
-                </button>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-gray-900">{activePools}</div>
-                <div className="text-sm text-gray-500 font-medium">ACTIVE POOLS</div>
-              </div>
+          <div className="flex items-center justify-between">
+            <div className="text-center">
+              <div className="text-3xl font-bold text-gray-900">{totalPools}</div>
+              <div className="text-sm text-gray-500 font-medium">TOTAL POOLS</div>
             </div>
-          ) : (
-            <>
-              <p className="text-base mb-6 text-gray-600">Connect your Arweave wallet to continue</p>
-              <button
-                onClick={handleConnectWallet}
-                className="bg-white text-black border-2 border-black px-8 py-3 rounded-xl text-sm font-medium hover:bg-black hover:text-white transition-colors"
-              >
-                CONNECT WALLET
-              </button>
-            </>
-          )}
+            <WalletStatus />
+            <div className="text-center">
+              <div className="text-3xl font-bold text-gray-900">{activePools}</div>
+              <div className="text-sm text-gray-500 font-medium">ACTIVE POOLS</div>
+            </div>
+          </div>
         </div>
 
-        {isWalletConnected && (
+        {connected && (
+          <Button
+            onClick={() => setShowUploadModal(true)}
+            className="bg-white text-black border-2 border-black px-8 py-3 rounded-xl text-sm font-medium hover:bg-black hover:text-white transition-colors mb-6"
+          >
+            Upload File with Turbo
+          </Button>
+        )}
+
+        {connected && (
           <div>
             {showPoolActions && selectedPool ? (
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="text-lg font-semibold">POOL ACTIONS - {selectedPool.name}</h3>
-                  <button onClick={() => setShowPoolActions(false)} className="text-gray-400 hover:text-gray-600">
+                  <Button
+                    onClick={() => setShowPoolActions(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
                     <X className="w-5 h-5" />
-                  </button>
+                  </Button>
                 </div>
                 <div className="space-y-6">
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
                       <h4 className="text-sm font-semibold text-gray-700">REVOKE ACCESS</h4>
-                      <button
+                      <Button
                         onClick={() => setShowAddressesModal(true)}
                         className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-xl text-sm font-medium transition-colors"
                       >
                         <Users className="w-4 h-4" />
                         View Addresses
-                      </button>
+                      </Button>
                     </div>
-                    <input
+                    <Input
                       type="text"
                       value={revokeAddress}
                       onChange={(e) => setRevokeAddress(e.target.value)}
                       placeholder="Enter wallet address to revoke"
                       className="w-full p-3 border border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
                     />
-                    <button
+                    <Button
                       onClick={() => handleRevokeAccess(revokeAddress)}
                       className="w-full bg-orange-500 text-white p-3 rounded-xl text-sm font-medium hover:bg-orange-600 transition-colors"
                     >
-                      REVOKE ACCESS
-                    </button>
+                      Revoke Access
+                    </Button>
                   </div>
                   <div className="space-y-3">
                     <h4 className="text-sm font-semibold text-gray-700">REFRESH BALANCE</h4>
-                    <button
+                    <Button
                       onClick={handleRefreshBalance}
                       className="w-full bg-blue-500 text-white p-3 rounded-xl text-sm font-medium hover:bg-blue-600 transition-colors"
                     >
-                      REFRESH BALANCE
-                    </button>
+                      Refresh Balance
+                    </Button>
                   </div>
                   <div className="space-y-3">
                     <h4 className="text-sm font-semibold text-gray-700">DOWNLOAD WALLET</h4>
-                    <button
+                    <Button
                       onClick={handleDownloadWallet}
                       className="w-full bg-green-500 text-white p-3 rounded-xl text-sm font-medium hover:bg-green-600 transition-colors"
                     >
-                      DOWNLOAD WALLET
-                    </button>
+                      Download Wallet
+                    </Button>
                   </div>
                   <div className="space-y-3">
                     <h4 className="text-sm font-semibold text-gray-700">DELETE POOL</h4>
-                    <button
+                    <Button
                       onClick={handleDeletePool}
                       className="w-full bg-red-500 text-white p-3 rounded-xl text-sm font-medium hover:bg-red-600 transition-colors"
                     >
-                      DELETE POOL
-                    </button>
+                      Delete Pool
+                    </Button>
                   </div>
                   <div className="space-y-3">
                     <h4 className="text-sm font-semibold text-gray-700">TOP UP POOL</h4>
-                    <button
+                    <Button
                       onClick={handleTopUp}
                       className="w-full bg-white text-black border-2 border-black p-3 rounded-xl text-sm font-medium hover:bg-black hover:text-white transition-colors"
                     >
-                      TOP UP
-                    </button>
+                      Top Up
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -373,14 +282,12 @@ export default function Dashboard() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold mb-6 text-gray-900">FAUCET INFORMATION</h3>
-
                   <div className="flex justify-between items-start mb-6">
                     <div className="flex-1 space-y-4">
                       <div className="flex justify-between py-3 border-b border-gray-100">
                         <span className="text-gray-600 font-medium">Name:</span>
                         <span className="font-semibold text-gray-900">{selectedPool.name}</span>
                       </div>
-
                       <div className="flex justify-between py-3 border-b border-gray-100">
                         <span className="text-gray-600 font-medium">Status:</span>
                         <span
@@ -389,36 +296,33 @@ export default function Dashboard() {
                           {selectedPool.status}
                         </span>
                       </div>
-
                       <div className="flex justify-between py-3 border-b border-gray-100">
                         <span className="text-gray-600 font-medium">
                           Whitelisted Addresses ({selectedPool.addresses.length}):
                         </span>
-                        <button
+                        <Button
                           onClick={() => setShowAddressesModal(true)}
                           className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-xl text-sm font-medium transition-colors"
                         >
                           <Users className="w-4 h-4" />
                           View Addresses
-                        </button>
+                        </Button>
                       </div>
-
                       <div className="flex gap-4 pt-4">
-                        <button
+                        <Button
                           onClick={() => setShowEditModal(true)}
                           className="bg-blue-500 text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-blue-600 transition-colors"
                         >
-                          EDIT POOL
-                        </button>
-                        <button
+                          Edit Pool
+                        </Button>
+                        <Button
                           onClick={handleSponsorCredits}
                           className="bg-yellow-500 text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-yellow-600 transition-colors"
                         >
-                          SPONSOR CREDITS
-                        </button>
+                          Sponsor Credits
+                        </Button>
                       </div>
                     </div>
-
                     <div className="ml-8 flex-shrink-0">
                       <div className="text-center">
                         <div className="text-gray-600 font-medium mb-2">Time Left:</div>
@@ -440,48 +344,20 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* Wallet Choice Modal */}
-      {showWalletModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white border-2 border-gray-300 shadow-xl p-8 min-w-80 text-center rounded-xl">
-            <h2 className="text-lg font-semibold mb-6 text-gray-900">CHOOSE WALLET</h2>
-            <div className="space-y-3">
-              <button
-                onClick={() => handleWalletConnect("beacon")}
-                className="w-full bg-white text-black border-2 border-black p-3 rounded-xl text-sm font-medium hover:bg-black hover:text-white transition-colors"
-                disabled={!beaconStrategy}
-              >
-                CONNECT WITH BEACON
-              </button>
-              <button
-                onClick={() => handleWalletConnect("wander")}
-                className="w-full bg-white text-black border-2 border-black p-3 rounded-xl text-sm font-medium hover:bg-black hover:text-white transition-colors"
-                disabled={!browserWalletStrategy}
-              >
-                CONNECT WITH WANDER
-              </button>
-              <button
-                onClick={() => setShowWalletModal(false)}
-                className="w-full bg-white text-gray-700 border-2 border-gray-300 p-3 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
-              >
-                CANCEL
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Whitelisted Addresses Modal */}
       {showAddressesModal && selectedPool && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-2 border-gray-300 shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 relative rounded-xl">
+          <div className="bg-white border-2 border-gray-300 shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 rounded-xl">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-semibold text-gray-900">
                 Whitelisted Addresses ({selectedPool.addresses.length})
               </h3>
-              <button onClick={() => setShowAddressesModal(false)} className="text-gray-400 hover:text-gray-600">
+              <Button
+                onClick={() => setShowAddressesModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
                 <X className="w-6 h-6" />
-              </button>
+              </Button>
             </div>
             <div className="space-y-3">
               {selectedPool.addresses.map((address, index) => (
@@ -490,13 +366,13 @@ export default function Dashboard() {
                   className="flex items-center justify-between bg-gray-50 border-2 border-gray-300 p-4 rounded-xl"
                 >
                   <span className="text-sm break-all">{address}</span>
-                  <button
+                  <Button
                     onClick={() => handleCopyAddress(address)}
                     className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-xl text-sm font-medium transition-colors ml-4 flex-shrink-0"
                   >
                     <ClipboardPenIcon className="w-4 h-4" />
                     Copy
-                  </button>
+                  </Button>
                 </div>
               ))}
             </div>
@@ -507,18 +383,18 @@ export default function Dashboard() {
       {/* Create Pool Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-2 border-gray-300 shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 relative rounded-xl">
-            <button
+          <div className="bg-white border-2 border-gray-300 shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 rounded-xl">
+            <Button
               onClick={() => setShowCreateModal(false)}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
             >
               <X className="w-6 h-6" />
-            </button>
+            </Button>
             <h3 className="text-xl font-semibold mb-6 text-gray-900">CREATE NEW POOL</h3>
             <form onSubmit={handleCreatePool} className="space-y-5">
               <div>
                 <label className="block text-sm font-semibold mb-2 text-gray-700">POOL NAME</label>
-                <input
+                <Input
                   name="poolName"
                   type="text"
                   className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
@@ -527,7 +403,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <label className="block text-sm font-semibold mb-2 text-gray-700">POOL PASSWORD</label>
-                <input
+                <Input
                   name="poolPassword"
                   type="password"
                   className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
@@ -536,7 +412,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <label className="block text-sm font-semibold mb-2 text-gray-700">CONFIRM PASSWORD</label>
-                <input
+                <Input
                   name="confirmPassword"
                   type="password"
                   className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
@@ -546,7 +422,7 @@ export default function Dashboard() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-semibold mb-2 text-gray-700">START TIME</label>
-                  <input
+                  <Input
                     name="startTime"
                     type="datetime-local"
                     className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
@@ -555,7 +431,7 @@ export default function Dashboard() {
                 </div>
                 <div>
                   <label className="block text-sm font-semibold mb-2 text-gray-700">END TIME</label>
-                  <input
+                  <Input
                     name="endTime"
                     type="datetime-local"
                     className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
@@ -567,7 +443,7 @@ export default function Dashboard() {
                 <label className="block text-sm font-semibold mb-2 text-gray-700">
                   MAX CREDITS PER WALLET (USAGE CAP)
                 </label>
-                <input
+                <Input
                   name="usageCap"
                   type="number"
                   step="0.000000000001"
@@ -578,27 +454,27 @@ export default function Dashboard() {
               </div>
               <div>
                 <label className="block text-sm font-semibold mb-2 text-gray-700">WHITELISTED ADDRESSES</label>
-                <textarea
+                <Textarea
                   name="addresses"
                   rows={4}
                   placeholder="Enter one Arweave address per line"
                   className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
-                ></textarea>
+                />
               </div>
               <div className="flex gap-4">
-                <button
+                <Button
                   type="submit"
                   className="flex-1 bg-white text-black border-2 border-black p-3 rounded-xl text-sm font-medium hover:bg-black hover:text-white transition-colors"
                 >
-                  CREATE POOL
-                </button>
-                <button
+                  Create Pool
+                </Button>
+                <Button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
                   className="bg-white text-gray-700 border-2 border-gray-300 p-3 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
                 >
-                  CANCEL
-                </button>
+                  Cancel
+                </Button>
               </div>
             </form>
           </div>
@@ -606,94 +482,99 @@ export default function Dashboard() {
       )}
 
       {/* Edit Pool Modal */}
-{showEditModal && selectedPool && (
-  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-    <div className="bg-white border-2 border-gray-300 shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 relative rounded-xl">
-      <button
-        onClick={() => setShowEditModal(false)}
-        className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-      >
-        <X className="w-6 h-6" />
-      </button>
-      <h3 className="text-xl font-semibold mb-6 text-gray-900">EDIT POOL - {selectedPool.name}</h3>
-      <form onSubmit={handleEditPool} className="space-y-5">
-        <div>
-          <label className="block text-sm font-semibold mb-2 text-gray-700">POOL NAME</label>
-          <input
-            name="poolName"
-            type="text"
-            defaultValue={selectedPool.name}
-            className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
-            required
-          />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-semibold mb-2 text-gray-700">START TIME (UTC)</label>
-            <input
-              name="startTime"
-              type="datetime-local"
-              defaultValue={new Date(selectedPool.startTime).toISOString().slice(0, 16)}
-              step="1"
-              className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
-              required
-            />
+      {showEditModal && selectedPool && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white border-2 border-gray-300 shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 rounded-xl">
+            <Button
+              onClick={() => setShowEditModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-6 h-6" />
+            </Button>
+            <h3 className="text-xl font-semibold mb-6 text-gray-900">EDIT POOL - {selectedPool.name}</h3>
+            <form onSubmit={handleEditPool} className="space-y-5">
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-700">POOL NAME</label>
+                <Input
+                  name="poolName"
+                  type="text"
+                  defaultValue={selectedPool.name}
+                  className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
+                  required
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-700">START TIME (UTC)</label>
+                  <Input
+                    name="startTime"
+                    type="datetime-local"
+                    defaultValue={new Date(selectedPool.startTime).toISOString().slice(0, 16)}
+                    step="1"
+                    className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-2 text-gray-700">END TIME (UTC)</label>
+                  <Input
+                    name="endTime"
+                    type="datetime-local"
+                    defaultValue={new Date(selectedPool.endTime).toISOString().slice(0, 16)}
+                    step="1"
+                    className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-700">
+                  MAX CREDITS PER WALLET (USAGE CAP)
+                </label>
+                <Input
+                  name="usageCap"
+                  type="number"
+                  step="0.000000000001"
+                  min="0"
+                  defaultValue={selectedPool.usageCap}
+                  className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-700">WHITELISTED ADDRESSES</label>
+                <Textarea
+                  name="addresses"
+                  rows={4}
+                  defaultValue={selectedPool.addresses.join("\n")}
+                  placeholder="Enter one Arweave address per line"
+                  className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
+                />
+              </div>
+              <div className="flex gap-4">
+                <Button
+                  type="submit"
+                  className="flex-1 bg-white text-black border-2 border-black p-3 rounded-xl text-sm font-medium hover:bg-black hover:text-white transition-colors"
+                >
+                  Save Changes
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => setShowEditModal(false)}
+                  className="bg-white text-gray-700 border-2 border-gray-300 p-3 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
           </div>
-          <div>
-            <label className="block text-sm font-semibold mb-2 text-gray-700">END TIME (UTC)</label>
-            <input
-              name="endTime"
-              type="datetime-local"
-              defaultValue={new Date(selectedPool.endTime).toISOString().slice(0, 16)}
-              step="1"
-              className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
-              required
-            />
-          </div>
         </div>
-        <div>
-          <label className="block text-sm font-semibold mb-2 text-gray-700">
-            MAX CREDITS PER WALLET (USAGE CAP)
-          </label>
-          <input
-            name="usageCap"
-            type="number"
-            step="0.000000000001"
-            min="0"
-            defaultValue={selectedPool.usageCap}
-            className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-semibold mb-2 text-gray-700">WHITELISTED ADDRESSES</label>
-          <textarea
-            name="addresses"
-            rows={4}
-            defaultValue={selectedPool.addresses.join("\n")}
-            placeholder="Enter one Arweave address per line"
-            className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
-          ></textarea>
-        </div>
-        <div className="flex gap-4">
-          <button
-            type="submit"
-            className="flex-1 bg-white text-black border-2 border-black p-3 rounded-xl text-sm font-medium hover:bg-black hover:text-white transition-colors"
-          >
-            SAVE CHANGES
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowEditModal(false)}
-            className="bg-white text-gray-700 border-2 border-gray-300 p-3 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors"
-          >
-            CANCEL
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-)}
+      )}
+
+      {/* Turbo Upload Modal */}
+      {showUploadModal && (
+        <TurboUploadModal isOpen={showUploadModal} onClose={() => setShowUploadModal(false)} />
+      )}
     </div>
   )
 }
