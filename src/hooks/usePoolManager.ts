@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { TurboFactory, ArconnectSigner } from "@ardrive/turbo-sdk"
+import { TurboFactory, ArconnectSigner } from "@ardrive/turbo-sdk/web"
 import { Pool } from "../types/types"
 import { isValidArweaveAddress } from "../utils/utils"
 import { useUser } from "./useUser"
