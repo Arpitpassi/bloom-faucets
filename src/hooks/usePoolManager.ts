@@ -80,11 +80,11 @@ export function usePoolManager(
       return null
     }
     try {
-       const signer = new ArconnectSigner(window.arweaveWallet);
-            const turbo = TurboFactory.authenticated({
-              signer,
-              token: "arweave",
-            });
+      const signer = new ArconnectSigner(window.arweaveWallet)
+      const turbo = TurboFactory.authenticated({
+        signer,
+        token: "arweave",
+      })
       const balanceResult = await turbo.getBalance()
       return Number(balanceResult.winc) / 1e12 // Convert winston to Turbo Credits
     } catch (error) {
@@ -151,6 +151,7 @@ export function usePoolManager(
       .filter((a) => a)
 
     if (!poolName.trim()) return showError("Invalid Pool Name", "Please enter a valid pool name")
+    if (Number.isNaN(usageCap) || usageCap < 0) return showError("Invalid Usage Cap", "Please enter a valid usage cap")
     const invalidAddresses = addresses.filter((a) => !isValidArweaveAddress(a))
     if (invalidAddresses.length > 0)
       return showError("Invalid Addresses", `Please fix invalid addresses: ${invalidAddresses.join(", ")}`)
@@ -158,20 +159,26 @@ export function usePoolManager(
     const endDateTime = new Date(endTime)
     if (startDateTime >= endDateTime) return showError("Invalid Dates", "Start time must be before end time")
 
-    const updatedPool: Pool = {
-      ...selectedPool,
-      name: poolName,
-      startTime: new Date(startTime).toISOString(),
-      endTime: new Date(endTime).toISOString(),
-      usageCap,
-      addresses,
-    }
+    try {
+      const updatedPool: Pool = {
+        ...selectedPool,
+        name: poolName,
+        startTime: new Date(startTime).toISOString(),
+        endTime: new Date(endTime).toISOString(),
+        usageCap,
+        addresses,
+        balance: selectedPool.balance, // Preserve existing balance
+      }
 
-    const updatedPools = pools.map((pool) => (pool.id === selectedPool.id ? updatedPool : pool))
-    savePools(updatedPools)
-    setSelectedPool(updatedPool)
-    setShowEditModal(false)
-    showSuccess("Pool Updated", `Pool "${poolName}" has been updated successfully`)
+      const updatedPools = pools.map((pool) => (pool.id === selectedPool.id ? updatedPool : pool))
+      savePools(updatedPools)
+      setSelectedPool(updatedPool)
+      loadPools() // Refresh sidebar
+      setShowEditModal(false)
+      showSuccess("Pool Updated", `Pool "${poolName}" has been updated successfully`)
+    } catch (error) {
+      showError("Edit Failed", `Failed to update pool: ${error instanceof Error ? error.message : String(error)}`)
+    }
   }
 
   const handleDeletePool = async () => {
@@ -197,11 +204,11 @@ export function usePoolManager(
     }
 
     try {
-       const signer = new ArconnectSigner(window.arweaveWallet);
-            const turbo = TurboFactory.authenticated({
-              signer,
-              token: "arweave",
-            });
+      const signer = new ArconnectSigner(window.arweaveWallet)
+      const turbo = TurboFactory.authenticated({
+        signer,
+        token: "arweave",
+      })
       await turbo.revokeCredits({ revokedAddress: revokeAddress })
 
       const updatedPool = {
@@ -211,6 +218,7 @@ export function usePoolManager(
       const updatedPools = pools.map((pool) => (pool.id === selectedPool.id ? updatedPool : pool))
       savePools(updatedPools)
       setSelectedPool(updatedPool)
+      await handleRefreshBalance() // Refresh balance after revoke
       showSuccess("Access Revoked", `Successfully revoked access for ${revokeAddress.slice(0, 10)}...`)
     } catch (error) {
       showError("Revoke Failed", `Error revoking access: ${error instanceof Error ? error.message : String(error)}`)
@@ -227,16 +235,18 @@ export function usePoolManager(
       return showError("No Addresses", "No whitelisted addresses to sponsor credits for")
 
     try {
-       const signer = new ArconnectSigner(window.arweaveWallet);
-            const turbo = TurboFactory.authenticated({
-              signer,
-              token: "arweave",
-            });
+      const signer = new ArconnectSigner(window.arweaveWallet)
+      const turbo = TurboFactory.authenticated({
+        signer,
+        token: "arweave",
+      })
       const balanceResp = await turbo.getBalance()
-      const availableCredits = BigInt(balanceResp.winc)
-      const creditsPerAddress = BigInt(Math.floor(Number(availableCredits) / selectedPool.addresses.length))
+      const availableCredits = Number(balanceResp.winc) / 1e12 // Convert to Turbo Credits
+      const usageCapCredits = selectedPool.usageCap // Usage cap is already in Turbo Credits
+      const creditsPerAddress = Math.min(usageCapCredits, availableCredits / selectedPool.addresses.length)
+      const creditsPerAddressWinston = BigInt(Math.floor(creditsPerAddress * 1e12)) // Convert back to Winston
 
-      if (creditsPerAddress <= 0n) {
+      if (creditsPerAddressWinston <= 0n) {
         showError("Insufficient Credits", "Not enough credits available to sponsor")
         return
       }
@@ -247,7 +257,7 @@ export function usePoolManager(
         try {
           await turbo.shareCredits({
             approvedAddress: addr,
-            approvedWincAmount: creditsPerAddress.toString(),
+            approvedWincAmount: creditsPerAddressWinston.toString(),
           })
           successfulShares++
         } catch (error) {
@@ -257,14 +267,14 @@ export function usePoolManager(
         }
       }
 
-      const newBalance = await fetchBalance()
-      const updatedPool = { ...selectedPool, balance: newBalance }
+      await handleRefreshBalance() // Refresh balance after sponsoring
+      const updatedPool = { ...selectedPool, balance: selectedPool.balance }
       const updatedPools = pools.map((p) => (p.id === selectedPool.id ? updatedPool : p))
       savePools(updatedPools)
       setSelectedPool(updatedPool)
 
       if (successfulShares > 0) {
-        const message = `Successfully sponsored credits to ${successfulShares} of ${selectedPool.addresses.length} addresses`
+        const message = `Successfully sponsored up to ${creditsPerAddress.toFixed(4)} credits to ${successfulShares} of ${selectedPool.addresses.length} addresses`
         if (errors.length > 0) {
           showWarning("Partial Success", `${message}. Errors: ${errors.join("; ")}`)
         } else {
@@ -274,7 +284,7 @@ export function usePoolManager(
         showError("Sponsor Failed", errors.length > 0 ? `Errors: ${errors.join("; ")}` : "No credits sponsored.")
       }
     } catch (error) {
-      showError("Sponsor Failed", `Error sponsoring créditos: ${error instanceof Error ? error.message : String(error)}`)
+      showError("Sponsor Failed", `Error sponsoring credits: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
 

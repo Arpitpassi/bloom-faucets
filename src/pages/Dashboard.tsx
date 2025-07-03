@@ -106,6 +106,18 @@ export default function Dashboard() {
     }
   }
 
+  // Convert ISO date to datetime-local format
+  const toDateTimeLocal = (isoDate: string): string => {
+    try {
+      const date = new Date(isoDate)
+      const offset = date.getTimezoneOffset()
+      const adjustedDate = new Date(date.getTime() - offset * 60 * 1000)
+      return adjustedDate.toISOString().slice(0, 16)
+    } catch {
+      return isoDate.slice(0, 16)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 font-inter antialiased flex">
       <ToastContainer toasts={toasts} onRemove={removeToast} />
@@ -146,7 +158,7 @@ export default function Dashboard() {
                   </span>
                 </div>
                 <div>
-                  Usage Cap: <span className="font-medium text-gray-900">{pool.usageCap.toFixed(4)}</span>
+                  Usage Cap: <span className="font-medium text-gray-900">{pool.usageCap}</span>
                 </div>
                 <div className="text-xs">
                   Duration: {formatDateTime(pool.startTime)} - {formatDateTime(pool.endTime)}
@@ -461,7 +473,7 @@ export default function Dashboard() {
                   <Input
                     name="startTime"
                     type="datetime-local"
-                    defaultValue={selectedPool.startTime.slice(0, 16)}
+                    defaultValue={toDateTimeLocal(selectedPool.startTime)}
                     className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
                     required
                   />
@@ -471,7 +483,7 @@ export default function Dashboard() {
                   <Input
                     name="endTime"
                     type="datetime-local"
-                    defaultValue={selectedPool.endTime.slice(0, 16)}
+                    defaultValue={toDateTimeLocal(selectedPool.endTime)}
                     className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
                     required
                   />
