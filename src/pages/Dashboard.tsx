@@ -8,19 +8,17 @@ import { TimeLeftDial } from "../components/TimeLeftDial"
 import { Pool } from "../types/types"
 import { usePoolManager } from "../hooks/usePoolManager"
 import { ConnectButton } from "@arweave-wallet-kit/react"
-import { useUser } from "../hooks/useUser"
-import TurboUploadModal from "../components/TurboUploadModal"
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
 import { Textarea } from "../components/ui/textarea"
 import { Badge } from "../components/ui/badge"
+import { useUser } from "@/hooks/useUser"
 
 export default function Dashboard() {
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [showPoolActions, setShowPoolActions] = useState(false)
   const [showAddressesModal, setShowAddressesModal] = useState(false)
-  const [showUploadModal, setShowUploadModal] = useState(false)
   const [revokeAddress, setRevokeAddress] = useState("")
   const { toasts, removeToast, showSuccess, showError, showWarning, showInfo } = useToast()
   const { connected, address } = useUser()
@@ -35,18 +33,14 @@ export default function Dashboard() {
     handleEditPool,
     handleDeletePool,
     handleRevokeAccess,
-    handleDownloadWallet,
-    handleTopUp,
     handleSponsorCredits,
     handleRefreshBalance,
-  } = usePoolManager(
-    address || "",
-    connected,
-    setShowPoolActions,
-    setShowCreateModal,
-    setShowEditModal,
-    { showSuccess, showError, showWarning, showInfo }
-  )
+  } = usePoolManager(setShowPoolActions, setShowCreateModal, setShowEditModal, {
+    showSuccess,
+    showError,
+    showWarning,
+    showInfo,
+  })
 
   const WalletStatus = () => {
     if (!connected) {
@@ -92,9 +86,8 @@ export default function Dashboard() {
     setSelectedPool({ ...pool, balance: pool.balance ?? null })
     setShowPoolActions(false)
     if (pool.balance === null) {
-      const balance = await fetchBalance(pool.id)
+      const balance = await fetchBalance()
       if (balance !== null) {
-        setPools((prev: Pool[]) => prev.map((p: Pool) => (p.id === pool.id ? { ...p, balance } : p)))
         setSelectedPool((prev) => (prev ? { ...prev, balance } : prev))
       }
     }
@@ -109,7 +102,6 @@ export default function Dashboard() {
       await navigator.clipboard.writeText(address)
       showSuccess("Address Copied", `Address ${address.slice(0, 10)}... copied to clipboard`)
     } catch (error) {
-      console.error("Copy address error:", error)
       showError("Copy Failed", `Failed to copy address: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
@@ -139,7 +131,7 @@ export default function Dashboard() {
               <div className="flex justify-between items-center mb-3">
                 <div className="font-semibold text-base">{pool.name}</div>
                 <Badge
-                  className={`text-xs fontagena-medium px-2 py-1 rounded-full ${
+                  className={`text-xs font-medium px-2 py-1 rounded-full ${
                     pool.status === "Active" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
                   }`}
                 >
@@ -197,15 +189,6 @@ export default function Dashboard() {
         </div>
 
         {connected && (
-          <Button
-            onClick={() => setShowUploadModal(true)}
-            className="bg-white text-black border-2 border-black px-8 py-3 rounded-xl text-sm font-medium hover:bg-black hover:text-white transition-colors mb-6"
-          >
-            Upload File with Turbo
-          </Button>
-        )}
-
-        {connected && (
           <div>
             {showPoolActions && selectedPool ? (
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
@@ -254,30 +237,12 @@ export default function Dashboard() {
                     </Button>
                   </div>
                   <div className="space-y-3">
-                    <h4 className="text-sm font-semibold text-gray-700">DOWNLOAD WALLET</h4>
-                    <Button
-                      onClick={handleDownloadWallet}
-                      className="w-full bg-green-500 text-white p-3 rounded-xl text-sm font-medium hover:bg-green-600 transition-colors"
-                    >
-                      Download Wallet
-                    </Button>
-                  </div>
-                  <div className="space-y-3">
                     <h4 className="text-sm font-semibold text-gray-700">DELETE POOL</h4>
                     <Button
                       onClick={handleDeletePool}
                       className="w-full bg-red-500 text-white p-3 rounded-xl text-sm font-medium hover:bg-red-600 transition-colors"
                     >
                       Delete Pool
-                    </Button>
-                  </div>
-                  <div className="space-y-3">
-                    <h4 className="text-sm font-semibold text-gray-700">TOP UP POOL</h4>
-                    <Button
-                      onClick={handleTopUp}
-                      className="w-full bg-purple-500 text-white p-3 rounded-xl text-sm font-medium hover:bg-purple-600 transition-colors"
-                    >
-                      Top Up
                     </Button>
                   </div>
                 </div>
@@ -396,29 +361,11 @@ export default function Dashboard() {
             </Button>
             <h3 className="text-xl font-semibold mb-6 text-gray-900">CREATE NEW POOL</h3>
             <form onSubmit={handleCreatePool} className="space-y-5">
-             grado: <div>
+              <div>
                 <label className="block text-sm font-semibold mb-2 text-gray-700">POOL NAME</label>
                 <Input
                   name="poolName"
                   type="text"
-                  className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold mb-2 text-gray-700">POOL PASSWORD</label>
-                <Input
-                  name="poolPassword"
-                  type="password"
-                  className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold mb-2 text-gray-700">CONFIRM PASSWORD</label>
-                <Input
-                  name="confirmPassword"
-                  type="password"
                   className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
                   required
                 />
@@ -574,15 +521,6 @@ export default function Dashboard() {
           </div>
         </div>
       )}
-
-      {/* Turbo Upload Modal */}
-      {showUploadModal && (
-        <TurboUploadModal onClose={() => setShowUploadModal(false)} />
-      )}
     </div>
   )
-}
-
-function setPools(_arg0: (prev: Pool[]) => Pool[]) {
-  throw new Error("Function not implemented.")
 }
