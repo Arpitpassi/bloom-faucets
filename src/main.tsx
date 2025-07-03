@@ -8,6 +8,7 @@ import { ArweaveWalletKit } from "@arweave-wallet-kit/react";
 import { UserProvider } from "./hooks/useUser.tsx";
 import AoSyncStrategy from "@vela-ventures/aosync-strategy";
 import WanderStrategy from "@arweave-wallet-kit/wander-strategy";
+import BrowserWalletStrategy from "@arweave-wallet-kit/browser-wallet-strategy";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -27,6 +28,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         strategies: [
           new AoSyncStrategy(),
           new WanderStrategy(),
+          new BrowserWalletStrategy()
         ],
       }}
     >
