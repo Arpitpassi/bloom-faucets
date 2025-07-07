@@ -1,94 +1,46 @@
-# Bloom Pool Manager - Vite
+Bloom Pool Manager
+A React application for creating and managing sponsored credit pools in the Arweave ecosystem, designed to simplify pool creation, access control, and usage tracking.
+Overview
+Bloom Pool Manager enables users to create, manage, and monitor sponsored credit pools for Arweave. It offers a user-friendly interface for configuring pools, managing access, and tracking usage with seamless wallet integration.
+Features
 
-A React application for creating and managing sponsored credit pools for the Arweave ecosystem, now powered by Vite.
+Pool Management: Create and configure credit pools with custom settings.
+Access Control: Whitelist specific Arweave addresses for pool access.
+Real-time Analytics: Monitor pool balances and usage.
+Wallet Integration: Connect with Beacon or Wander wallets for secure transactions.
+Time Tracking: Visualize pool duration with countdown timers.
 
-## Features
+User Inputs
+The application collects the following inputs from users:
 
-- Pool Management: Create and manage multiple sponsor pools
-- Access Control: Whitelist specific addresses with granular permissions
-- Real-time Analytics: Monitor pool usage and track spending
-- Wallet Integration: Support for Beacon and Wander wallets
-- Time Tracking: Visual countdown timers for pool duration
+Pool Name: A unique name for the credit pool.
+Start/End Time: UTC-based start and end dates for pool activity.
+Usage Cap: Maximum Turbo credits per wallet (e.g., 0.01 credits).
+Whitelisted Addresses: List of valid 43-character Arweave addresses (one per line).
+Wallet Connection: Requires an Arweave-compatible wallet (Beacon or Wander) for authentication and transactions.
 
-## Getting Started
+Major Components
 
-### Prerequisites
+Dashboard: Main interface for viewing and managing pools, displaying pool counts, wallet status, and pool details like balance and duration.
+Pool Management System: Handles pool creation, editing, deletion, credit sponsoring, and access revocation.
+User Authentication: Manages wallet connections and retrieves active addresses for secure operations.
+Notification System: Provides feedback for user actions (e.g., success or error messages).
 
-- Node.js 18+ 
-- npm or yarn
-- Arweave-compatible wallet (Beacon or Wander)
+Technology Stack
 
-### Installation
+Framework: React with TypeScript for type-safe development.
+Wallet Integration: Arweave Wallet Kit for Beacon and Wander wallet support.
+Arweave Interaction: Turbo SDK for balance checks and transaction signing.
 
-1. Clone the repository
-2. Install dependencies:
-   \`\`\`bash
-   npm install
-   \`\`\`
-
-3. Copy environment variables:
-   \`\`\`bash
-   cp .env.example .env
-   \`\`\`
-
-4. Update environment variables in `.env` as needed
-
-5. Start the development server:
-   \`\`\`bash
-   npm run dev
-   \`\`\`
-
-6. Open [http://localhost:5173](http://localhost:5173) in your browser
-
-### Building for Production
-
-\`\`\`bash
-npm run build
-\`\`\`
-
-The built files will be in the `dist` directory.
-
-### Preview Production Build
-
-\`\`\`bash
-npm run preview
-\`\`\`
-
-## Migration from Next.js
-
-This project has been migrated from Next.js to Vite while maintaining all existing functionality:
-
-- Replaced Next.js App Router with React Router
-- Updated build configuration for Vite
-- Converted Next.js specific imports to standard React patterns
-- Maintained all existing components and business logic
-- Preserved styling and UI components
-
-## Technology Stack
-
-- **Build Tool**: Vite
-- **Framework**: React 19
-- **Routing**: React Router DOM
-- **Styling**: Tailwind CSS
-- **UI Components**: Radix UI primitives
-- **Icons**: Lucide React
-- **TypeScript**: Full type safety
-- **Wallet Integration**: Arweave wallet strategies
-
-## Project Structure
-
-\`\`\`
+Project Structure
 src/
-├── components/          # Reusable UI components
-├── pages/              # Page components (HomePage, Dashboard)
-├── hooks/              # Custom React hooks
-├── types/              # TypeScript type definitions
-├── utils/              # Utility functions
-├── constants/          # Application constants
-├── assets/             # Static assets
-└── globals.css         # Global styles
-\`\`\`
+├── components/     # Reusable UI components
+├── pages/         # Page components (HomePage, Dashboard)
+├── hooks/         # Custom hooks for pool and user management
+├── types/         # TypeScript type definitions
+├── utils/         # Utility functions (e.g., date formatting, address validation)
+├── assets/        # Static assets
+└── globals.css    # Global styles
 
-## License
-
+License
 © 2025 Bloom. All rights reserved.
