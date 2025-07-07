@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react"
@@ -5,9 +6,10 @@ import { useNavigate } from "react-router-dom"
 import { X, ExternalLink, Calculator, FileText, Database, Shield, BarChart3 } from "lucide-react"
 import SplitText from "../components/SplitText"
 
-
 export default function HomePage() {
-  const [showSetupGuide, setShowSetupGuide] = useState(false)
+  const [showHowToModal, setShowHowToModal] = useState(false)
+  const [showPoolsGuide, setShowPoolsGuide] = useState(false)
+  const [showCreditsGuide, setShowCreditsGuide] = useState(false)
   const [showContactModal, setShowContactModal] = useState(false)
   const navigate = useNavigate()
 
@@ -29,8 +31,7 @@ export default function HomePage() {
       <header className="bg-white shadow-sm border-b border-gray-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-            </div>
+            <div className="flex items-center"></div>
             <button
               onClick={() => setShowContactModal(true)}
               className="text-black hover:underline font-semibold transition-all duration-200 cursor-pointer"
@@ -69,10 +70,10 @@ export default function HomePage() {
               Get Started
             </button>
             <button
-              onClick={() => setShowSetupGuide(true)}
+              onClick={() => setShowHowToModal(true)}
               className="bg-white text-black border-2 border-black px-8 py-4 text-lg font-semibold hover:bg-black hover:text-white transition-colors rounded-xl"
             >
-              Setup Guide
+              Guides
             </button>
           </div>
         </div>
@@ -125,7 +126,7 @@ export default function HomePage() {
           <h2 className="text-3xl font-bold mb-8">Resources & Support</h2>
           <div className="grid md:grid-cols-3 gap-6">
             <a
-              href="https://discord.gg/wbhP7ND4"
+              href="https://discord.gg/9cJyqrJUHh"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white border-2 border-gray-300 p-6 rounded-2xl hover:bg-gray-50 transition-colors group"
@@ -159,7 +160,7 @@ export default function HomePage() {
             </a>
 
             <a
-              href="https://github.com/ropats16/bloom-pools-code-ref"
+              href="https://github.com/ropats16/nitya-pools-code-ref"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white border-2 border-gray-300 p-6 rounded-2xl hover:bg-gray-50 transition-colors group"
@@ -184,155 +185,344 @@ export default function HomePage() {
         </div>
       </footer>
 
-      {/* Setup Guide Modal */}
-      {showSetupGuide && (
+      {/* How To Modal */}
+      {showHowToModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-2 border-gray-300 max-w-4xl w-full max-h-[80vh] overflow-y-auto p-8 relative">
+          <div className="bg-white border-2 border-gray-300 max-w-lg w-full p-8 relative rounded-2xl">
             <button
-              onClick={() => setShowSetupGuide(false)}
+              onClick={() => setShowHowToModal(false)}
+              className="absolute top-4 right-4 text-2xl font-bold hover:text-gray-600 p-1 rounded-xl hover:bg-gray-100 transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <h1 className="text-3xl font-bold mb-6 text-center">How To</h1>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => {
+                  setShowHowToModal(false)
+                  setShowPoolsGuide(true)
+                }}
+                className="bg-white text-black border-2 border-black px-10 py-4 text-lg font-semibold hover:bg-black hover:text-white transition-colors rounded-xl flex-1"
+              >
+                Setup Pools
+              </button>
+              <button
+                onClick={() => {
+                  setShowHowToModal(false)
+                  setShowCreditsGuide(true)
+                }}
+                className="bg-white text-black border-2 border-black px-10 py-4 text-lg font-semibold hover:bg-black hover:text-white transition-colors rounded-xl flex-1"
+              >
+                Use Shared Credits
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Setup Pools Guide Modal */}
+      {showPoolsGuide && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white border-2 border-gray-300 max-w-5xl w-full max-h-[80vh] overflow-y-auto p-8 relative">
+            <button
+              onClick={() => setShowPoolsGuide(false)}
               className="absolute top-4 right-4 text-2xl font-bold hover:text-gray-600 p-1 hover:bg-gray-100 transition-colors"
             >
               <X className="w-6 h-6" />
             </button>
 
-            <h1 className="text-3xl font-bold mb-6">Bloomfaucets Quick Start Guide</h1>
-            <p className="mb-6">Follow these steps to get started.</p>
+            <h1 className="text-3xl font-bold mb-6">Bloom Pool Manager: Simple Guide to Create and Use a Pool</h1>
+            <p className="mb-6">This guide provides straightforward instructions for creating and using a sponsored credit pool in the Arweave ecosystem using the Bloom Pool Manager.</p>
 
-            <h2 className="text-xl font-semibold mt-8 mb-4">1. Accessing the Application</h2>
-            <ul className="list-disc pl-6 mb-4">
-              <li>Ensure you have an Arweave-compatible wallet (e.g., Wander Wallet or Beacon) ready.</li>
+            <h2 className="text-xl font-semibold mt-8 mb-4">Prerequisites</h2>
+            <ul className="list-disc pl-6 mb-4 space-y-2">
+              <li>An Arweave-compatible wallet (Beacon or Wander) installed in your browser.</li>
             </ul>
 
-            <h2 className="text-xl font-semibold mt-8 mb-4">2. Connecting Your Wallet</h2>
+            <h2 className="text-xl font-semibold mt-8 mb-4">1. Access the Dashboard</h2>
             <ul className="list-disc pl-6 mb-4 space-y-2">
-              <li>
-                Click <strong>Connect Wallet</strong> on the homepage.
-              </li>
-              <li>
-                Select either <strong>Wander Wallet</strong> or <strong>Beacon</strong> from the wallet selection
-                pop-up.
-              </li>
-              <li>Follow the prompts in your wallet to establish a connection.</li>
-              <li>Upon successful connection, you will be directed to the "Your Deployment Pools" dashboard.</li>
+              <li>Open the Bloom Pool Manager in your browser.</li>
+              <li>On the homepage, click <strong>Get Started</strong> to go to the <strong>Dashboard</strong>.</li>
             </ul>
 
-            <h2 className="text-xl font-semibold mt-8 mb-4">3. Creating a New Pool</h2>
+            <h2 className="text-xl font-semibold mt-8 mb-4">2. Connect Your Wallet</h2>
             <ul className="list-disc pl-6 mb-4 space-y-2">
-              <li>
-                Click <strong>+ New Pool</strong> on the dashboard.
-              </li>
-              <li>
-                Complete the "Create New Pool" form with the following details:
+              <li>On the dashboard, click <strong>Connect Wallet</strong> if not already connected.</li>
+              <li>Choose <strong>Wander Wallet</strong> or <strong>Beacon</strong>.</li>
+              <li>Follow your wallet’s prompts to connect.</li>
+            </ul>
+
+            <h2 className="text-xl font-semibold mt-8 mb-4">3. Create a Pool</h2>
+            <ul className="list-disc pl-6 mb-4 space-y-2">
+              <li>On the dashboard, in the left sidebar, click <strong>+ New Pool</strong>.</li>
+              <li>Fill out the <strong>Create New Pool</strong> form:
                 <ul className="list-disc pl-6 mt-2 space-y-1">
-                  <li>
-                    <strong>Pool Name</strong>: A unique name for your pool.
-                  </li>
-                  <li>
-                    <strong>Password</strong>: A secure password for pool management.
-                  </li>
-                  <li>
-                    <strong>Start Time</strong> and <strong>End Time</strong>: The active duration of the pool.
-                  </li>
-                  <li>
-                    <strong>Usage Cap</strong>: The maximum credit limit per wallet for the pool.
-                  </li>
-                  <li>
-                    <strong>Whitelisted Addresses</strong>: Wallet Addresses allowed to use the pool.
-                  </li>
-                  <li>
-                    <strong>Sponsor Info</strong>: Additional sponsor details.
-                  </li>
+                  <li><strong>Pool Name</strong>: Enter a name (e.g., "My Pool").</li>
+                  <li><strong>Start Time</strong>: Pick a start date and time (UTC).</li>
+                  <li><strong>End Time</strong>: Pick an end date and time.</li>
+                  <li><strong>Max Credits Per Wallet (Usage Cap)</strong>: Enter the maximum Turbo credits per wallet (e.g., 0.01).</li>
+                  <li><strong>Whitelisted Addresses</strong>: Enter one Arweave address per line (43 characters each).</li>
                 </ul>
               </li>
-              <li>
-                Click <strong>Create Pool</strong> to save your pool, or <strong>Cancel</strong>/<strong>×</strong> to
-                discard changes.
-              </li>
+              <li>Click <strong>Create Pool</strong> to save. A success message will appear.</li>
+              <li>To cancel, click <strong>Cancel</strong> or the <strong>X</strong> button.</li>
             </ul>
 
-            <h2 className="text-xl font-semibold mt-8 mb-4">4. Managing Your Pools</h2>
+            <h2 className="text-xl font-semibold mt-8 mb-4">4. Use a Pool</h2>
             <ul className="list-disc pl-6 mb-4 space-y-2">
-              <li>
-                Your pools are displayed on the dashboard, showing details such as name, status, balance, usage cap,
-                duration, and whitelisted addresses.
-              </li>
-              <li>
-                Click <strong>Pool Actions</strong> on a pool card to:
+              <li><strong>View Pool</strong>:
                 <ul className="list-disc pl-6 mt-2 space-y-1">
-                  <li>View pool information, status, balance, and whitelisted addresses.</li>
-                  <li>
-                    Use <strong>Sponsor Credits</strong> (requires password) to sponsor all the addresses in the
-                    whitelist
-                  </li>
-                  <li>
-                    Enter an address to <strong>Revoke Access</strong> (requires password).
-                  </li>
-                  <li>
-                    Click <strong>Download Wallet</strong> to save the pool's wallet key file.
-                  </li>
-                  <li>
-                    Click <strong>Delete Pool</strong> to permanently remove the pool (requires confirmation and
-                    password; ensure key files are downloaded first).
-                  </li>
+                  <li>In the sidebar, click your pool to see details (name, status, balance, usage cap, duration, addresses).</li>
+                  <li><strong>Time Dial</strong> shows you the remaining time.</li>
                 </ul>
               </li>
-              <li>
-                For active pools, click <strong>Edit Pool</strong> to:
+              <li><strong>Manage Addresses</strong>:
                 <ul className="list-disc pl-6 mt-2 space-y-1">
-                  <li>Modify pool details in the "Edit Pool" form.</li>
-                  <li>
-                    Click <strong>Update Pool</strong> to save changes.
-                  </li>
+                  <li>Click <strong>View Addresses</strong> to see whitelisted addresses.</li>
+                  <li>Copy an address by clicking <strong>Copy</strong> next to it.</li>
+                  <li>Use <strong>Edit Pool</strong> to add or remove addresses.</li>
+                </ul>
+              </li>
+              <li><strong>Sponsor Credits</strong>:
+                <ul className="list-disc pl-6 mt-2 space-y-1">
+                  <li>Select the pool, then click <strong>Sponsor Credits</strong>.</li>
+                  <li>Credits will be distributed to whitelisted addresses (up to the usage cap).</li>
+                  <li>A success or error message will show.</li>
+                </ul>
+              </li>
+              <li><strong>Revoke Access</strong>:
+                <ul className="list-disc pl-6 mt-2 space-y-1">
+                  <li>Select the pool, click <strong>Pool Actions</strong>, then enter an address under <strong>Revoke Access</strong>.</li>
+                  <li>Click <strong>Revoke Access</strong> to remove it.</li>
+                </ul>
+              </li>
+              <li><strong>Edit Pool</strong>:
+                <ul className="list-disc pl-6 mt-2 space-y-1">
+                  <li>Select the pool, click <strong>Edit Pool</strong>.</li>
+                  <li>Update name, times, usage cap, or addresses, then click <strong>Save Changes</strong>.</li>
+                </ul>
+              </li>
+              <li><strong>Delete Pool</strong>:
+                <ul className="list-disc pl-6 mt-2 space-y-1">
+                  <li>In <strong>Pool Actions</strong>, click <strong>Delete Pool</strong>, confirm, and the pool will be removed.</li>
                 </ul>
               </li>
             </ul>
 
-            <h2 className="text-xl font-semibold mt-8 mb-4">5. Topping Up a Pool Wallet</h2>
-            <p className="italic text-gray-600 mb-4">
-              Note: This process may be time-consuming due to potential network congestion. Our development team is
-              working to streamline this step in future updates.
-            </p>
+            <h2 className="text-xl font-semibold mt-8 mb-4">5. Need Help?</h2>
             <ul className="list-disc pl-6 mb-4 space-y-2">
-              <li>Download the pool's wallet key file.</li>
-              <li>Import the key file into your preferred wallet.</li>
-              <li>
-                Transfer AR tokens equivalent to the desired credit amount to the pool wallet. (Note: Turbo and AR
-                prices may vary but are generally comparable.)
-              </li>
-              <li>
-                Connect the pool wallet to{" "}
-                <a
-                  href="https://turbo-topup.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 underline hover:text-blue-800"
-                >
-                  turbo-topup.com
-                </a>{" "}
-                to convert AR tokens into Turbo credits.
-              </li>
-              <li>Your pool is now recharged with Turbo credits, ready to support sponsorships.</li>
+              <li>Email <a href="mailto:nityaprotocol@gmail.com" className="text-blue-600 underline hover:text-blue-800">nityaprotocol@gmail.com</a> via <strong>Mail Us</strong> on the homepage.</li>
+              <li>Join the <a href="https://discord.gg/9cJyqrJUHh" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">Discord</a> for support.</li>
             </ul>
 
             <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-8 rounded-xl">
               <p className="font-semibold text-red-800">
-                Important: Bloomfaucets is currently in beta. Securely store all wallet key files to prevent loss of
-                access.
+                Note: This is a beta application. Read the Disclaimer.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Use Shared Credits Guide Modal */}
+      {showCreditsGuide && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white border-2 border-gray-300 max-w-5xl w-full max-h-[80vh] overflow-y-auto p-8 relative">
+            <button
+              onClick={() => setShowCreditsGuide(false)}
+              className="absolute top-4 right-4 text-2xl font-bold hover:text-gray-600 p-1 hover:bg-gray-100 transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            <h1 className="text-3xl font-bold mb-6">Bloom Faucets: Upload Data to Arweave with Sponsored Credits</h1>
+            <p className="mb-6">This guide explains how to use Bloom Faucets to upload data to Arweave. Bloom Faucets allow sponsors to set up credit pools for events, enabling participants to use these shared credits for testing and other activities without needing their own AR tokens.</p>
+
+            <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4 rounded-xl">
+              <p className="font-semibold text-red-800">
+                Note: Your wallet address must be whitelisted by the Sponsor in order for you to be able to use credits from the shared pool.
               </p>
             </div>
 
-            <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-4 rounded-xl">
+            <h2 className="text-xl font-semibold mt-8 mb-4">Quick Start: Using Sponsored Credits</h2>
+            <p className="mb-4">Here are the simplest ways to use Bloom Faucets credits depending on your method:</p>
+            <ul className="list-disc pl-6 mb-4 space-y-2">
+              <li><strong>Turbo CLI</strong>: By default, the CLI will automatically check if you have credits in a sponsor's pool first. You do not need to do anything extra.</li>
+              <li><strong>Turbo SDK (Node/Web)</strong>: When uploading, pass the <code>paidBy</code> option specifying the sponsor's wallet address.</li>
+              <li><strong>HTTP API (Turbo Endpoint)</strong>: When making your upload request, add the <code>x-paid-by</code> header, again specifying the sponsor's wallet address.</li>
+            </ul>
+
+            <h2 className="text-xl font-semibold mt-8 mb-4">Detailed Guide</h2>
+            <p className="mb-4">Below is a more detailed breakdown of each method.</p>
+
+            <h3 className="text-lg font-semibold mt-6 mb-3">Using the CLI to Upload Files</h3>
+            <p className="mb-4">By default, the CLI is configured to prioritize using credits from any available sponsor pools you are part of. If credits are available in a Bloom Faucets pool, they will be used before attempting to use any credits from your personal wallet. This makes it easy for participants in sponsored events to upload data without incurring personal costs.</p>
+
+            <h4 className="text-base font-semibold mt-4 mb-2">1. Installation</h4>
+            <p className="mb-4">First, you need to install the <code>@ardrive/turbo-sdk</code> globally on your system. Open your terminal and run the following command:</p>
+            <pre className="bg-gray-100 p-4 rounded-xl mb-4">
+              npm install -g @ardrive/turbo-sdk
+            </pre>
+
+            <h4 className="text-base font-semibold mt-4 mb-2">2. Wallet Setup</h4>
+            <p className="mb-4">You will need an Arweave wallet key file. Ensure you have your key file saved securely on your computer. This file is necessary for the CLI to interact with the Arweave network and Bloom Faucets.</p>
+            <p className="mb-4">For example, you might save your wallet as <code>wallet.json</code> in your project directory or a designated secure location.</p>
+
+            <h4 className="text-base font-semibold mt-4 mb-2">3. Uploading Files</h4>
+            <p className="mb-4">Once the SDK is installed and you have your wallet file ready, you can upload files using the <code>turbo upload-file</code> command.</p>
+            <p className="mb-4">Here's an example command:</p>
+            <pre className="bg-gray-100 p-4 rounded-xl mb-4">
+              turbo upload-file --file-path ./public/stock.jpeg --wallet-file ./wallet.json
+            </pre>
+            <p className="mb-4">Explanation of the command:</p>
+            <ul className="list-disc pl-6 mb-4 space-y-1">
+              <li><code>turbo upload-file</code>: The base command to initiate a file upload.</li>
+              <li><code>--file-path ./public/stock.jpeg</code>: Specifies the path to the file you want to upload. Replace <code>./public/stock.jpeg</code> with the actual path to your file.</li>
+              <li><code>--wallet-file ./wallet.json</code>: Specifies the path to your Arweave wallet key file. Replace <code>./wallet.json</code> with the actual path to your wallet file.</li>
+            </ul>
+
+            <h3 className="text-lg font-semibold mt-6 mb-3">Using the Node.js SDK to Upload Files</h3>
+            <p className="mb-4">You can also programmatically upload files to Arweave using Bloom Faucets credits via the <code>@ardrive/turbo-sdk</code> in a Node.js environment.</p>
+
+            <h4 className="text-base font-semibold mt-4 mb-2">1. Setup and Initialization</h4>
+            <p className="mb-4">First, ensure you have the <code>@ardrive/turbo-sdk</code> installed in your project:</p>
+            <pre className="bg-gray-100 p-4 rounded-xl mb-4">
+              npm install @ardrive/turbo-sdk
+            </pre>
+            <p className="mb-4">Then, you can import the necessary modules and initialize the Turbo SDK with your Arweave wallet:</p>
+            <pre className="bg-gray-100 p-4 rounded-xl mb-4">
+{`// src/index-node.js (Simplified Example)
+import { TurboFactory, ArweaveSigner } from "@ardrive/turbo-sdk/node";
+import fs from "fs";
+import path from "path";
+
+(async () => {
+  const jwk = JSON.parse(fs.readFileSync("./wallet.json", "utf8"));
+  const signer = new ArweaveSigner(jwk);
+  const turbo = TurboFactory.authenticated({
+    signer,
+  });
+
+  const __dirname = path.resolve();
+  const filePath = path.join(__dirname, "./public/stock.jpeg");
+  const fileSize = fs.statSync(filePath).size;
+
+  // Details for balance checking and cost estimation can be found in src/index-node.js
+
+  try {
+    const { id } = await turbo.uploadFile({
+      fileStreamFactory: () => fs.createReadStream(filePath),
+      fileSizeFactory: () => fileSize,
+      dataItemOpts: {
+        tags: [
+          {
+            name: "Content-Type",
+            value: "image/jpeg",
+          },
+        ],
+        // Specify the sponsor's wallet address to use their Bloom Faucets credits
+        paidBy: "1-5C9_RbavjM4fG5nwLK9EOlpmTDmffb72WGQ5tvfgc", // Replace with actual sponsor wallet address
+      },
+    });
+    console.log("Successfully uploaded data item with ID:", id);
+  } catch (error) {
+    console.error("Failed to upload data item:", error);
+  }
+})();`}
+            </pre>
+
+            <h4 className="text-base font-semibold mt-4 mb-2">2. Using Sponsored Credits with paidBy</h4>
+            <p className="mb-4">To utilize credits from a Bloom Faucets pool, you must specify the sponsor's Arweave wallet address in the <code>paidBy</code> field within the <code>dataItemOpts</code> when calling <code>turbo.uploadFile()</code>.</p>
+            <p className="mb-4">As shown in the example above (and in <code>src/index-node.js</code>):</p>
+            <pre className="bg-gray-100 p-4 rounded-xl mb-4">
+{`// ...
+dataItemOpts: {
+  // ... other tags
+  paidBy: "SPONSOR_WALLET_ADDRESS", // Replace with the actual sponsor's wallet address
+}
+// ...`}
+            </pre>
+            <p className="mb-4">This tells the ArDrive Turbo SDK to attempt to use the sponsor's Bloom Faucets credits for the upload transaction.</p>
+
+            <h3 className="text-lg font-semibold mt-6 mb-3">Using the HTTP API to Upload Files</h3>
+            <p className="mb-4">For environments where you might not use the SDK directly, or for more direct control, you can interact with the Bloom Faucets / ArDrive upload endpoint via an HTTP POST request.</p>
+
+            <h4 className="text-base font-semibold mt-4 mb-2">1. Prepare Data for Upload</h4>
+            <p className="mb-4">Before making the HTTP request, you'll need to prepare your file data as a data item and sign it. The <code>@dha-team/arbundles</code> library can be helpful here, as shown in <code>src/index-http.js</code>.</p>
+            <pre className="bg-gray-100 p-4 rounded-xl mb-4">
+{`// src/index-http.js (Simplified Example)
+import { ArweaveSigner } from "@ardrive/turbo-sdk/node"; // Signer can be from turbo-sdk
+import { createData, sign } from "@dha-team/arbundles";
+import fs from "fs";
+import path from "path";
+
+(async () => {
+  const jwk = JSON.parse(fs.readFileSync("./wallet.json", "utf8"));
+  const signer = new ArweaveSigner(jwk);
+
+  const __dirname = path.resolve();
+  const filePath = path.join(__dirname, "./public/stock.jpeg");
+  const fileAsUint8Array = new Uint8Array(fs.readFileSync(filePath));
+
+  const data = createData(fileAsUint8Array, signer, {
+    tags: [
+      {
+        name: "Content-Type",
+        value: "image/jpeg",
+      },
+    ],
+  });
+
+  const signedData = await sign(data, signer);
+
+  // ... (rest of the HTTP call)
+})();`}
+            </pre>
+
+            <h4 className="text-base font-semibold mt-4 mb-2">2. Making the HTTP POST Request</h4>
+            <p className="mb-4">You will send the raw binary data of the signed data item in the body of a POST request to <code>https://upload.ardrive.io/v1/tx</code>.</p>
+
+            <h4 className="text-base font-semibold mt-4 mb-2">3. Using Sponsored Credits with x-paid-by Header</h4>
+            <p className="mb-4">To use credits from a Bloom Faucets pool via the HTTP API, include the <code>x-paid-by</code> header in your request, with its value set to the sponsor's Arweave wallet address.</p>
+            <pre className="bg-gray-100 p-4 rounded-xl mb-4">
+{`// src/index-http.js (Relevant Part)
+// ...
+try {
+  const response = await fetch(\`https://upload.ardrive.io/v1/tx\`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/octet-stream",
+      Accept: "application/json",
+      // Specify the sponsor's wallet address to use their Bloom Faucets credits
+      "x-paid-by": "1-5C9_RbavjM4fG5nwLK9EOlpmTDmffb72WGQ5tvfgc", // Replace with actual sponsor wallet address
+    },
+    body: data.getRaw(), // Send the raw data item
+  });
+
+  if (!response.ok) {
+    throw new Error(\`Upload failed: \${response.statusText}\`);
+  }
+  const result = await response.json();
+  console.dir(result);
+} catch (error) {
+  console.error("Failed to upload image:", error);
+}
+// ...`}
+            </pre>
+            <p className="mb-4">When the <code>x-paid-by</code> header is present and valid, the ArDrive service will attempt to use the specified sponsor's Bloom Faucets credits for the upload.</p>
+
+            <h3 className="text-lg font-semibold mt-6 mb-3">Additional Resources</h3>
+            <p className="mb-4">Check out <a href="https://docs.ardrive.io/turbo" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">Turbo docs</a> for more information on using the Turbo CLI, SDK, or API.</p>
+
+            <h3 className="text-lg font-semibold mt-6 mb-3">Need Help?</h3>
+            <ul className="list-disc pl-6 mb-4 space-y-2">
+              <li>Email <a href="mailto:nityaprotocol@gmail.com" className="text-blue-600 underline hover:text-blue-800">nityaprotocol@gmail.com</a> via <strong>Mail Us</strong> on the homepage.</li>
+              <li>Join the <a href="https://discord.gg/9cJyqrJUHh" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">Discord</a> for support.</li>
+            </ul>
+
+            <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-8 rounded-xl">
               <p className="font-semibold text-red-800">
-                For assistance with errors or bugs, please report issues on our{" "}
-                <a
-                  href="https://discord.gg/wbhP7ND4"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 underline hover:text-blue-800"
-                >
-                  support Discord
-                </a>
-                .
+                Note: This is a beta application. Read the Disclaimer.
               </p>
             </div>
           </div>
@@ -354,7 +544,7 @@ export default function HomePage() {
             <p>
               <strong>Email:</strong>{" "}
               <a href="mailto:support@bloomfaucets.com" className="text-blue-600 underline hover:text-blue-800">
-                bloomprotocol@gmail.com
+                nityaprotocol@gmail.com
               </a>
             </p>
           </div>
