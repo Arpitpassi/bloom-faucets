@@ -1,7 +1,7 @@
 {
   "projectName": "Bloom",
   "walletPath": "/home/arpit/.permaweb/Bloom/wallet.json",
-  "buildCommand": "npm --version",
+  "buildCommand": "bun run build",
   "deployBranch": "main",
   "arnsName": "enginesoup",
   "undername": "bloom",
