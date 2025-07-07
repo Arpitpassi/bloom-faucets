@@ -159,7 +159,7 @@ export default function HomePage() {
             </a>
 
             <a
-              href="https://github.com/ropats16/nitya-pools-code-ref"
+              href="https://github.com/ropats16/bloom-pools-code-ref"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white border-2 border-gray-300 p-6 rounded-2xl hover:bg-gray-50 transition-colors group"
@@ -354,7 +354,7 @@ export default function HomePage() {
             <p>
               <strong>Email:</strong>{" "}
               <a href="mailto:support@bloomfaucets.com" className="text-blue-600 underline hover:text-blue-800">
-                nityaprotocol@gmail.com
+                bloomprotocol@gmail.com
               </a>
             </p>
           </div>
