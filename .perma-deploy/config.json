@@ -1,0 +1,13 @@
+{
+  "projectName": "Bloom",
+  "walletPath": "/home/arpit/.permaweb/Bloom/wallet.json",
+  "buildCommand": "npm --version",
+  "deployBranch": "main",
+  "arnsName": "enginesoup",
+  "undername": "bloom",
+  "antProcess": "SvcHmgBgdRi4mAAcpw4zVcHnhyWGOyZWIMM3c1ABaEA",
+  "deployFolder": "dist",
+  "sigType": "arweave",
+  "walletAddress": "I6Ab8KzAHbuGvKKSNud6UmhuvrfBfNMq-5--X5MsFh4",
+  "sponsorWalletAddress": "FNIAFzFaGy-I1Tq9x1Ry8Gnm9ORP_u1cH66OAtLptxM"
+}

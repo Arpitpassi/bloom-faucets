@@ -336,7 +336,7 @@ export default function HomePage() {
             </button>
 
             <h1 className="text-3xl font-bold mb-6">Bloom Faucets: Upload Data to Arweave with Sponsored Credits</h1>
-            <p className="mb-6">This guide explains how to use Bloom Faucets to upload data to Arweave. Bloom Faucets allow sponsors to set up credit pools for events, enabling participants to use these shared credits for testing and other activities without needing their own AR tokens.</p>
+            <p className="mb-6">This guide explains how to use shared credits to upload data to Arweave.</p>
 
             <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4 rounded-xl">
               <p className="font-semibold text-red-800">

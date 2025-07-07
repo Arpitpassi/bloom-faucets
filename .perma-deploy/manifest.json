@@ -1,0 +1,20 @@
+{
+  "files": {
+    "assets/index-C08BhInb.js": {
+      "txId": "AvbZun647IcRgQA7HtdLqyHCtfNMTBdX3s0_fEZQt40",
+      "hash": "e0ecf1d19eed399c923f32d41614e5da1a9aa7c657fbe9ed3998120747e062c4",
+      "lastModified": "2025-07-07T14:07:45.809Z"
+    },
+    "assets/index-CR2RbzXm.css": {
+      "txId": "J1xTf770TTsYwDqNymQWArkEtu40SakM9q_8fYAgwu0",
+      "hash": "5d7cd7186b856c72e8f242695c2f29f930f0f1384a35e4d0dbacafdfa80e0223",
+      "lastModified": "2025-07-07T14:07:45.773Z"
+    },
+    "index.html": {
+      "txId": "hbJt5nhZwa0m2gA2kmFXrVA6kjyBFO-TQBslcO2SVww",
+      "hash": "08b25a57ef98c67721a69ffbc94893183f3b4bf27288d5b6cf71b3f005018522",
+      "lastModified": "2025-07-07T14:07:45.774Z"
+    }
+  },
+  "lastManifestId": "UfEV8IXJwbiWiVvv4DWjFSQ70k_LAMcspUCTV2dBRY8"
+}

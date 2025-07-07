@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "deploy": "perma-deploy --ant-process SvcHmgBgdRi4mAAcpw4zVcHnhyWGOyZWIMM3c1ABaEA --undername bloom --sponsor-wallet-address FNIAFzFaGy-I1Tq9x1Ry8Gnm9ORP_u1cH66OAtLptxM",
+    "build-and-deploy": "npm --version && npx nitya deploy"
   },
   "dependencies": {
     "@ardrive/turbo-sdk": "^1.28.2",
