@@ -24,6 +24,7 @@ export function usePoolManager(
   const [terminalActionType, setTerminalActionType] = useState<'sponsor' | 'revoke' | null>(null)
   const [terminalResult, setTerminalResult] = useState<string | null>(null)
   const [terminalError, setTerminalError] = useState<string | null>(null)
+  const [terminalRawOutput, setTerminalRawOutput] = useState<any[]>([])
   const { connected, address } = useUser()
   const { showSuccess, showError, showWarning } = toastFunctions
 
@@ -48,6 +49,7 @@ export function usePoolManager(
       status: new Date() < new Date(pool.endTime) ? "Active" : "Ended",
       balance: pool.balance ?? null,
       poolId: id,
+      sponsoredAddresses: pool.sponsoredAddresses || [],
     }))
     setPools(poolArray)
     setTotalPools(poolArray.length)
@@ -68,6 +70,7 @@ export function usePoolManager(
         endTime: pool.endTime,
         usageCap: pool.usageCap,
         addresses: pool.addresses,
+        sponsoredAddresses: pool.sponsoredAddresses,
         balance: pool.balance,
         sponsorInfo: pool.sponsorInfo,
       }
@@ -96,6 +99,23 @@ export function usePoolManager(
       showError("Balance Check Failed", `Failed to fetch balance: ${error instanceof Error ? error.message : String(error)}`)
       return null
     }
+  }
+
+  const handleRefreshBalance = async () => {
+    if (!selectedPool) {
+      showError("No Pool Selected", "Please select a pool first")
+      return null
+    }
+    const balance = await fetchBalance()
+    if (balance !== null) {
+      const updatedPool = { ...selectedPool, balance }
+      const updatedPools = pools.map((p) => (p.id === selectedPool.id ? updatedPool : p))
+      savePools(updatedPools)
+      setSelectedPool(updatedPool)
+      showSuccess("Balance Refreshed", `Balance for pool "${selectedPool.name}" has been updated`)
+      return balance
+    }
+    return null
   }
 
   const handleCreatePool = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -130,6 +150,7 @@ export function usePoolManager(
       endTime: new Date(endTime).toISOString(),
       usageCap,
       addresses,
+      sponsoredAddresses: [],
       balance: await fetchBalance(),
       status: "Active",
       poolId: poolId,
@@ -165,6 +186,7 @@ export function usePoolManager(
     if (startDateTime >= endDateTime) return showError("Invalid Dates", "Start time must be before end time")
 
     try {
+      const balance = await fetchBalance()
       const updatedPool: Pool = {
         ...selectedPool,
         name: poolName,
@@ -172,13 +194,14 @@ export function usePoolManager(
         endTime: new Date(endTime).toISOString(),
         usageCap,
         addresses,
-        balance: selectedPool.balance, // Preserve existing balance
+        sponsoredAddresses: selectedPool.sponsoredAddresses,
+        balance,
       }
 
       const updatedPools = pools.map((pool) => (pool.id === selectedPool.id ? updatedPool : pool))
       savePools(updatedPools)
       setSelectedPool(updatedPool)
-      loadPools() // Refresh sidebar
+      loadPools()
       setShowEditModal(false)
       showSuccess("Pool Updated", `Pool "${poolName}" has been updated successfully`)
     } catch (error) {
@@ -211,6 +234,7 @@ export function usePoolManager(
     setShowTerminal(true)
     setTerminalActionType('revoke')
     setTerminalStatus(`Revoking access for ${revokeAddress.slice(0, 10)}...`)
+    setTerminalRawOutput([])
 
     try {
       const signer = new ArconnectSigner(window.arweaveWallet)
@@ -218,11 +242,13 @@ export function usePoolManager(
         signer,
         token: "arweave",
       })
-      await turbo.revokeCredits({ revokedAddress: revokeAddress })
+      const response = await turbo.revokeCredits({ revokedAddress: revokeAddress })
+      setTerminalRawOutput([{ address: revokeAddress, response }])
 
       const updatedPool = {
         ...selectedPool,
         addresses: selectedPool.addresses.filter((addr) => addr !== revokeAddress),
+        sponsoredAddresses: selectedPool.sponsoredAddresses.filter((addr) => addr !== revokeAddress),
       }
       const updatedPools = pools.map((pool) => (pool.id === selectedPool.id ? updatedPool : pool))
       savePools(updatedPools)
@@ -235,10 +261,11 @@ export function usePoolManager(
       const errorMessage = `Error revoking access: ${error instanceof Error ? error.message : String(error)}`
       setTerminalError(errorMessage)
       setTerminalResult(null)
+      setTerminalRawOutput([])
       showError("Revoke Failed", errorMessage)
     } finally {
       setTerminalStatus('')
-      setShowTerminal(true) // Keep terminal visible to show result/error
+      setShowTerminal(true)
     }
   }
 
@@ -248,12 +275,18 @@ export function usePoolManager(
       showError("Wallet Error", "Please connect your wallet first")
       return
     }
-    if (selectedPool.addresses.length === 0)
-      return showError("No Addresses", "No whitelisted addresses to sponsor credits for")
+    const unsponsoredAddresses = selectedPool.addresses.filter(
+      (addr) => !selectedPool.sponsoredAddresses.includes(addr)
+    )
+    console.log("Sponsored Addresses:", selectedPool.sponsoredAddresses)
+    console.log("Unsponsored Addresses:", unsponsoredAddresses)
+    if (unsponsoredAddresses.length === 0)
+      return showError("No Addresses", "All whitelisted addresses have already been sponsored")
 
     setShowTerminal(true)
     setTerminalActionType('sponsor')
-    setTerminalStatus(`Sponsoring credits for ${selectedPool.addresses.length} addresses...`)
+    setTerminalStatus(`Sponsoring credits for ${unsponsoredAddresses.length} addresses...`)
+    setTerminalRawOutput([])
 
     try {
       const signer = new ArconnectSigner(window.arweaveWallet)
@@ -264,7 +297,7 @@ export function usePoolManager(
       const balanceResp = await turbo.getBalance()
       const availableCredits = Number(balanceResp.winc) / 1e12
       const usageCapCredits = selectedPool.usageCap
-      const creditsPerAddress = Math.min(usageCapCredits, availableCredits / selectedPool.addresses.length)
+      const creditsPerAddress = Math.min(usageCapCredits, availableCredits / unsponsoredAddresses.length)
       const creditsPerAddressWinston = BigInt(Math.floor(creditsPerAddress * 1e12))
 
       if (creditsPerAddressWinston <= 0n) {
@@ -276,29 +309,45 @@ export function usePoolManager(
 
       let successfulShares = 0
       const errors: string[] = []
-      for (const addr of selectedPool.addresses) {
+      const rawOutputs: any[] = []
+      let currentSponsoredAddresses = [...selectedPool.sponsoredAddresses]
+
+      for (const addr of unsponsoredAddresses) {
+        if (currentSponsoredAddresses.includes(addr)) {
+          console.log(`Skipping already sponsored address: ${addr}`)
+          continue
+        }
         setTerminalStatus(`Sponsoring credits for ${addr.slice(0, 10)}...`)
         try {
-          await turbo.shareCredits({
+          const response = await turbo.shareCredits({
             approvedAddress: addr,
             approvedWincAmount: creditsPerAddressWinston.toString(),
           })
+          rawOutputs.push({ address: addr, response })
+          currentSponsoredAddresses.push(addr)
           successfulShares++
+
+          // Immediately update pool state
+          const updatedPool = {
+            ...selectedPool,
+            sponsoredAddresses: currentSponsoredAddresses,
+          }
+          const updatedPools = pools.map((p) => (p.id === selectedPool.id ? updatedPool : p))
+          savePools(updatedPools)
+          setSelectedPool(updatedPool)
+          console.log(`Updated sponsoredAddresses after ${addr}:`, currentSponsoredAddresses)
         } catch (error) {
           const errorMsg = `Failed to sponsor credits for ${addr.slice(0, 10)}...: ${error instanceof Error ? error.message : String(error)}`
           console.error(errorMsg)
           errors.push(errorMsg)
         }
       }
+      setTerminalRawOutput(rawOutputs)
 
       await handleRefreshBalance()
-      const updatedPool = { ...selectedPool, balance: selectedPool.balance }
-      const updatedPools = pools.map((p) => (p.id === selectedPool.id ? updatedPool : p))
-      savePools(updatedPools)
-      setSelectedPool(updatedPool)
 
       if (successfulShares > 0) {
-        const message = `Successfully sponsored up to ${creditsPerAddress.toFixed(4)} credits to ${successfulShares} of ${selectedPool.addresses.length} addresses`
+        const message = `Successfully sponsored up to ${creditsPerAddress.toFixed(4)} credits to ${successfulShares} of ${unsponsoredAddresses.length} addresses`
         setTerminalResult(message)
         setTerminalError(null)
         if (errors.length > 0) {
@@ -323,23 +372,12 @@ export function usePoolManager(
     }
   }
 
-  const handleRefreshBalance = async () => {
-    if (!selectedPool) return showError("No Pool Selected", "Please select a pool first")
-    const balance = await fetchBalance()
-    if (balance !== null) {
-      const updatedPool = { ...selectedPool, balance }
-      const updatedPools = pools.map((p) => (p.id === selectedPool.id ? updatedPool : p))
-      savePools(updatedPools)
-      setSelectedPool(updatedPool)
-      showSuccess("Balance Refreshed", `Balance for pool "${selectedPool.name}" has been updated`)
-    }
-  }
-
   const handleTerminalClose = () => {
     setShowTerminal(false)
     setTerminalActionType(null)
     setTerminalResult(null)
     setTerminalError(null)
+    setTerminalRawOutput([])
   }
 
   return {
@@ -363,6 +401,7 @@ export function usePoolManager(
     terminalActionType,
     terminalResult,
     terminalError,
+    terminalRawOutput,
     handleTerminalClose,
   }
 }

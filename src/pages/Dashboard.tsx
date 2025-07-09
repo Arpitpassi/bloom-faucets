@@ -41,6 +41,7 @@ export default function Dashboard() {
     terminalActionType,
     terminalResult,
     terminalError,
+    terminalRawOutput,
     handleTerminalClose,
   } = usePoolManager(setShowPoolActions, setShowCreateModal, setShowEditModal, {
     showSuccess,
@@ -135,6 +136,7 @@ export default function Dashboard() {
         selectedPool={selectedPool ? { name: selectedPool.name, addresses: selectedPool.addresses } : null}
         result={terminalResult}
         error={terminalError}
+        rawOutput={terminalRawOutput}
         onComplete={handleTerminalClose}
       />
 

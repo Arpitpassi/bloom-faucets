@@ -9,6 +9,8 @@ export interface Pool {
   endTime: string
   addresses: string[]
   poolId: string
+  sponsoredAddresses: string[] // New field for tracking sponsored wallets
+
 }
 
 export interface Strategy {

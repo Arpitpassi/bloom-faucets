@@ -9,6 +9,7 @@ interface TerminalLoadingProps {
   selectedPool: { name: string; addresses: string[] } | null;
   result: string | null;
   error: string | null;
+  rawOutput: any[] | null;
   onComplete: () => void;
 }
 
@@ -19,6 +20,7 @@ const TerminalLoading: React.FC<TerminalLoadingProps> = ({
   selectedPool,
   result,
   error,
+  rawOutput,
   onComplete,
 }) => {
   const [displayedText, setDisplayedText] = useState<string>('');
@@ -39,13 +41,6 @@ const TerminalLoading: React.FC<TerminalLoadingProps> = ({
       }
     }
   }, [status, isActive]);
-
-  // Trigger onComplete when action finishes
-  useEffect(() => {
-    if (!isActive && (result || error)) {
-      setTimeout(onComplete, 3000); // Auto-close after 3 seconds
-    }
-  }, [isActive, result, error, onComplete]);
 
   return (
     <div
@@ -105,6 +100,21 @@ const TerminalLoading: React.FC<TerminalLoadingProps> = ({
               <div className="text-gray-700 font-mono text-sm">
                 <span className="text-gray-900">$</span> Result:{' '}
                 <span className="text-gray-900">{result}</span>
+              </div>
+            )}
+            {(actionType === 'sponsor' || actionType === 'revoke') && rawOutput && rawOutput.length > 0 && (
+              <div className="mt-4">
+                <pre className="text-gray-700 text-sm font-mono whitespace-pre-wrap max-h-64 overflow-auto bg-gray-50 border-2 border-gray-200 p-4 rounded-xl">
+                  {rawOutput.map((output, index) => (
+                    <div key={index} className="mb-2">
+                      <span className="text-gray-900">Address: {output.address}</span>
+                      <br />
+                      <span className="text-gray-900">
+                        {JSON.stringify(output.response, null, 2)}
+                      </span>
+                    </div>
+                  ))}
+                </pre>
               </div>
             )}
           </div>
