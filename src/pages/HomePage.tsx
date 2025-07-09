@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react"
@@ -21,7 +22,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-black font-mono relative overflow-hidden">
+    <div className="min-h-screen bg-brand-snow-drift text-brand-night font-mono relative overflow-hidden">
       {/* Geometric Decorations */}
       <div className="fixed top-0 right-0 w-48 h-48 border-2 border-gray-300 bg-black/5 rounded-bl-full -z-10" />
       <div className="fixed bottom-0 left-0 w-48 h-48 border-2 border-gray-300 bg-black/5 rounded-tr-full -z-10" />
@@ -39,7 +40,7 @@ export default function HomePage() {
             </div>
             <button
               onClick={() => setShowContactModal(true)}
-              className="text-black hover:underline font-semibold transition-all duration-200 cursor-pointer"
+              className="text-brand-night hover:underline font-semibold transition-all duration-200 cursor-pointer"
             >
               Mail Us
             </button>
@@ -52,7 +53,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <SplitText
             text="faucets.beta"
-            className="text-4xl md:text-6xl font-bold mb-6 inline-block"
+            className="text-3xl md:text-6xl font-inter-tight-bold mb-6 inline-block text-faucets-beta"
             delay={100}
             duration={0.6}
             ease="power3.out"
@@ -70,13 +71,13 @@ export default function HomePage() {
           <div className="flex justify-center gap-6 flex-wrap">
             <button
               onClick={handleGetStarted}
-              className="bg-white text-black border-2 border-black px-8 py-4 text-lg font-semibold hover:bg-black hover:text-white transition-colors rounded-xl"
+              className="bg-white text-brand-night border-2 border-brand-night px-8 py-4 text-lg font-semibold hover:bg-brand-night hover:text-white transition-colors rounded-xl"
             >
               Get Started
             </button>
             <button
               onClick={() => setShowHowToModal(true)}
-              className="bg-white text-black border-2 border-black px-8 py-4 text-lg font-semibold hover:bg-black hover:text-white transition-colors rounded-xl"
+              className="bg-white text-brand-night border-2 border-brand-night px-8 py-4 text-lg font-semibold hover:bg-brand-night hover:text-white transition-colors rounded-xl"
             >
               Guides
             </button>
@@ -85,7 +86,7 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-brand-spring-wood">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center mb-12">Features</h2>
           <div className="grid md:grid-cols-3 gap-8">
@@ -126,7 +127,7 @@ export default function HomePage() {
       </section>
 
       {/* Resources & Support Section */}
-      <section className="py-16">
+      <section className="py-16 bg-brand-spring-wood">
         <div className="max-w-7xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold mb-8">Resources & Support</h2>
           <div className="grid md:grid-cols-3 gap-6">
@@ -134,7 +135,7 @@ export default function HomePage() {
               href="https://discord.gg/9cJyqrJUHh"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white border-2 border-gray-300 p-6 rounded-2xl hover:bg-gray-50 transition-colors group"
+              className="bg-brand-snow-drift border-2 border-gray-300 p-6 rounded-2xl hover:bg-gray-50 transition-colors group"
             >
               <div className="w-16 h-16 bg-gradient-to-br from-indigo-100 to-indigo-200 border-2 border-indigo-300 flex items-center justify-center mx-auto mb-4 rounded-2xl">
                 <svg className="w-8 h-8 text-indigo-600" fill="currentColor" viewBox="0 0 24 24">
@@ -152,7 +153,7 @@ export default function HomePage() {
               href="https://prices.ardrive.io/"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white border-2 border-gray-300 p-6 rounded-2xl hover:bg-gray-50 transition-colors group"
+              className="bg-brand-snow-drift border-2 border-gray-300 p-6 rounded-2xl hover:bg-gray-50 transition-colors group"
             >
               <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 border-2 border-orange-300 flex items-center justify-center mx-auto mb-4 rounded-2xl">
                 <Calculator className="w-8 h-8 text-orange-600" />
@@ -168,7 +169,7 @@ export default function HomePage() {
               href="https://github.com/Arpitpassi/bloom-frontendv4"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white border-2 border-gray-300 p-6 rounded-2xl hover:bg-gray-50 transition-colors group"
+              className="bg-brand-snow-drift border-2 border-gray-300 p-6 rounded-2xl hover:bg-gray-50 transition-colors group"
             >
               <div className="w-16 h-16 bg-gradient-to-br from-teal-100 to-teal-200 border-2 border-teal-300 flex items-center justify-center mx-auto mb-4 rounded-2xl">
                 <FileText className="w-8 h-8 text-teal-600" />
@@ -207,7 +208,7 @@ export default function HomePage() {
                   setShowHowToModal(false)
                   setShowPoolsGuide(true)
                 }}
-                className="bg-white text-black border-2 border-black px-10 py-4 text-lg font-semibold hover:bg-black hover:text-white transition-colors rounded-xl flex-1"
+                className="bg-white text-brand-night border-2 border-brand-night px-10 py-4 text-lg font-semibold hover:bg-brand-night hover:text-white transition-colors rounded-xl flex-1"
               >
                 Setup Faucets
               </button>
@@ -216,7 +217,7 @@ export default function HomePage() {
                   setShowHowToModal(false)
                   setShowCreditsGuide(true)
                 }}
-                className="bg-white text-black border-2 border-black px-10 py-4 text-lg font-semibold hover:bg-black hover:text-white transition-colors rounded-xl flex-1"
+                className="bg-white text-brand-night border-2 border-brand-night px-10 py-4 text-lg font-semibold hover:bg-brand-night hover:text-white transition-colors rounded-xl flex-1"
               >
                 Use Shared Credits
               </button>

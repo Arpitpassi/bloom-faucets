@@ -147,7 +147,7 @@ export default function Dashboard() {
 
       {/* Left Sidebar - Pools */}
       <div className="w-80 bg-white rounded-r-xl shadow-sm border-r border-gray-200 p-6 overflow-y-auto">
-        <h2 className="text-lg font-semibold mb-6 pb-3 border-b border-gray-200">POOLS</h2>
+        <h2 className="text-lg font-semibold mb-6 pb-3 border-b border-gray-200">FAUCETS</h2>
         <Button
           onClick={() => setShowCreateModal(true)}
           className="w-full bg-white text-black border-2 border-black p-3 rounded-xl text-sm font-medium mb-6 hover:bg-black hover:text-white transition-colors"

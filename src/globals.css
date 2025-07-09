@@ -1,3 +1,4 @@
+ @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;800&display=swap'); 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,6 +10,7 @@
 
 * {
   font-family: var(--font-inter);
+  font-weight: 300; /* Inter Light as default */
 }
 
 body {
@@ -25,45 +27,68 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 800; /* Bold */
 }
 
+/* Info cards background */
+.info-card {
+  background: #F7F9F8; /* Snow Drift */
+}
+
+/* Button styles */
+.btn-primary {
+  background: #0B1713; /* Night */
+  color: #F7F6F1; /* Spring Wood text */
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: #09130F; /* Slightly darker Night on hover */
+  transform: translateY(-1px);
+}
+
+/* Faucets.beta text styling */
+.faucets-beta {
+  color: #E97F52; /* Burnt Sienna */
+}
+
 /* Custom scrollbar for modals */
 .modal-content::-webkit-scrollbar {
   width: 8px;
 }
 
 .modal-content::-webkit-scrollbar-track {
-  background: #F7F6F1;
+  background: #F7F6F1; /* Spring Wood */
 }
 
 .modal-content::-webkit-scrollbar-thumb {
-  background: #F7F9F8;
+  background: #F7F9F8; /* Snow Drift */
   border-radius: 4px;
 }
 
 .modal-content::-webkit-scrollbar-thumb:hover {
-  background: #0B1713;
+  background: #0B1713; /* Night */
 }
 
 @layer base {
   :root {
     --background: 48 15% 97%; /* Spring Wood */
     --foreground: 160 40% 7%; /* Night */
-    --card: 0 0% 100%;
-    --card-foreground: 160 40% 7%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 160 40% 7%;
-    --primary: 160 40% 7%; /* Night */
+    --card: 160 10% 97%; /* Snow Drift for cards */
+    --card-foreground: 160 40% 7%; /* Night */
+    --popover: 160 10% 97%; /* Snow Drift */
+    --popover-foreground: 160 40% 7%; /* Night */
+    --primary: 160 40% 7%; /* Night for buttons */
     --primary-foreground: 48 15% 97%; /* Spring Wood */
-    --secondary: 48 15% 97%; /* Spring Wood */
+    --secondary: 160 10% 97%; /* Snow Drift */
     --secondary-foreground: 160 40% 7%; /* Night */
-    --muted: 48 15% 97%;
-    --muted-foreground: 160 40% 7%;
+    --muted: 160 10% 97%; /* Snow Drift */
+    --muted-foreground: 160 40% 7%; /* Night */
     --accent: 17 77% 62%; /* Burnt Sienna */
-    --accent-foreground: 0 0% 100%;
+    --accent-foreground: 48 15% 97%; /* Spring Wood */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 48 15% 97%;
-    --input: 48 15% 97%;
-    --ring: 160 40% 7%;
+    --border: 160 10% 97%; /* Snow Drift */
+    --input: 160 10% 97%; /* Snow Drift */
+    --ring: 160 40% 7%; /* Night */
     --chart-1: 17 77% 62%; /* Burnt Sienna */
     --chart-2: 70 68% 53%; /* Pear */
     --chart-3: 160 40% 7%; /* Night */
@@ -78,6 +103,30 @@ h1, h2, h3, h4, h5, h6 {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-light;
   }
+}
+
+@layer components {
+  /* Info card component */
+  .info-card {
+    @apply bg-brand-snow-drift border border-brand-snow-drift rounded-lg p-6 shadow-sm;
+  }
+  
+  /* Button component */
+  .btn-night {
+    @apply bg-brand-night text-brand-spring-wood hover:bg-primary-700 transition-all duration-300 hover:-translate-y-0.5 px-4 py-2 rounded-md font-medium;
+  }
+  
+  /* Faucets beta text */
+  .text-faucets-beta {
+    @apply text-brand-burnt-sienna font-medium;
+  }
+}
+
+/* To use "Inter Tight" from Google Fonts, import it in your HTML or via @import at the top of this file: */
+/* @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;800&display=swap'); */
+
+:root {
+  --font-inter-tight: "Inter Tight", "system-ui", "sans-serif";
 }
