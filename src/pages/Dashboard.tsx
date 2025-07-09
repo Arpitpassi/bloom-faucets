@@ -268,7 +268,7 @@ export default function Dashboard() {
                       onClick={handleDeletePool}
                       className="w-full bg-red-500 text-white p-3 rounded-xl text-sm font-medium hover:bg-red-600 transition-colors"
                     >
-                      Delete Pool
+                      Delete Faucet
                     </Button>
                   </div>
                 </div>
@@ -308,7 +308,7 @@ export default function Dashboard() {
                           onClick={() => setShowEditModal(true)}
                           className="bg-blue-500 text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-blue-600 transition-colors"
                         >
-                          Edit Pool
+                          Edit Faucet
                         </Button>
                         <Button
                           onClick={handleSponsorCredits}
@@ -331,7 +331,7 @@ export default function Dashboard() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
                 <h3 className="text-lg font-semibold mb-4 text-gray-900">YOUR FAUCETS</h3>
                 <p className="text-gray-600">
-                  Your pools will appear in the sidebar once loaded. Click on a pool to view its details.
+                  Your faucet will appear in the sidebar once loaded. Click on a faucet to view its details.
                 </p>
               </div>
             )}
@@ -385,10 +385,10 @@ export default function Dashboard() {
             >
               <X className="w-6 h-6" />
             </Button>
-            <h3 className="text-xl font-semibold mb-6 text-gray-900">CREATE NEW POOL</h3>
+            <h3 className="text-xl font-semibold mb-6 text-gray-900">CREATE NEW FAUCET</h3>
             <form onSubmit={handleCreatePool} className="space-y-5">
               <div>
-                <label className="block text-sm font-semibold mb-2 text-gray-700">POOL NAME</label>
+                <label className="block text-sm font-semibold mb-2 text-gray-700">FAUCET NAME</label>
                 <Input
                   name="poolName"
                   type="text"
