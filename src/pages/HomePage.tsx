@@ -1,11 +1,10 @@
-
 "use client"
 
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { X, ExternalLink, Calculator, FileText, Database, Shield, BarChart3 } from "lucide-react"
 import SplitText from "../components/SplitText"
-
+import Logo from "../assets/logo.svg"
 export default function HomePage() {
   const [showHowToModal, setShowHowToModal] = useState(false)
   const [showPoolsGuide, setShowPoolsGuide] = useState(false)
@@ -28,10 +27,16 @@ export default function HomePage() {
       <div className="fixed bottom-0 left-0 w-48 h-48 border-2 border-gray-300 bg-black/5 rounded-tr-full -z-10" />
 
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-300">
+      <header className="bg-spring-wood shadow-sm border-b border-gray-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center"></div>
+            <div className="flex items-center">
+              <img
+                src={Logo}
+                alt="Bloom Faucets Logo"
+                className="h-5 w-auto"
+              />
+            </div>
             <button
               onClick={() => setShowContactModal(true)}
               className="text-black hover:underline font-semibold transition-all duration-200 cursor-pointer"

@@ -8,8 +8,26 @@ const config: Config = {
       fontFamily: {
         sans: ["var(--font-inter)", "Inter", "system-ui", "sans-serif"],
         mono: ["var(--font-inter)", "Inter", "system-ui", "sans-serif"],
+        heading: ["var(--font-inter-tight)", "Inter Tight", "system-ui", "sans-serif"],
+      },
+      fontWeight: {
+        light: '300',
+        normal: '400',
+        medium: '500',
+        semibold: '600',
+        bold: '700',
+        extrabold: '800',
+        black: '900',
       },
       colors: {
+        // Brand colors from the palette
+        brand: {
+          'burnt-sienna': '#E97F52',
+          'pear': '#CADE42',
+          'spring-wood': '#F7F6F1',
+          'snow-drift': '#F7F9F8',
+          'night': '#0B1713',
+        },
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -24,10 +42,10 @@ const config: Config = {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
           50: "#f0f9ff",
-          500: "#3b82f6",
-          600: "#2563eb",
-          700: "#1d4ed8",
-          900: "#1e3a8a",
+          500: "#0B1713", // Night
+          600: "#0A1511",
+          700: "#09130F",
+          900: "#06100C",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
