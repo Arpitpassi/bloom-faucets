@@ -35,7 +35,6 @@ export default function Dashboard() {
     handleDeletePool,
     handleRevokeAccess,
     handleSponsorCredits,
-    handleRefreshBalance,
     showTerminal,
     terminalStatus,
     terminalActionType,
@@ -221,7 +220,9 @@ export default function Dashboard() {
         {connected && (
           <div>
             {showPoolActions && selectedPool ? (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+              <div
+
+ className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="text-lg font-semibold">FAUCET ACTIONS - {selectedPool.name}</h3>
                   <Button
@@ -255,15 +256,6 @@ export default function Dashboard() {
                       className="w-full bg-orange-500 text-white p-3 rounded-xl text-sm font-medium hover:bg-orange-600 transition-colors"
                     >
                       Revoke Access
-                    </Button>
-                  </div>
-                  <div className="space-y-3">
-                    <h4 className="text-sm font-semibold text-gray-700">REFRESH BALANCE</h4>
-                    <Button
-                      onClick={handleRefreshBalance}
-                      className="w-full bg-blue-500 text-white p-3 rounded-xl text-sm font-medium hover:bg-blue-600 transition-colors"
-                    >
-                      Refresh Balance
                     </Button>
                   </div>
                   <div className="space-y-3">

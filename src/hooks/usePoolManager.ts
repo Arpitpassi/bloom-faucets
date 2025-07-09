@@ -284,127 +284,136 @@ export function usePoolManager(
     }
   }
 
-  const handleSponsorCredits = async () => {
-    if (!selectedPool) {
-      showError("No Pool Selected", "Please select a pool first")
-      return
-    }
-    if (!connected || !window.arweaveWallet) {
-      showError("Wallet Error", "Please connect your wallet first")
-      return
-    }
-
-    // Check for unsponsored addresses before any Turbo calls
-    const unsponsoredAddresses = selectedPool.addresses.filter(
-      (addr) => !selectedPool.sponsoredAddresses.includes(addr)
-    )
-    console.log("Sponsored Addresses:", selectedPool.sponsoredAddresses)
-    console.log("Unsponsored Addresses:", unsponsoredAddresses)
-    if (unsponsoredAddresses.length === 0) {
-      showError("No Addresses", "All whitelisted addresses have already been sponsored")
-      return
-    }
-
-    setShowTerminal(true)
-    setTerminalActionType('sponsor')
-    setTerminalStatus(`Sponsoring credits for ${unsponsoredAddresses.length} addresses...`)
-    setTerminalRawOutput([])
-
-    try {
-      const signer = new ArconnectSigner(window.arweaveWallet)
-      const turbo = TurboFactory.authenticated({
-        signer,
-        token: "arweave",
-      })
-      const balanceResp = await turbo.getBalance()
-      const availableCredits = Number(balanceResp.winc) / 1e12
-      const usageCapCredits = selectedPool.usageCap
-      const creditsPerAddress = Math.min(usageCapCredits, availableCredits / unsponsoredAddresses.length)
-      const creditsPerAddressWinston = BigInt(Math.floor(creditsPerAddress * 1e12))
-
-      if (creditsPerAddressWinston <= 0n) {
-        setTerminalError("Not enough credits available to sponsor")
-        setTerminalResult(null)
-        showError("Insufficient Credits", "Not enough credits available to sponsor")
-        return
-      }
-
-      // Calculate expireBySeconds based on endTime
-      const endTime = new Date(selectedPool.endTime)
-      const currentTime = new Date()
-      const secondsUntilEnd = Math.floor((endTime.getTime() - currentTime.getTime()) / 1000)
-      if (secondsUntilEnd <= 0) {
-        setTerminalError("Pool has already ended")
-        setTerminalResult(null)
-        showError("Pool Ended", "Cannot sponsor credits for an ended pool")
-        return
-      }
-
-      let successfulShares = 0
-      const errors: string[] = []
-      const rawOutputs: any[] = []
-      let currentSponsoredAddresses = [...selectedPool.sponsoredAddresses]
-
-      for (const addr of unsponsoredAddresses) {
-        if (currentSponsoredAddresses.includes(addr)) {
-          console.log(`Skipping already sponsored address: ${addr}`)
-          continue
-        }
-        setTerminalStatus(`Sponsoring credits for ${addr.slice(0, 10)}...`)
-        try {
-          const response = await turbo.shareCredits({
-            approvedAddress: addr,
-            approvedWincAmount: creditsPerAddressWinston.toString(),
-            expiresBySeconds: secondsUntilEnd,
-          })
-          rawOutputs.push({ address: addr, response })
-          currentSponsoredAddresses.push(addr)
-          successfulShares++
-
-          // Immediately update pool state
-          const updatedPool = {
-            ...selectedPool,
-            sponsoredAddresses: currentSponsoredAddresses,
-            expireBySeconds: secondsUntilEnd,
-          }
-          const updatedPools = pools.map((p) => (p.id === selectedPool.id ? updatedPool : p))
-          savePools(updatedPools)
-          setSelectedPool(updatedPool)
-        } catch (error) {
-          const errorMsg = `Failed to sponsor credits for ${addr.slice(0, 10)}...: ${error instanceof Error ? error.message : String(error)}`
-          console.error(errorMsg)
-          errors.push(errorMsg)
-        }
-      }
-      setTerminalRawOutput(rawOutputs)
-
-      await handleRefreshBalance()
-
-      if (successfulShares > 0) {
-        const message = `Successfully sponsored up to ${creditsPerAddress.toFixed(4)} credits to ${successfulShares} of ${unsponsoredAddresses.length} addresses`
-        setTerminalResult(message)
-        setTerminalError(null)
-        if (errors.length > 0) {
-          setTerminalError(errors.join("; "))
-          showWarning("Partial Success", `${message}. Errors: ${errors.join("; ")}`)
-        } else {
-          showSuccess("Credits Sponsored", message)
-        }
-      } else {
-        setTerminalError(errors.length > 0 ? `Errors: ${errors.join("; ")}` : "No credits sponsored.")
-        setTerminalResult(null)
-        showError("Sponsor Failed", errors.length > 0 ? `Errors: ${errors.join("; ")}` : "No credits sponsored.")
-      }
-    } catch (error) {
-      const errorMessage = `Error sponsoring credits: ${error instanceof Error ? error.message : String(error)}`
-      setTerminalError(errorMessage)
-      setTerminalResult(null)
-      showError("Sponsor Failed", errorMessage)
-    } finally {
-      setTerminalStatus('')
-      setShowTerminal(true)
-    }
+ const handleSponsorCredits = async () => {
+  if (!selectedPool) {
+    showError("No Pool Selected", "Please select a pool first");
+    return;
   }
+  if (!connected || !window.arweaveWallet) {
+    showError("Wallet Error", "Please connect your wallet first");
+    return;
+  }
+
+  // Check for unsponsored addresses
+  let unsponsoredAddresses = selectedPool.addresses.filter(
+    (addr) => !selectedPool.sponsoredAddresses.includes(addr)
+  );
+  console.log("Sponsored Addresses:", selectedPool.sponsoredAddresses);
+  console.log("Unsponsored Addresses:", unsponsoredAddresses);
+  if (unsponsoredAddresses.length === 0) {
+    showError("No Addresses", "All whitelisted addresses have already been sponsored");
+    return;
+  }
+
+  setShowTerminal(true);
+  setTerminalActionType('sponsor');
+  setTerminalStatus(`Sponsoring credits for ${unsponsoredAddresses.length} addresses...`);
+  setTerminalRawOutput([]);
+
+  try {
+    const signer = new ArconnectSigner(window.arweaveWallet);
+    const turbo = TurboFactory.authenticated({
+      signer,
+      token: "arweave",
+    });
+    const balanceResp = await turbo.getBalance();
+    const availableCredits = Number(balanceResp.winc) / 1e12;
+    const usageCapCredits = selectedPool.usageCap;
+    const creditsPerAddress = Math.min(usageCapCredits, availableCredits / unsponsoredAddresses.length);
+    const creditsPerAddressWinston = BigInt(Math.floor(creditsPerAddress * 1e12));
+
+    if (creditsPerAddressWinston <= 0n) {
+      setTerminalError("Not enough credits available to sponsor");
+      setTerminalResult(null);
+      showError("Insufficient Credits", "Not enough credits available to sponsor");
+      return;
+    }
+
+    // Calculate expireBySeconds based on endTime
+    const endTime = new Date(selectedPool.endTime);
+    const currentTime = new Date();
+    const secondsUntilEnd = Math.floor((endTime.getTime() - currentTime.getTime()) / 1000);
+    if (secondsUntilEnd <= 0) {
+      setTerminalError("Pool has already ended");
+      setTerminalResult(null);
+      showError("Pool Ended", "Cannot sponsor credits for an ended pool");
+      return;
+    }
+
+    let successfulShares = 0;
+    const errors: string[] = [];
+    const rawOutputs: any[] = [];
+    let currentSponsoredAddresses = [...selectedPool.sponsoredAddresses];
+
+    // Process each address sequentially to avoid race conditions
+    for (const addr of unsponsoredAddresses) {
+      // Re-check if address is already sponsored to handle any state inconsistencies
+      if (currentSponsoredAddresses.includes(addr)) {
+        console.log(`Skipping already sponsored address: ${addr}`);
+        continue;
+      }
+
+      setTerminalStatus(`Sponsoring credits for ${addr.slice(0, 10)}...`);
+      try {
+        const response = await turbo.shareCredits({
+          approvedAddress: addr,
+          approvedWincAmount: creditsPerAddressWinston.toString(),
+          expiresBySeconds: secondsUntilEnd,
+        });
+        rawOutputs.push({ address: addr, response });
+
+        // Update sponsored addresses
+        currentSponsoredAddresses = [...currentSponsoredAddresses, addr];
+
+        // Update pool state immediately
+        const updatedPool = {
+          ...selectedPool,
+          sponsoredAddresses: currentSponsoredAddresses,
+          expireBySeconds: secondsUntilEnd,
+        };
+
+        // Update pools state and persist to localStorage
+        const updatedPools = pools.map((p) => (p.id === selectedPool.id ? updatedPool : p));
+        savePools(updatedPools);
+        setSelectedPool(updatedPool);
+
+        successfulShares++;
+      } catch (error) {
+        const errorMsg = `Failed to sponsor credits for ${addr.slice(0, 10)}...: ${error instanceof Error ? error.message : String(error)}`;
+        console.error(errorMsg);
+        errors.push(errorMsg);
+      }
+    }
+    setTerminalRawOutput(rawOutputs);
+
+    // Refresh balance after all sponsorships
+    await handleRefreshBalance();
+
+    if (successfulShares > 0) {
+      const message = `Successfully sponsored up to ${creditsPerAddress.toFixed(4)} credits to ${successfulShares} of ${unsponsoredAddresses.length} addresses`;
+      setTerminalResult(message);
+      setTerminalError(null);
+      if (errors.length > 0) {
+        setTerminalError(errors.join("; "));
+        showWarning("Partial Success", `${message}. Errors: ${errors.join("; ")}`);
+      } else {
+        showSuccess("Credits Sponsored", message);
+      }
+    } else {
+      setTerminalError(errors.length > 0 ? `Errors: ${errors.join("; ")}` : "No credits sponsored.");
+      setTerminalResult(null);
+      showError("Sponsor Failed", errors.length > 0 ? `Errors: ${errors.join("; ")}` : "No credits sponsored.");
+    }
+  } catch (error) {
+    const errorMessage = `Error sponsoring credits: ${error instanceof Error ? error.message : String(error)}`;
+    setTerminalError(errorMessage);
+    setTerminalResult(null);
+    showError("Sponsor Failed", errorMessage);
+  } finally {
+    setTerminalStatus('');
+    setShowTerminal(true);
+  }
+};
 
   const handleTerminalClose = () => {
     setShowTerminal(false)
