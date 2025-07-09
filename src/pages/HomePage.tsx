@@ -97,7 +97,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-xl font-semibold mb-3">Faucet Management</h3>
               <p className="text-gray-600">
-                Create and manage multiple sponsor faucets with custom configurations and access controls.
+                Create multiple sponsor faucets to fund them with turbo credits.
               </p>
             </div>
 
@@ -108,7 +108,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-xl font-semibold mb-3">Access Control</h3>
               <p className="text-gray-600">
-                Whitelist specific addresses and manage user access with granular permission controls.
+                Whitelist specific addresses and manage user access.
               </p>
             </div>
 
@@ -119,7 +119,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-xl font-semibold mb-3">Real-time Analytics</h3>
               <p className="text-gray-600">
-                Monitor faucet usage and detailed insights into your faucet activities.
+                Monitor faucet usage and complete control over faucet activites
               </p>
             </div>
           </div>
@@ -187,7 +187,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 border-t border-gray-300">
         <div className="max-w-7xl mx-auto text-center">
-          <p className="text-gray-600">© 2025 Bloom. All rights reserved. Version 0.0.23</p>
+          <p className="text-gray-600">© 2025 Bloom. All rights reserved. Version 0.0.25</p>
         </div>
       </footer>
 
