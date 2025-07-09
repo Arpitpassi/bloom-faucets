@@ -54,9 +54,6 @@ export default function Dashboard() {
     if (!connected) {
       return (
         <div className="flex flex-col items-center gap-2 p-2">
-          <p className="text-gray-700 text-xs font-medium">
-            Connect your Arweave wallet
-          </p>
           <ConnectButton
             accent="rgb(0,0,0)"
             showBalance={false}
