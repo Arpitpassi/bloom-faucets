@@ -52,23 +52,30 @@ export default function Dashboard() {
   const WalletStatus = () => {
     if (!connected) {
       return (
-        <div className="flex flex-col items-center gap-4 p-6 bg-white border border-gray-200 rounded-xl shadow-sm">
-          <p className="text-gray-700 text-sm font-medium">
-            Connect your Arweave wallet to continue
+        <div className="flex flex-col items-center gap-2 p-2">
+          <p className="text-gray-700 text-xs font-medium">
+            Connect your Arweave wallet
           </p>
           <ConnectButton
             accent="rgb(0,0,0)"
             showBalance={false}
-            className="bg-black text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-colors focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
+            className="bg-black text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-gray-800 transition-colors focus:ring-2 focus:ring-gray-900 focus:ring-offset-1"
           />
         </div>
       )
     }
     return (
-      <div className="flex flex-col items-center gap-4 p-6 bg-white border border-gray-200 rounded-xl shadow-sm">
-        <p className="text-gray-700 text-sm font-medium">
-          Connected: {address?.slice(0, 8)}...{address?.slice(-8)}
-        </p>
+      <div className="flex flex-col items-center gap-2 p-2">
+        <div
+          className="flex items-center text-gray-700 text-xs font-medium cursor-pointer"
+          onClick={() => {
+            navigator.clipboard.writeText(address || '');
+            showSuccess("Address Copied", `Address ${address?.slice(0, 10)}... copied to clipboard`);
+          }}
+        >
+          {address?.slice(0, 6)}...{address?.slice(-6)}
+          <ClipboardPenIcon className="w-3 h-3 ml-1" />
+        </div>
         <Button
           onClick={async () => {
             try {
@@ -81,7 +88,7 @@ export default function Dashboard() {
               )
             }
           }}
-          className="bg-red-500 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-red-600 transition-colors focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+          className="bg-red-500 text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-red-600 transition-colors focus:ring-2 focus:ring-red-500 focus:ring-offset-1"
         >
           Disconnect
         </Button>
@@ -113,7 +120,6 @@ export default function Dashboard() {
     }
   }
 
-  // Convert ISO date to datetime-local format
   const toDateTimeLocal = (isoDate: string): string => {
     try {
       const date = new Date(isoDate)
@@ -202,17 +208,17 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <div className="flex-1 p-6 overflow-y-auto">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 text-center mb-6">
-          <h2 className="text-xl font-bold mb-4 text-gray-900">FAUCET MANAGER</h2>
-          <div className="flex items-center justify-between">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center mb-6">
+          <h2 className="text-lg font-bold mb-3 text-gray-900">FAUCET MANAGER</h2>
+          <div className="flex items-center justify-around">
             <div className="text-center">
-              <div className="text-3xl font-bold text-gray-900">{totalPools}</div>
-              <div className="text-sm text-gray-500 font-medium">TOTAL FAUCETS</div>
+              <div className="text-2xl font-bold text-gray-900">{totalPools}</div>
+              <div className="text-xs text-gray-500 font-medium">TOTAL FAUCETS</div>
             </div>
             <WalletStatus />
             <div className="text-center">
-              <div className="text-3xl font-bold text-gray-900">{activePools}</div>
-              <div className="text-sm text-gray-500 font-medium">ACTIVE FAUCETS</div>
+              <div className="text-2xl font-bold text-gray-900">{activePools}</div>
+              <div className="text-xs text-gray-500 font-medium">ACTIVE FAUCETS</div>
             </div>
           </div>
         </div>
@@ -220,29 +226,27 @@ export default function Dashboard() {
         {connected && (
           <div>
             {showPoolActions && selectedPool ? (
-              <div
-
- className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="text-lg font-semibold">FAUCET ACTIONS - {selectedPool.name}</h3>
-                  <Button
+                  <button
                     onClick={() => setShowPoolActions(false)}
-                    className="text-gray-400 hover:text-gray-600"
+                    className="text-gray-500 hover:text-gray-700"
                   >
-                    <X className="w-5 h-5" />
-                  </Button>
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
                 <div className="space-y-6">
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
                       <h4 className="text-sm font-semibold text-gray-700">REVOKE ACCESS</h4>
-                      <Button
+                      <button
                         onClick={() => setShowAddressesModal(true)}
-                        className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-xl text-sm font-medium transition-colors"
+                        className="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-2 py-1 rounded border border-gray-300 text-sm"
                       >
-                        <Users className="w-4 h-4" />
-                        View Addresses
-                      </Button>
+                        <Users className="w-3 h-3" />
+                        View
+                      </button>
                     </div>
                     <Input
                       type="text"
@@ -291,13 +295,13 @@ export default function Dashboard() {
                         <span className="text-gray-600 font-medium">
                           Whitelisted Addresses ({selectedPool.addresses.length}):
                         </span>
-                        <Button
+                        <button
                           onClick={() => setShowAddressesModal(true)}
-                          className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-xl text-sm font-medium transition-colors"
+                          className="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-2 py-1 rounded border border-gray-300 text-sm"
                         >
-                          <Users className="w-4 h-4" />
-                          View Addresses
-                        </Button>
+                          <Users className="w-3 h-3" />
+                          View
+                        </button>
                       </div>
                       <div className="flex gap-4 pt-4">
                         <Button
@@ -338,17 +342,17 @@ export default function Dashboard() {
       {/* Whitelisted Addresses Modal */}
       {showAddressesModal && selectedPool && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-2 border-gray-300 shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 rounded-xl">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-semibold text-gray-900">
+          <div className="bg-white border rounded-xl shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">
                 Whitelisted Addresses ({selectedPool.addresses.length})
               </h3>
-              <Button
+              <button
                 onClick={() => setShowAddressesModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-500 hover:text-gray-700"
               >
-                <X className="w-6 h-6" />
-              </Button>
+                <X className="w-4 h-4" />
+              </button>
             </div>
             <div className="space-y-3">
               {selectedPool.addresses.map((address, index) => (
@@ -374,7 +378,7 @@ export default function Dashboard() {
       {/* Create Pool Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-2 border-gray-300 shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 rounded-xl">
+          <div className="bg-white border-2 border-gray-200 shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 rounded-xl">
             <Button
               onClick={() => setShowCreateModal(false)}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
@@ -458,7 +462,7 @@ export default function Dashboard() {
       {/* Edit Pool Modal */}
       {showEditModal && selectedPool && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-2 border-gray-300 shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 rounded-xl">
+          <div className="bg-white border-2 border-gray-200 shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 rounded-xl">
             <Button
               onClick={() => setShowEditModal(false)}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
