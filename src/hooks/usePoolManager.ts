@@ -50,6 +50,7 @@ export function usePoolManager(
       balance: pool.balance ?? null,
       poolId: id,
       sponsoredAddresses: pool.sponsoredAddresses || [],
+      expireBySeconds: pool.expireBySeconds ?? null,
     }))
     setPools(poolArray)
     setTotalPools(poolArray.length)
@@ -75,6 +76,7 @@ export function usePoolManager(
         sponsoredAddresses: pool.sponsoredAddresses,
         balance: pool.balance,
         sponsorInfo: pool.sponsorInfo,
+        expireBySeconds: pool.expireBySeconds,
       }
       return acc
     }, {} as { [key: string]: Omit<Pool, "id" | "status" | "poolId"> })
@@ -157,6 +159,7 @@ export function usePoolManager(
       status: "Active",
       poolId: poolId,
       sponsorInfo: "",
+      expireBySeconds: Math.floor((new Date(endTime).getTime() - Date.now()) / 1000),
     }
 
     const updatedPools = [...pools, newPool]
@@ -198,6 +201,7 @@ export function usePoolManager(
         addresses,
         sponsoredAddresses: selectedPool.sponsoredAddresses,
         balance,
+        expireBySeconds: Math.floor((new Date(endTime).getTime() - Date.now()) / 1000),
       }
 
       const updatedPools = pools.map((pool) => (pool.id === selectedPool.id ? updatedPool : pool))
@@ -325,6 +329,17 @@ export function usePoolManager(
         return
       }
 
+      // Calculate expireBySeconds based on endTime
+      const endTime = new Date(selectedPool.endTime)
+      const currentTime = new Date()
+      const secondsUntilEnd = Math.floor((endTime.getTime() - currentTime.getTime()) / 1000)
+      if (secondsUntilEnd <= 0) {
+        setTerminalError("Pool has already ended")
+        setTerminalResult(null)
+        showError("Pool Ended", "Cannot sponsor credits for an ended pool")
+        return
+      }
+
       let successfulShares = 0
       const errors: string[] = []
       const rawOutputs: any[] = []
@@ -340,6 +355,7 @@ export function usePoolManager(
           const response = await turbo.shareCredits({
             approvedAddress: addr,
             approvedWincAmount: creditsPerAddressWinston.toString(),
+            expiresBySeconds: secondsUntilEnd,
           })
           rawOutputs.push({ address: addr, response })
           currentSponsoredAddresses.push(addr)
@@ -349,6 +365,7 @@ export function usePoolManager(
           const updatedPool = {
             ...selectedPool,
             sponsoredAddresses: currentSponsoredAddresses,
+            expireBySeconds: secondsUntilEnd,
           }
           const updatedPools = pools.map((p) => (p.id === selectedPool.id ? updatedPool : p))
           savePools(updatedPools)
