@@ -60,7 +60,7 @@ export default function HomePage() {
             onLetterAnimationComplete={handleAnimationComplete}
           />
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Creating and managing sponsored credit pools for the Arweave ecosystem made easy.
+            Creating and managing sponsored credit faucets for the Arweave ecosystem made easy.
           </p>
           <div className="flex justify-center gap-6 flex-wrap">
             <button
@@ -89,9 +89,9 @@ export default function HomePage() {
               <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 border-2 border-blue-300 flex items-center justify-center mb-4 mx-auto rounded-2xl">
                 <Database className="w-8 h-8 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Pool Management</h3>
+              <h3 className="text-xl font-semibold mb-3">Faucet Management</h3>
               <p className="text-gray-600">
-                Create and manage multiple sponsor pools with custom configurations and access controls.
+                Create and manage multiple sponsor faucets with custom configurations and access controls.
               </p>
             </div>
 
@@ -113,7 +113,7 @@ export default function HomePage() {
               </div>
               <h3 className="text-xl font-semibold mb-3">Real-time Analytics</h3>
               <p className="text-gray-600">
-                Monitor pool usage, track spending, and get detailed insights into your pool activities.
+                Monitor faucet usage and detailed insights into your faucet activities.
               </p>
             </div>
           </div>
@@ -160,7 +160,7 @@ export default function HomePage() {
             </a>
 
             <a
-              href="https://github.com/ropats16/nitya-pools-code-ref"
+              href="https://github.com/Arpitpassi/bloom-frontendv4"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white border-2 border-gray-300 p-6 rounded-2xl hover:bg-gray-50 transition-colors group"
@@ -172,7 +172,7 @@ export default function HomePage() {
                 Documentation
                 <ExternalLink className="w-4 h-4 ml-1" />
               </h3>
-              <p className="text-gray-600 text-sm">Learn how to use sponsored credits</p>
+              <p className="text-gray-600 text-sm">Look at the code behind Bloom faucets</p>
             </a>
           </div>
         </div>
@@ -204,7 +204,7 @@ export default function HomePage() {
                 }}
                 className="bg-white text-black border-2 border-black px-10 py-4 text-lg font-semibold hover:bg-black hover:text-white transition-colors rounded-xl flex-1"
               >
-                Setup Pools
+                Setup Faucets
               </button>
               <button
                 onClick={() => {
@@ -231,8 +231,8 @@ export default function HomePage() {
               <X className="w-6 h-6" />
             </button>
 
-            <h1 className="text-3xl font-bold mb-6">Bloom Pool Manager: Simple Guide to Create and Use a Pool</h1>
-            <p className="mb-6">This guide provides straightforward instructions for creating and using a sponsored credit pool in the Arweave ecosystem using the Bloom Pool Manager.</p>
+            <h1 className="text-3xl font-bold mb-6">Bloom Faucet Manager: Simple Guide to Create and Use a Faucet</h1>
+            <p className="mb-6">This guide provides straightforward instructions for creating and using a sponsored credit Faucet in the Arweave ecosystem using the Bloom Faucet Manager.</p>
 
             <h2 className="text-xl font-semibold mt-8 mb-4">Prerequisites</h2>
             <ul className="list-disc pl-6 mb-4 space-y-2">
@@ -241,7 +241,7 @@ export default function HomePage() {
 
             <h2 className="text-xl font-semibold mt-8 mb-4">1. Access the Dashboard</h2>
             <ul className="list-disc pl-6 mb-4 space-y-2">
-              <li>Open the Bloom Pool Manager in your browser.</li>
+              <li>Open the Bloom Faucet Manager in your browser.</li>
               <li>On the homepage, click <strong>Get Started</strong> to go to the <strong>Dashboard</strong>.</li>
             </ul>
 
@@ -252,27 +252,27 @@ export default function HomePage() {
               <li>Follow your wallet’s prompts to connect.</li>
             </ul>
 
-            <h2 className="text-xl font-semibold mt-8 mb-4">3. Create a Pool</h2>
+            <h2 className="text-xl font-semibold mt-8 mb-4">3. Create a Faucet</h2>
             <ul className="list-disc pl-6 mb-4 space-y-2">
-              <li>On the dashboard, in the left sidebar, click <strong>+ New Pool</strong>.</li>
-              <li>Fill out the <strong>Create New Pool</strong> form:
+              <li>On the dashboard, in the left sidebar, click <strong>+ New Faucet</strong>.</li>
+              <li>Fill out the <strong>Create New Faucet</strong> form:
                 <ul className="list-disc pl-6 mt-2 space-y-1">
-                  <li><strong>Pool Name</strong>: Enter a name (e.g., "My Pool").</li>
+                  <li><strong>Faucet Name</strong>: Enter a name (e.g., "My Faucet").</li>
                   <li><strong>Start Time</strong>: Pick a start date and time (UTC).</li>
                   <li><strong>End Time</strong>: Pick an end date and time.</li>
                   <li><strong>Max Credits Per Wallet (Usage Cap)</strong>: Enter the maximum Turbo credits per wallet (e.g., 0.01).</li>
                   <li><strong>Whitelisted Addresses</strong>: Enter one Arweave address per line (43 characters each).</li>
                 </ul>
               </li>
-              <li>Click <strong>Create Pool</strong> to save. A success message will appear.</li>
+              <li>Click <strong>Create Faucet</strong> to save. A success message will appear.</li>
               <li>To cancel, click <strong>Cancel</strong> or the <strong>X</strong> button.</li>
             </ul>
 
-            <h2 className="text-xl font-semibold mt-8 mb-4">4. Use a Pool</h2>
+            <h2 className="text-xl font-semibold mt-8 mb-4">4. Use a Faucet</h2>
             <ul className="list-disc pl-6 mb-4 space-y-2">
-              <li><strong>View Pool</strong>:
+              <li><strong>View Faucet</strong>:
                 <ul className="list-disc pl-6 mt-2 space-y-1">
-                  <li>In the sidebar, click your pool to see details (name, status, balance, usage cap, duration, addresses).</li>
+                  <li>In the sidebar, click your Faucet to see details (name, status, balance, usage cap, duration, addresses).</li>
                   <li><strong>Time Dial</strong> shows you the remaining time.</li>
                 </ul>
               </li>
@@ -280,31 +280,31 @@ export default function HomePage() {
                 <ul className="list-disc pl-6 mt-2 space-y-1">
                   <li>Click <strong>View Addresses</strong> to see whitelisted addresses.</li>
                   <li>Copy an address by clicking <strong>Copy</strong> next to it.</li>
-                  <li>Use <strong>Edit Pool</strong> to add or remove addresses.</li>
+                  <li>Use <strong>Edit Faucet</strong> to add or remove addresses.</li>
                 </ul>
               </li>
               <li><strong>Sponsor Credits</strong>:
                 <ul className="list-disc pl-6 mt-2 space-y-1">
-                  <li>Select the pool, then click <strong>Sponsor Credits</strong>.</li>
+                  <li>Select the Faucet, then click <strong>Sponsor Credits</strong>.</li>
                   <li>Credits will be distributed to whitelisted addresses (up to the usage cap).</li>
                   <li>A success or error message will show.</li>
                 </ul>
               </li>
               <li><strong>Revoke Access</strong>:
                 <ul className="list-disc pl-6 mt-2 space-y-1">
-                  <li>Select the pool, click <strong>Pool Actions</strong>, then enter an address under <strong>Revoke Access</strong>.</li>
+                  <li>Select the Faucet, click <strong>Faucet Actions</strong>, then enter an address under <strong>Revoke Access</strong>.</li>
                   <li>Click <strong>Revoke Access</strong> to remove it.</li>
                 </ul>
               </li>
-              <li><strong>Edit Pool</strong>:
+              <li><strong>Edit Faucet</strong>:
                 <ul className="list-disc pl-6 mt-2 space-y-1">
-                  <li>Select the pool, click <strong>Edit Pool</strong>.</li>
+                  <li>Select the Faucet, click <strong>Edit Faucet</strong>.</li>
                   <li>Update name, times, usage cap, or addresses, then click <strong>Save Changes</strong>.</li>
                 </ul>
               </li>
-              <li><strong>Delete Pool</strong>:
+              <li><strong>Delete Faucet</strong>:
                 <ul className="list-disc pl-6 mt-2 space-y-1">
-                  <li>In <strong>Pool Actions</strong>, click <strong>Delete Pool</strong>, confirm, and the pool will be removed.</li>
+                  <li>In <strong>Faucet Actions</strong>, click <strong>Delete Faucet</strong>, confirm, and the Faucet will be removed.</li>
                 </ul>
               </li>
             </ul>
@@ -340,14 +340,14 @@ export default function HomePage() {
 
             <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4 rounded-xl">
               <p className="font-semibold text-red-800">
-                Note: Your wallet address must be whitelisted by the Sponsor in order for you to be able to use credits from the shared pool.
+                Note: Your wallet address must be whitelisted by the Sponsor in order for you to be able to use credits from the shared Faucet.
               </p>
             </div>
 
             <h2 className="text-xl font-semibold mt-8 mb-4">Quick Start: Using Sponsored Credits</h2>
             <p className="mb-4">Here are the simplest ways to use Bloom Faucets credits depending on your method:</p>
             <ul className="list-disc pl-6 mb-4 space-y-2">
-              <li><strong>Turbo CLI</strong>: By default, the CLI will automatically check if you have credits in a sponsor's pool first. You do not need to do anything extra.</li>
+              <li><strong>Turbo CLI</strong>: By default, the CLI will automatically check if you have credits in a sponsor's Faucet first. You do not need to do anything extra.</li>
               <li><strong>Turbo SDK (Node/Web)</strong>: When uploading, pass the <code>paidBy</code> option specifying the sponsor's wallet address.</li>
               <li><strong>HTTP API (Turbo Endpoint)</strong>: When making your upload request, add the <code>x-paid-by</code> header, again specifying the sponsor's wallet address.</li>
             </ul>
@@ -356,7 +356,7 @@ export default function HomePage() {
             <p className="mb-4">Below is a more detailed breakdown of each method.</p>
 
             <h3 className="text-lg font-semibold mt-6 mb-3">Using the CLI to Upload Files</h3>
-            <p className="mb-4">By default, the CLI is configured to prioritize using credits from any available sponsor pools you are part of. If credits are available in a Bloom Faucets pool, they will be used before attempting to use any credits from your personal wallet. This makes it easy for participants in sponsored events to upload data without incurring personal costs.</p>
+            <p className="mb-4">By default, the CLI is configured to prioritize using credits from any available sponsor Faucets you are part of. If credits are available in a Bloom Faucets Faucet, they will be used before attempting to use any credits from your personal wallet. This makes it easy for participants in sponsored events to upload data without incurring personal costs.</p>
 
             <h4 className="text-base font-semibold mt-4 mb-2">1. Installation</h4>
             <p className="mb-4">First, you need to install the <code>@ardrive/turbo-sdk</code> globally on your system. Open your terminal and run the following command:</p>
@@ -432,7 +432,7 @@ import path from "path";
             </pre>
 
             <h4 className="text-base font-semibold mt-4 mb-2">2. Using Sponsored Credits with paidBy</h4>
-            <p className="mb-4">To utilize credits from a Bloom Faucets pool, you must specify the sponsor's Arweave wallet address in the <code>paidBy</code> field within the <code>dataItemOpts</code> when calling <code>turbo.uploadFile()</code>.</p>
+            <p className="mb-4">To utilize credits from a Bloom Faucets Faucet, you must specify the sponsor's Arweave wallet address in the <code>paidBy</code> field within the <code>dataItemOpts</code> when calling <code>turbo.uploadFile()</code>.</p>
             <p className="mb-4">As shown in the example above (and in <code>src/index-node.js</code>):</p>
             <pre className="bg-gray-100 p-4 rounded-xl mb-4">
 {`// ...
@@ -483,7 +483,7 @@ import path from "path";
             <p className="mb-4">You will send the raw binary data of the signed data item in the body of a POST request to <code>https://upload.ardrive.io/v1/tx</code>.</p>
 
             <h4 className="text-base font-semibold mt-4 mb-2">3. Using Sponsored Credits with x-paid-by Header</h4>
-            <p className="mb-4">To use credits from a Bloom Faucets pool via the HTTP API, include the <code>x-paid-by</code> header in your request, with its value set to the sponsor's Arweave wallet address.</p>
+            <p className="mb-4">To use credits from a Bloom Faucets Faucet via the HTTP API, include the <code>x-paid-by</code> header in your request, with its value set to the sponsor's Arweave wallet address.</p>
             <pre className="bg-gray-100 p-4 rounded-xl mb-4">
 {`// src/index-http.js (Relevant Part)
 // ...

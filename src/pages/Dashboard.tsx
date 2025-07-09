@@ -147,7 +147,7 @@ export default function Dashboard() {
           onClick={() => setShowCreateModal(true)}
           className="w-full bg-white text-black border-2 border-black p-3 rounded-xl text-sm font-medium mb-6 hover:bg-black hover:text-white transition-colors"
         >
-          + New Pool
+          + New Faucet
         </Button>
         <div className="space-y-4">
           {pools.map((pool: Pool) => (
@@ -193,7 +193,7 @@ export default function Dashboard() {
                   }}
                   className="w-full bg-white text-black border-2 border-black p-2 mt-3 rounded-xl text-sm font-medium hover:bg-black hover:text-white transition-colors"
                 >
-                  Pool Actions
+                  Faucet Actions
                 </Button>
               )}
             </div>
@@ -208,12 +208,12 @@ export default function Dashboard() {
           <div className="flex items-center justify-between">
             <div className="text-center">
               <div className="text-3xl font-bold text-gray-900">{totalPools}</div>
-              <div className="text-sm text-gray-500 font-medium">TOTAL POOLS</div>
+              <div className="text-sm text-gray-500 font-medium">TOTAL FAUCETS</div>
             </div>
             <WalletStatus />
             <div className="text-center">
               <div className="text-3xl font-bold text-gray-900">{activePools}</div>
-              <div className="text-sm text-gray-500 font-medium">ACTIVE POOLS</div>
+              <div className="text-sm text-gray-500 font-medium">ACTIVE FAUCETS</div>
             </div>
           </div>
         </div>
@@ -223,7 +223,7 @@ export default function Dashboard() {
             {showPoolActions && selectedPool ? (
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-lg font-semibold">POOL ACTIONS - {selectedPool.name}</h3>
+                  <h3 className="text-lg font-semibold">FAUCET ACTIONS - {selectedPool.name}</h3>
                   <Button
                     onClick={() => setShowPoolActions(false)}
                     className="text-gray-400 hover:text-gray-600"
@@ -267,7 +267,7 @@ export default function Dashboard() {
                     </Button>
                   </div>
                   <div className="space-y-3">
-                    <h4 className="text-sm font-semibold text-gray-700">DELETE POOL</h4>
+                    <h4 className="text-sm font-semibold text-gray-700">DELETE FAUCET</h4>
                     <Button
                       onClick={handleDeletePool}
                       className="w-full bg-red-500 text-white p-3 rounded-xl text-sm font-medium hover:bg-red-600 transition-colors"
@@ -333,7 +333,7 @@ export default function Dashboard() {
               </div>
             ) : (
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-                <h3 className="text-lg font-semibold mb-4 text-gray-900">YOUR FAUCET POOLS</h3>
+                <h3 className="text-lg font-semibold mb-4 text-gray-900">YOUR FAUCETS</h3>
                 <p className="text-gray-600">
                   Your pools will appear in the sidebar once loaded. Click on a pool to view its details.
                 </p>
@@ -448,7 +448,7 @@ export default function Dashboard() {
                   type="submit"
                   className="flex-1 bg-white text-black border-2 border-black p-3 rounded-xl text-sm font-medium hover:bg-black hover:text-white transition-colors"
                 >
-                  Create Pool
+                  Create Faucet
                 </Button>
                 <Button
                   type="button"
@@ -473,10 +473,10 @@ export default function Dashboard() {
             >
               <X className="w-6 h-6" />
             </Button>
-            <h3 className="text-xl font-semibold mb-6 text-gray-900">EDIT POOL - {selectedPool.name}</h3>
+            <h3 className="text-xl font-semibold mb-6 text-gray-900">EDIT FAUCET - {selectedPool.name}</h3>
             <form onSubmit={handleEditPool} className="space-y-5">
               <div>
-                <label className="block text-sm font-semibold mb-2 text-gray-700">POOL NAME</label>
+                <label className="block text-sm font-semibold mb-2 text-gray-700">FAUCET NAME</label>
                 <Input
                   name="poolName"
                   type="text"
