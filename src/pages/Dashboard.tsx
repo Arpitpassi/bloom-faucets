@@ -13,6 +13,7 @@ import { Input } from "../components/ui/input"
 import { Textarea } from "../components/ui/textarea"
 import { Badge } from "../components/ui/badge"
 import { useUser } from "@/hooks/useUser"
+import TerminalLoading from "../components/TerminalLoading"
 
 export default function Dashboard() {
   const [showCreateModal, setShowCreateModal] = useState(false)
@@ -35,6 +36,12 @@ export default function Dashboard() {
     handleRevokeAccess,
     handleSponsorCredits,
     handleRefreshBalance,
+    showTerminal,
+    terminalStatus,
+    terminalActionType,
+    terminalResult,
+    terminalError,
+    handleTerminalClose,
   } = usePoolManager(setShowPoolActions, setShowCreateModal, setShowEditModal, {
     showSuccess,
     showError,
@@ -121,6 +128,15 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 font-inter antialiased flex">
       <ToastContainer toasts={toasts} onRemove={removeToast} />
+      <TerminalLoading
+        isActive={showTerminal && !!terminalStatus}
+        status={terminalStatus}
+        actionType={terminalActionType}
+        selectedPool={selectedPool ? { name: selectedPool.name, addresses: selectedPool.addresses } : null}
+        result={terminalResult}
+        error={terminalError}
+        onComplete={handleTerminalClose}
+      />
 
       {/* Left Sidebar - Pools */}
       <div className="w-80 bg-white rounded-r-xl shadow-sm border-r border-gray-200 p-6 overflow-y-auto">

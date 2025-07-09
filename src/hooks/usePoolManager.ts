@@ -19,6 +19,11 @@ export function usePoolManager(
   const [selectedPool, setSelectedPool] = useState<Pool | null>(null)
   const [totalPools, setTotalPools] = useState(0)
   const [activePools, setActivePools] = useState(0)
+  const [showTerminal, setShowTerminal] = useState(false)
+  const [terminalStatus, setTerminalStatus] = useState<string>('')
+  const [terminalActionType, setTerminalActionType] = useState<'sponsor' | 'revoke' | null>(null)
+  const [terminalResult, setTerminalResult] = useState<string | null>(null)
+  const [terminalError, setTerminalError] = useState<string | null>(null)
   const { connected, address } = useUser()
   const { showSuccess, showError, showWarning } = toastFunctions
 
@@ -203,6 +208,10 @@ export function usePoolManager(
       return
     }
 
+    setShowTerminal(true)
+    setTerminalActionType('revoke')
+    setTerminalStatus(`Revoking access for ${revokeAddress.slice(0, 10)}...`)
+
     try {
       const signer = new ArconnectSigner(window.arweaveWallet)
       const turbo = TurboFactory.authenticated({
@@ -218,10 +227,18 @@ export function usePoolManager(
       const updatedPools = pools.map((pool) => (pool.id === selectedPool.id ? updatedPool : pool))
       savePools(updatedPools)
       setSelectedPool(updatedPool)
-      await handleRefreshBalance() // Refresh balance after revoke
+      await handleRefreshBalance()
+      setTerminalResult(revokeAddress)
+      setTerminalError(null)
       showSuccess("Access Revoked", `Successfully revoked access for ${revokeAddress.slice(0, 10)}...`)
     } catch (error) {
-      showError("Revoke Failed", `Error revoking access: ${error instanceof Error ? error.message : String(error)}`)
+      const errorMessage = `Error revoking access: ${error instanceof Error ? error.message : String(error)}`
+      setTerminalError(errorMessage)
+      setTerminalResult(null)
+      showError("Revoke Failed", errorMessage)
+    } finally {
+      setTerminalStatus('')
+      setShowTerminal(true) // Keep terminal visible to show result/error
     }
   }
 
@@ -234,6 +251,10 @@ export function usePoolManager(
     if (selectedPool.addresses.length === 0)
       return showError("No Addresses", "No whitelisted addresses to sponsor credits for")
 
+    setShowTerminal(true)
+    setTerminalActionType('sponsor')
+    setTerminalStatus(`Sponsoring credits for ${selectedPool.addresses.length} addresses...`)
+
     try {
       const signer = new ArconnectSigner(window.arweaveWallet)
       const turbo = TurboFactory.authenticated({
@@ -241,12 +262,14 @@ export function usePoolManager(
         token: "arweave",
       })
       const balanceResp = await turbo.getBalance()
-      const availableCredits = Number(balanceResp.winc) / 1e12 // Convert to Turbo Credits
-      const usageCapCredits = selectedPool.usageCap // Usage cap is already in Turbo Credits
+      const availableCredits = Number(balanceResp.winc) / 1e12
+      const usageCapCredits = selectedPool.usageCap
       const creditsPerAddress = Math.min(usageCapCredits, availableCredits / selectedPool.addresses.length)
-      const creditsPerAddressWinston = BigInt(Math.floor(creditsPerAddress * 1e12)) // Convert back to Winston
+      const creditsPerAddressWinston = BigInt(Math.floor(creditsPerAddress * 1e12))
 
       if (creditsPerAddressWinston <= 0n) {
+        setTerminalError("Not enough credits available to sponsor")
+        setTerminalResult(null)
         showError("Insufficient Credits", "Not enough credits available to sponsor")
         return
       }
@@ -254,6 +277,7 @@ export function usePoolManager(
       let successfulShares = 0
       const errors: string[] = []
       for (const addr of selectedPool.addresses) {
+        setTerminalStatus(`Sponsoring credits for ${addr.slice(0, 10)}...`)
         try {
           await turbo.shareCredits({
             approvedAddress: addr,
@@ -267,7 +291,7 @@ export function usePoolManager(
         }
       }
 
-      await handleRefreshBalance() // Refresh balance after sponsoring
+      await handleRefreshBalance()
       const updatedPool = { ...selectedPool, balance: selectedPool.balance }
       const updatedPools = pools.map((p) => (p.id === selectedPool.id ? updatedPool : p))
       savePools(updatedPools)
@@ -275,16 +299,27 @@ export function usePoolManager(
 
       if (successfulShares > 0) {
         const message = `Successfully sponsored up to ${creditsPerAddress.toFixed(4)} credits to ${successfulShares} of ${selectedPool.addresses.length} addresses`
+        setTerminalResult(message)
+        setTerminalError(null)
         if (errors.length > 0) {
+          setTerminalError(errors.join("; "))
           showWarning("Partial Success", `${message}. Errors: ${errors.join("; ")}`)
         } else {
           showSuccess("Credits Sponsored", message)
         }
       } else {
+        setTerminalError(errors.length > 0 ? `Errors: ${errors.join("; ")}` : "No credits sponsored.")
+        setTerminalResult(null)
         showError("Sponsor Failed", errors.length > 0 ? `Errors: ${errors.join("; ")}` : "No credits sponsored.")
       }
     } catch (error) {
-      showError("Sponsor Failed", `Error sponsoring credits: ${error instanceof Error ? error.message : String(error)}`)
+      const errorMessage = `Error sponsoring credits: ${error instanceof Error ? error.message : String(error)}`
+      setTerminalError(errorMessage)
+      setTerminalResult(null)
+      showError("Sponsor Failed", errorMessage)
+    } finally {
+      setTerminalStatus('')
+      setShowTerminal(true)
     }
   }
 
@@ -298,6 +333,13 @@ export function usePoolManager(
       setSelectedPool(updatedPool)
       showSuccess("Balance Refreshed", `Balance for pool "${selectedPool.name}" has been updated`)
     }
+  }
+
+  const handleTerminalClose = () => {
+    setShowTerminal(false)
+    setTerminalActionType(null)
+    setTerminalResult(null)
+    setTerminalError(null)
   }
 
   return {
@@ -316,5 +358,11 @@ export function usePoolManager(
     handleRevokeAccess,
     handleSponsorCredits,
     handleRefreshBalance,
+    showTerminal,
+    terminalStatus,
+    terminalActionType,
+    terminalResult,
+    terminalError,
+    handleTerminalClose,
   }
 }
