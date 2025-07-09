@@ -5,3 +5,7 @@ src/assets/logo.png
 codebase.md
 src/lib/utils.ts
 src/lib/utils.ts
+dist/index.html
+.gitignore
+dist
+dist/index.html

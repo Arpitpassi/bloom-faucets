@@ -63,6 +63,8 @@ export function usePoolManager(
   }
 
   const savePools = (updatedPools: Pool[]) => {
+    // Clear existing pool data to prevent stale entries
+    localStorage.removeItem("pools")
     const poolObject = updatedPools.reduce((acc, pool) => {
       acc[pool.id] = {
         name: pool.name,
@@ -201,9 +203,8 @@ export function usePoolManager(
       const updatedPools = pools.map((pool) => (pool.id === selectedPool.id ? updatedPool : pool))
       savePools(updatedPools)
       setSelectedPool(updatedPool)
-      loadPools()
-      setShowEditModal(false)
       showSuccess("Pool Updated", `Pool "${poolName}" has been updated successfully`)
+      setShowEditModal(false)
     } catch (error) {
       showError("Edit Failed", `Failed to update pool: ${error instanceof Error ? error.message : String(error)}`)
     }
@@ -245,11 +246,21 @@ export function usePoolManager(
       const response = await turbo.revokeCredits({ revokedAddress: revokeAddress })
       setTerminalRawOutput([{ address: revokeAddress, response }])
 
-      const updatedPool = {
+      // Update pool state by removing the revoked address
+      const updatedPool: Pool = {
         ...selectedPool,
         addresses: selectedPool.addresses.filter((addr) => addr !== revokeAddress),
         sponsoredAddresses: selectedPool.sponsoredAddresses.filter((addr) => addr !== revokeAddress),
       }
+
+      // Verify address removal
+      if (updatedPool.addresses.includes(revokeAddress)) {
+        throw new Error(`Failed to remove ${revokeAddress} from whitelisted addresses`)
+      }
+      if (updatedPool.sponsoredAddresses.includes(revokeAddress)) {
+        throw new Error(`Failed to remove ${revokeAddress} from sponsored addresses`)
+      }
+
       const updatedPools = pools.map((pool) => (pool.id === selectedPool.id ? updatedPool : pool))
       savePools(updatedPools)
       setSelectedPool(updatedPool)
@@ -270,18 +281,25 @@ export function usePoolManager(
   }
 
   const handleSponsorCredits = async () => {
-    if (!selectedPool) return showError("No Pool Selected", "Please select a pool first")
+    if (!selectedPool) {
+      showError("No Pool Selected", "Please select a pool first")
+      return
+    }
     if (!connected || !window.arweaveWallet) {
       showError("Wallet Error", "Please connect your wallet first")
       return
     }
+
+    // Check for unsponsored addresses before any Turbo calls
     const unsponsoredAddresses = selectedPool.addresses.filter(
       (addr) => !selectedPool.sponsoredAddresses.includes(addr)
     )
     console.log("Sponsored Addresses:", selectedPool.sponsoredAddresses)
     console.log("Unsponsored Addresses:", unsponsoredAddresses)
-    if (unsponsoredAddresses.length === 0)
-      return showError("No Addresses", "All whitelisted addresses have already been sponsored")
+    if (unsponsoredAddresses.length === 0) {
+      showError("No Addresses", "All whitelisted addresses have already been sponsored")
+      return
+    }
 
     setShowTerminal(true)
     setTerminalActionType('sponsor')
@@ -335,7 +353,6 @@ export function usePoolManager(
           const updatedPools = pools.map((p) => (p.id === selectedPool.id ? updatedPool : p))
           savePools(updatedPools)
           setSelectedPool(updatedPool)
-          console.log(`Updated sponsoredAddresses after ${addr}:`, currentSponsoredAddresses)
         } catch (error) {
           const errorMsg = `Failed to sponsor credits for ${addr.slice(0, 10)}...: ${error instanceof Error ? error.message : String(error)}`
           console.error(errorMsg)
