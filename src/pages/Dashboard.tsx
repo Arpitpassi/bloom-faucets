@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react"
@@ -59,7 +60,7 @@ export default function Dashboard() {
           <ConnectButton
             accent="rgb(0,0,0)"
             showBalance={false}
-            className="bg-black text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-gray-800 transition-colors focus:ring-2 focus:ring-gray-900 focus:ring-offset-1"
+            className="bg-brand-night text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-gray-800 transition-colors focus:ring-2 focus:ring-gray-900 focus:ring-offset-1"
           />
         </div>
       )
@@ -132,7 +133,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 font-inter antialiased flex">
+    <div className="min-h-screen bg-brand-spring-wood text-gray-900 font-inter antialiased flex">
       <ToastContainer toasts={toasts} onRemove={removeToast} />
       <TerminalLoading
         isActive={showTerminal && !!terminalStatus}
@@ -146,11 +147,11 @@ export default function Dashboard() {
       />
 
       {/* Left Sidebar - Pools */}
-      <div className="w-80 bg-white rounded-r-xl shadow-sm border-r border-gray-200 p-6 overflow-y-auto">
+      <div className="w-80 bg-brand-snow-drift rounded-r-xl shadow-sm border-r border-gray-200 p-6 overflow-y-auto">
         <h2 className="text-lg font-semibold mb-6 pb-3 border-b border-gray-200">FAUCETS</h2>
         <Button
           onClick={() => setShowCreateModal(true)}
-          className="w-full bg-white text-black border-2 border-black p-3 rounded-xl text-sm font-medium mb-6 hover:bg-black hover:text-white transition-colors"
+          className="w-full bg-white text-brand-night border-2 border-brand-night p-3 rounded-xl text-sm font-medium mb-6 hover:bg-brand-night hover:text-white transition-colors"
         >
           + New Faucet
         </Button>
@@ -159,7 +160,7 @@ export default function Dashboard() {
             <div
               key={pool.id}
               onClick={() => handlePoolSelect(pool)}
-              className={`bg-white border border-gray-200 rounded-xl p-4 cursor-pointer transition-all hover:shadow-md ${
+              className={`bg-brand-snow-drift border border-gray-200 rounded-xl p-4 cursor-pointer transition-all hover:shadow-md ${
                 selectedPool?.id === pool.id ? "ring-2 ring-gray-900 bg-gray-50" : ""
               }`}
             >
@@ -196,7 +197,7 @@ export default function Dashboard() {
                     e.stopPropagation()
                     handlePoolActions()
                   }}
-                  className="w-full bg-white text-black border-2 border-black p-2 mt-3 rounded-xl text-sm font-medium hover:bg-black hover:text-white transition-colors"
+                  className="w-full bg-white text-brand-night border-2 border-brand-night p-2 mt-3 rounded-xl text-sm font-medium hover:bg-brand-night hover:text-white transition-colors"
                 >
                   Faucet Actions
                 </Button>
@@ -208,7 +209,7 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <div className="flex-1 p-6 overflow-y-auto">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center mb-6">
+        <div className="bg-brand-snow-drift rounded-xl shadow-sm border border-gray-200 p-4 text-center mb-6">
           <h2 className="text-lg font-bold mb-3 text-gray-900">FAUCET MANAGER</h2>
           <div className="flex items-center justify-around">
             <div className="text-center">
@@ -226,7 +227,7 @@ export default function Dashboard() {
         {connected && (
           <div>
             {showPoolActions && selectedPool ? (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+              <div className="bg-brand-snow-drift rounded-xl shadow-sm border border-gray-200 p-8">
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="text-lg font-semibold">FAUCET ACTIONS - {selectedPool.name}</h3>
                   <button
@@ -274,7 +275,7 @@ export default function Dashboard() {
                 </div>
               </div>
             ) : selectedPool ? (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+              <div className="bg-brand-snow-drift rounded-xl shadow-sm border border-gray-200 p-8">
                 <div className="mb-6">
                   <h3 className="text-lg font-semibold mb-6 text-gray-900">FAUCET INFORMATION</h3>
                   <div className="flex justify-between items-start mb-6">
@@ -328,7 +329,7 @@ export default function Dashboard() {
                 </div>
               </div>
             ) : (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
+              <div className="bg-brand-snow-drift rounded-xl shadow-sm border border-gray-200 p-8">
                 <h3 className="text-lg font-semibold mb-4 text-gray-900">YOUR FAUCETS</h3>
                 <p className="text-gray-600">
                   Your faucet will appear in the sidebar once loaded. Click on a faucet to view its details.
@@ -342,7 +343,7 @@ export default function Dashboard() {
       {/* Whitelisted Addresses Modal */}
       {showAddressesModal && selectedPool && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border rounded-xl shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8">
+          <div className="bg-brand-snow-drift border rounded-xl shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-gray-900">
                 Whitelisted Addresses ({selectedPool.addresses.length})
@@ -358,7 +359,7 @@ export default function Dashboard() {
               {selectedPool.addresses.map((address, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between bg-gray-50 border-2 border-gray-300 p-4 rounded-xl"
+                  className="flex items-center justify-between bg-white border-2 border-gray-300 p-4 rounded-xl"
                 >
                   <span className="text-sm break-all">{address}</span>
                   <Button
@@ -378,7 +379,7 @@ export default function Dashboard() {
       {/* Create Pool Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-2 border-gray-200 shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 rounded-xl">
+          <div className="bg-brand-snow-drift border-2 border-gray-200 shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 rounded-xl">
             <Button
               onClick={() => setShowCreateModal(false)}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
@@ -442,7 +443,7 @@ export default function Dashboard() {
               <div className="flex gap-4">
                 <Button
                   type="submit"
-                  className="flex-1 bg-white text-black border-2 border-black p-3 rounded-xl text-sm font-medium hover:bg-black hover:text-white transition-colors"
+                  className="flex-1 bg-white text-brand-night border-2 border-brand-night p-3 rounded-xl text-sm font-medium hover:bg-brand-night hover:text-white transition-colors"
                 >
                   Create Faucet
                 </Button>
@@ -462,7 +463,7 @@ export default function Dashboard() {
       {/* Edit Pool Modal */}
       {showEditModal && selectedPool && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-2 border-gray-200 shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 rounded-xl">
+          <div className="bg-brand-snow-drift border-2 border-gray-200 shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 rounded-xl">
             <Button
               onClick={() => setShowEditModal(false)}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
@@ -531,7 +532,7 @@ export default function Dashboard() {
               <div className="flex gap-4">
                 <Button
                   type="submit"
-                  className="flex-1 bg-white text-black border-2 border-black p-3 rounded-xl text-sm font-medium hover:bg-black hover:text-white transition-colors"
+                  className="flex-1 bg-white text-brand-night border-2 border-brand-night p-3 rounded-xl text-sm font-medium hover:bg-brand-night hover:text-white transition-colors"
                 >
                   Save Changes
                 </Button>

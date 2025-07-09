@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react"
 import { TurboFactory, ArconnectSigner } from "@ardrive/turbo-sdk/web"
 import { Pool } from "../types/types"
@@ -266,7 +267,7 @@ export function usePoolManager(
       const response = await turbo.revokeCredits({ revokedAddress: revokeAddress })
       setTerminalRawOutput([{ address: revokeAddress, response }])
 
-      // Update pool state by removing the revoked address
+      // Update pool state by removing the revoked address from both addresses and sponsoredAddresses
       const updatedPool: Pool = {
         ...selectedPool,
         addresses: selectedPool.addresses.filter((addr) => addr !== revokeAddress),
@@ -284,7 +285,7 @@ export function usePoolManager(
       const updatedPools = pools.map((pool) => (pool.id === selectedPool.id ? updatedPool : pool))
       savePools(updatedPools)
       setSelectedPool(updatedPool)
-      await handleRefreshBalance()
+      await loadPools() // Refresh pool data
       setTerminalResult(revokeAddress)
       setTerminalError(null)
       showSuccess("Access Revoked", `Successfully revoked access for ${revokeAddress.slice(0, 10)}...`)
@@ -402,8 +403,8 @@ export function usePoolManager(
       }
       setTerminalRawOutput(rawOutputs)
 
-      // Refresh balance after all sponsorships
-      await handleRefreshBalance()
+      // Refresh pool data after sponsorship
+      await loadPools()
 
       if (successfulShares > 0) {
         const message = `Successfully sponsored up to ${creditsPerAddress.toFixed(4)} credits to ${successfulShares} of ${unsponsoredAddresses.length} addresses`
