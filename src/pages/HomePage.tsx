@@ -1,11 +1,11 @@
-
 "use client"
 
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { X, ExternalLink, Calculator, FileText, Database, Shield, BarChart3 } from "lucide-react"
+import { X, ExternalLink, Calculator, FileText, Database, Shield, BarChart3, ClipboardPen } from "lucide-react"
 import SplitText from "../components/SplitText"
 import Logo from "../assets/logo.svg"
+
 export default function HomePage() {
   const [showHowToModal, setShowHowToModal] = useState(false)
   const [showPoolsGuide, setShowPoolsGuide] = useState(false)
@@ -21,6 +21,14 @@ export default function HomePage() {
     console.log("Bloomfaucets.beta animation completed!")
   }
 
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      alert("Code copied to clipboard!")
+    }).catch((err) => {
+      console.error("Failed to copy: ", err)
+    })
+  }
+
   return (
     <div className="min-h-screen bg-brand-snow-drift text-brand-night font-mono relative overflow-hidden">
       {/* Geometric Decorations */}
@@ -28,7 +36,7 @@ export default function HomePage() {
       <div className="fixed bottom-0 left-0 w-48 h-48 border-2 border-gray-300 bg-black/5 rounded-tr-full -z-10" />
 
       {/* Header */}
-      <header className="bg-spring-wood shadow-sm border-b border-gray-300">
+      <header className="bg spring-wood shadow-sm border-b border-gray-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
@@ -86,7 +94,7 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 bg-brand-spring-wood">
+      <section className="py-16 bg-brand spring-wood">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center mb-12">Features</h2>
           <div className="grid md:grid-cols-3 gap-8">
@@ -229,37 +237,37 @@ export default function HomePage() {
       {/* Setup Pools Guide Modal */}
       {showPoolsGuide && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-2 border-gray-300 max-w-5xl w-full max-h-[80vh] overflow-y-auto p-8 relative">
+          <div className="bg-white border-2 border-gray-300 max-w-4xl w-full max-h-[85vh] overflow-y-auto p-8 sm:p-10 relative rounded-2xl">
             <button
               onClick={() => setShowPoolsGuide(false)}
-              className="absolute top-4 right-4 text-2xl font-bold hover:text-gray-600 p-1 hover:bg-gray-100 transition-colors"
+              className="absolute top-4 right-4 text-2xl font-bold hover:text-gray-600 p-1 hover:bg-gray-100 transition-colors rounded-xl"
             >
               <X className="w-6 h-6" />
             </button>
 
             <h1 className="text-3xl font-bold mb-6">Bloom Faucet Manager: Simple Guide to Create and Use a Faucet</h1>
-            <p className="mb-6">This guide provides straightforward instructions for creating and using a sponsored credit Faucet in the Arweave ecosystem using the Bloom Faucet Manager.</p>
+            <p className="mb-6 text-gray-600">This guide provides straightforward instructions for creating and using a sponsored credit Faucet in the Arweave ecosystem using the Bloom Faucet Manager.</p>
 
             <h2 className="text-xl font-semibold mt-8 mb-4">Prerequisites</h2>
-            <ul className="list-disc pl-6 mb-4 space-y-2">
+            <ul className="list-disc pl-6 mb-4 space-y-2 text-gray-600">
               <li>An Arweave-compatible wallet (Beacon or Wander) installed in your browser.</li>
             </ul>
 
             <h2 className="text-xl font-semibold mt-8 mb-4">1. Access the Dashboard</h2>
-            <ul className="list-disc pl-6 mb-4 space-y-2">
+            <ul className="list-disc pl-6 mb-4 space-y-2 text-gray-600">
               <li>Open the Bloom Faucet Manager in your browser.</li>
               <li>On the homepage, click <strong>Get Started</strong> to go to the <strong>Dashboard</strong>.</li>
             </ul>
 
             <h2 className="text-xl font-semibold mt-8 mb-4">2. Connect Your Wallet</h2>
-            <ul className="list-disc pl-6 mb-4 space-y-2">
+            <ul className="list-disc pl-6 mb-4 space-y-2 text-gray-600">
               <li>On the dashboard, click <strong>Connect Wallet</strong> if not already connected.</li>
               <li>Choose <strong>Wander Wallet</strong> or <strong>Beacon</strong>.</li>
               <li>Follow your wallet’s prompts to connect.</li>
             </ul>
 
             <h2 className="text-xl font-semibold mt-8 mb-4">3. Create a Faucet</h2>
-            <ul className="list-disc pl-6 mb-4 space-y-2">
+            <ul className="list-disc pl-6 mb-4 space-y-2 text-gray-600">
               <li>On the dashboard, in the left sidebar, click <strong>+ New Faucet</strong>.</li>
               <li>Fill out the <strong>Create New Faucet</strong> form:
                 <ul className="list-disc pl-6 mt-2 space-y-1">
@@ -275,7 +283,7 @@ export default function HomePage() {
             </ul>
 
             <h2 className="text-xl font-semibold mt-8 mb-4">4. Use a Faucet</h2>
-            <ul className="list-disc pl-6 mb-4 space-y-2">
+            <ul className="list-disc pl-6 mb-4 space-y-2 text-gray-600">
               <li><strong>View Faucet</strong>:
                 <ul className="list-disc pl-6 mt-2 space-y-1">
                   <li>In the sidebar, click your Faucet to see details (name, status, balance, usage cap, duration, addresses).</li>
@@ -316,8 +324,8 @@ export default function HomePage() {
             </ul>
 
             <h2 className="text-xl font-semibold mt-8 mb-4">5. Need Help?</h2>
-            <ul className="list-disc pl-6 mb-4 space-y-2">
-              <li>Email <a href="mailto:nityaprotocol@gmail.com" className="text-blue-600 underline hover:text-blue-800">nityaprotocol@gmail.com</a> via <strong>Mail Us</strong> on the homepage.</li>
+            <ul className="list-disc pl-6 mb-4 space-y-2 text-gray-600">
+              <li>Email <a href="https://mail.google.com/mail/u/0/#inbox?compose=GTvVlcSMSqVsmVCqFrJFNLRZsrWQMfmVkQdrKWJfLwJkfkpmtcBzFMsBqGWGFRhXrDqLqXtsfBpTm" className="text-blue-600 underline hover:text-blue-800">nityaprotocol@gmail.com</a> via <strong>Mail Us</strong> on the homepage.</li>
               <li>Join the <a href="https://discord.gg/9cJyqrJUHh" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">Discord</a> for support.</li>
             </ul>
 
@@ -333,204 +341,257 @@ export default function HomePage() {
       {/* Use Shared Credits Guide Modal */}
       {showCreditsGuide && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-2 border-gray-300 max-w-5xl w-full max-h-[80vh] overflow-y-auto p-8 relative">
+          <div className="bg-white border-2 border-gray-300 max-w-4xl w-full max-h-[85vh] overflow-y-auto p-8 sm:p-10 relative rounded-2xl">
             <button
               onClick={() => setShowCreditsGuide(false)}
-              className="absolute top-4 right-4 text-2xl font-bold hover:text-gray-600 p-1 hover:bg-gray-100 transition-colors"
+              className="absolute top-4 right-4 text-2xl font-bold hover:text-gray-600 p-1 hover:bg-gray-100 transition-colors rounded-xl"
             >
               <X className="w-6 h-6" />
             </button>
 
-            <h1 className="text-3xl font-bold mb-6">Bloom Faucets: Upload Data to Arweave with Sponsored Credits</h1>
-            <p className="mb-6">This guide explains how to use shared credits to upload data to Arweave.</p>
+            <h1 className="text-3xl font-bold mb-6">Bloom Faucets: Upload to Arweave Using Sponsored Credits</h1>
+            <p className="mb-6 text-gray-600">Easily upload your data to Arweave without paying from your own wallet, using shared credits from a Bloom Faucet.</p>
 
             <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4 rounded-xl">
               <p className="font-semibold text-red-800">
-                Note: Your wallet address must be whitelisted by the Sponsor in order for you to be able to use credits from the shared Faucet.
+                Note: To use sponsored credits, your wallet address must be whitelisted by the sponsor.
               </p>
             </div>
 
-            <h2 className="text-xl font-semibold mt-8 mb-4">Quick Start: Using Sponsored Credits</h2>
-            <p className="mb-4">Here are the simplest ways to use Bloom Faucets credits depending on your method:</p>
-            <ul className="list-disc pl-6 mb-4 space-y-2">
-              <li><strong>Turbo CLI</strong>: By default, the CLI will automatically check if you have credits in a sponsor's Faucet first. You do not need to do anything extra.</li>
-              <li><strong>Turbo SDK (Node/Web)</strong>: When uploading, pass the <code>paidBy</code> option specifying the sponsor's wallet address.</li>
-              <li><strong>HTTP API (Turbo Endpoint)</strong>: When making your upload request, add the <code>x-paid-by</code> header, again specifying the sponsor's wallet address.</li>
-            </ul>
+            <h2 className="text-xl font-semibold mt-8 mb-4">Quick Start</h2>
+            <p className="mb-4 text-gray-600">Here’s how to upload with Bloom Faucet credits based on how you're uploading:</p>
+            <table className="w-full border-collapse mb-4">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border border-gray-300 p-3 text-left text-sm font-semibold">Method</th>
+                  <th className="border border-gray-300 p-3 text-left text-sm font-semibold">How to use Faucet credits</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="border border-gray-300 p-3 text-gray-600">Turbo CLI</td>
+                  <td className="border border-gray-300 p-3 text-gray-600">No extra steps. CLI will auto-use any Faucet credits.</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 p-3 text-gray-600">Bloom Uploads</td>
+                  <td className="border border-gray-300 p-3 text-gray-600">Create profile to generate a new wallet, or connect a wallet with sponsored credits then simply add the sponsors wallet address and upload easily after the quick setup</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 p-3 text-gray-600">Turbo SDK</td>
+                  <td className="border border-gray-300 p-3 text-gray-600">Use the <code className="bg-gray-200 px-1 rounded">paidBy</code> option with the sponsor’s wallet address. See info below</td>
+                </tr>
+                <tr>
+                  <td className="border border-gray-300 p-3 text-gray-600">HTTP API</td>
+                  <td className="border border-gray-300 p-3 text-gray-600">Set <code className="bg-gray-200 px-1 rounded">x-paid-by</code> header to the sponsor’s wallet address. See info below</td>
+                </tr>
+              </tbody>
+            </table>
 
-            <h2 className="text-xl font-semibold mt-8 mb-4">Detailed Guide</h2>
-            <p className="mb-4">Below is a more detailed breakdown of each method.</p>
+            <h2 className="text-xl font-semibold mt-8 mb-4">Step-by-Step Guide</h2>
 
-            <h3 className="text-lg font-semibold mt-6 mb-3">Using the CLI to Upload Files</h3>
-            <p className="mb-4">By default, the CLI is configured to prioritize using credits from any available sponsor Faucets you are part of. If credits are available in a Bloom Faucets Faucet, they will be used before attempting to use any credits from your personal wallet. This makes it easy for participants in sponsored events to upload data without incurring personal costs.</p>
+            <h3 className="text-lg font-semibold mt-6 mb-3">Option 1: Using Turbo CLI</h3>
+            <ol className="list-decimal pl-6 mb-4 space-y-4 text-gray-600">
+              <li>
+                <strong>Install Turbo CLI</strong>
+                <div className="relative">
+                  <pre className="bg-gray-100 p-4 rounded-xl overflow-x-auto">
+                    <code>npm install -g @ardrive/turbo-sdk</code>
+                  </pre>
+                  <button
+                    onClick={() => copyToClipboard("npm install -g @ardrive/turbo-sdk")}
+                    className="absolute top-2 right-2 text-brand-night hover:text-brand-night/80 transition-colors"
+                    title="Copy to clipboard"
+                  >
+                    <ClipboardPen className="w-5 h-5" />
+                  </button>
+                </div>
+              </li>
+              <li>
+                <strong>Get Your Arweave Wallet</strong>
+                <p className="my-2">Download and save your wallet key file (e.g., <code className="bg-gray-200 px-1 rounded">wallet.json</code>) securely.</p>
+              </li>
+              <li>
+                <strong>Upload a File</strong>
+                <div className="relative">
+                  <pre className="bg-gray-100 p-4 rounded-xl overflow-x-auto">
+                    <code>turbo upload-file --file-path ./public/stock.jpeg --wallet-file ./wallet.json</code>
+                  </pre>
+                  <button
+                    onClick={() => copyToClipboard("turbo upload-file --file-path ./public/stock.jpeg --wallet-file ./wallet.json")}
+                    className="absolute top-2 right-2 text-brand-night hover:text-brand-night/80 transition-colors"
+                    title="Copy to clipboard"
+                  >
+                    <ClipboardPen className="w-5 h-5" />
+                  </button>
+                </div>
+                <p className="my-2">This will automatically use any available sponsored credits without needing extra setup.</p>
+              </li>
+            </ol>
 
-            <h4 className="text-base font-semibold mt-4 mb-2">1. Installation</h4>
-            <p className="mb-4">First, you need to install the <code>@ardrive/turbo-sdk</code> globally on your system. Open your terminal and run the following command:</p>
-            <pre className="bg-gray-100 p-4 rounded-xl mb-4">
-              npm install -g @ardrive/turbo-sdk
-            </pre>
-
-            <h4 className="text-base font-semibold mt-4 mb-2">2. Wallet Setup</h4>
-            <p className="mb-4">You will need an Arweave wallet key file. Ensure you have your key file saved securely on your computer. This file is necessary for the CLI to interact with the Arweave network and Bloom Faucets.</p>
-            <p className="mb-4">For example, you might save your wallet as <code>wallet.json</code> in your project directory or a designated secure location.</p>
-
-            <h4 className="text-base font-semibold mt-4 mb-2">3. Uploading Files</h4>
-            <p className="mb-4">Once the SDK is installed and you have your wallet file ready, you can upload files using the <code>turbo upload-file</code> command.</p>
-            <p className="mb-4">Here's an example command:</p>
-            <pre className="bg-gray-100 p-4 rounded-xl mb-4">
-              turbo upload-file --file-path ./public/stock.jpeg --wallet-file ./wallet.json
-            </pre>
-            <p className="mb-4">Explanation of the command:</p>
-            <ul className="list-disc pl-6 mb-4 space-y-1">
-              <li><code>turbo upload-file</code>: The base command to initiate a file upload.</li>
-              <li><code>--file-path ./public/stock.jpeg</code>: Specifies the path to the file you want to upload. Replace <code>./public/stock.jpeg</code> with the actual path to your file.</li>
-              <li><code>--wallet-file ./wallet.json</code>: Specifies the path to your Arweave wallet key file. Replace <code>./wallet.json</code> with the actual path to your wallet file.</li>
-            </ul>
-
-            <h3 className="text-lg font-semibold mt-6 mb-3">Using the Node.js SDK to Upload Files</h3>
-            <p className="mb-4">You can also programmatically upload files to Arweave using Bloom Faucets credits via the <code>@ardrive/turbo-sdk</code> in a Node.js environment.</p>
-
-            <h4 className="text-base font-semibold mt-4 mb-2">1. Setup and Initialization</h4>
-            <p className="mb-4">First, ensure you have the <code>@ardrive/turbo-sdk</code> installed in your project:</p>
-            <pre className="bg-gray-100 p-4 rounded-xl mb-4">
-              npm install @ardrive/turbo-sdk
-            </pre>
-            <p className="mb-4">Then, you can import the necessary modules and initialize the Turbo SDK with your Arweave wallet:</p>
-            <pre className="bg-gray-100 p-4 rounded-xl mb-4">
-{`// src/index-node.js (Simplified Example)
-import { TurboFactory, ArweaveSigner } from "@ardrive/turbo-sdk/node";
+            <h3 className="text-lg font-semibold mt-6 mb-3">Option 2: Using Turbo SDK (Node.js)</h3>
+            <ol className="list-decimal pl-6 mb-4 space-y-4 text-gray-600">
+              <li>
+                <strong>Install SDK</strong>
+                <div className="relative">
+                  <pre className="bg-gray-100 p-4 rounded-xl overflow-x-auto">
+                    <code>npm install @ardrive/turbo-sdk</code>
+                  </pre>
+                  <button
+                    onClick={() => copyToClipboard("npm install @ardrive/turbo-sdk")}
+                    className="absolute top-2 right-2 text-brand-night hover:text-brand-night/80 transition-colors"
+                    title="Copy to clipboard"
+                  >
+                    <ClipboardPen className="w-5 h-5" />
+                  </button>
+                </div>
+              </li>
+              <li>
+                <strong>Example Upload Script</strong>
+                <div className="relative">
+                  <pre className="bg-gray-100 p-4 rounded-xl overflow-x-auto">
+                    <code>{`import { TurboFactory, ArweaveSigner } from "@ardrive/turbo-sdk/node";
 import fs from "fs";
 import path from "path";
 
 (async () => {
   const jwk = JSON.parse(fs.readFileSync("./wallet.json", "utf8"));
   const signer = new ArweaveSigner(jwk);
-  const turbo = TurboFactory.authenticated({
-    signer,
-  });
-
-  const __dirname = path.resolve();
-  const filePath = path.join(__dirname, "./public/stock.jpeg");
+  const turbo = TurboFactory.authenticated({ signer });
+  const filePath = path.join(process.cwd(), "./public/stock.jpeg");
   const fileSize = fs.statSync(filePath).size;
+  const { id } = await turbo.uploadFile({
+    fileStreamFactory: () => fs.createReadStream(filePath),
+    fileSizeFactory: () => fileSize,
+    dataItemOpts: {
+      tags: [{ name: "Content-Type", value: "image/jpeg" }],
+      paidBy: "SPONSOR_WALLET_ADDRESS",
+    },
+  });
+  console.log("Upload successful! ID:", id);
+})();
+`}</code>
+                  </pre>
+                  <button
+                    onClick={() => copyToClipboard(`import { TurboFactory, ArweaveSigner } from "@ardrive/turbo-sdk/node";
+import fs from "fs";
+import path from "path";
 
-  // Details for balance checking and cost estimation can be found in src/index-node.js
+(async () => {
+  const jwk = JSON.parse(fs.readFileSync("./wallet.json", "utf8"));
+  const signer = new ArweaveSigner(jwk);
+  const turbo = TurboFactory.authenticated({ signer });
+  const filePath = path.join(process.cwd(), "./public/stock.jpeg");
+  const fileSize = fs.statSync(filePath).size;
+  const { id } = await turbo.uploadFile({
+    fileStreamFactory: () => fs.createReadStream(filePath),
+    fileSizeFactory: () => fileSize,
+    dataItemOpts: {
+      tags: [{ name: "Content-Type", value: "image/jpeg" }],
+      paidBy: "SPONSOR_WALLET_ADDRESS",
+    },
+  });
+  console.log("Upload successful! ID:", id);
+})();
+`)}
+                    className="absolute top-2 right-2 text-brand-night hover:text-brand-night/80 transition-colors"
+                    title="Copy to clipboard"
+                  >
+                    <ClipboardPen className="w-5 h-5" />
+                  </button>
+                </div>
+                <p className="my-2">Replace <code className="bg-gray-200 px-1 rounded">"SPONSOR_WALLET_ADDRESS"</code> with your sponsor’s actual wallet address.</p>
+              </li>
+            </ol>
 
-  try {
-    const { id } = await turbo.uploadFile({
-      fileStreamFactory: () => fs.createReadStream(filePath),
-      fileSizeFactory: () => fileSize,
-      dataItemOpts: {
-        tags: [
-          {
-            name: "Content-Type",
-            value: "image/jpeg",
-          },
-        ],
-        // Specify the sponsor's wallet address to use their Bloom Faucets credits
-        paidBy: "1-5C9_RbavjM4fG5nwLK9EOlpmTDmffb72WGQ5tvfgc", // Replace with actual sponsor wallet address
-      },
-    });
-    console.log("Successfully uploaded data item with ID:", id);
-  } catch (error) {
-    console.error("Failed to upload data item:", error);
-  }
-})();`}
-            </pre>
-
-            <h4 className="text-base font-semibold mt-4 mb-2">2. Using Sponsored Credits with paidBy</h4>
-            <p className="mb-4">To utilize credits from a Bloom Faucets Faucet, you must specify the sponsor's Arweave wallet address in the <code>paidBy</code> field within the <code>dataItemOpts</code> when calling <code>turbo.uploadFile()</code>.</p>
-            <p className="mb-4">As shown in the example above (and in <code>src/index-node.js</code>):</p>
-            <pre className="bg-gray-100 p-4 rounded-xl mb-4">
-{`// ...
-dataItemOpts: {
-  // ... other tags
-  paidBy: "SPONSOR_WALLET_ADDRESS", // Replace with the actual sponsor's wallet address
-}
-// ...`}
-            </pre>
-            <p className="mb-4">This tells the ArDrive Turbo SDK to attempt to use the sponsor's Bloom Faucets credits for the upload transaction.</p>
-
-            <h3 className="text-lg font-semibold mt-6 mb-3">Using the HTTP API to Upload Files</h3>
-            <p className="mb-4">For environments where you might not use the SDK directly, or for more direct control, you can interact with the Bloom Faucets / ArDrive upload endpoint via an HTTP POST request.</p>
-
-            <h4 className="text-base font-semibold mt-4 mb-2">1. Prepare Data for Upload</h4>
-            <p className="mb-4">Before making the HTTP request, you'll need to prepare your file data as a data item and sign it. The <code>@dha-team/arbundles</code> library can be helpful here, as shown in <code>src/index-http.js</code>.</p>
-            <pre className="bg-gray-100 p-4 rounded-xl mb-4">
-{`// src/index-http.js (Simplified Example)
-import { ArweaveSigner } from "@ardrive/turbo-sdk/node"; // Signer can be from turbo-sdk
+            <h3 className="text-lg font-semibold mt-6 mb-3">Option 3: Using HTTP API</h3>
+            <ol className="list-decimal pl-6 mb-4 space-y-4 text-gray-600">
+              <li>
+                <strong>Prepare Your Data Item</strong>
+                <p className="my-2">Use <code className="bg-gray-200 px-1 rounded">@dha-team/arbundles</code> and Turbo’s signer to create and sign your data.</p>
+                <div className="relative">
+                  <pre className="bg-gray-100 p-4 rounded-xl overflow-x-auto">
+                    <code>{`import { ArweaveSigner } from "@ardrive/turbo-sdk/node";
 import { createData, sign } from "@dha-team/arbundles";
 import fs from "fs";
 import path from "path";
 
-(async () => {
-  const jwk = JSON.parse(fs.readFileSync("./wallet.json", "utf8"));
-  const signer = new ArweaveSigner(jwk);
+const jwk = JSON.parse(fs.readFileSync("./wallet.json", "utf8"));
+const signer = new ArweaveSigner(jwk);
+const filePath = path.join(process.cwd(), "./public/stock.jpeg");
+const data = createData(new Uint8Array(fs.readFileSync(filePath)), signer, {
+  tags: [{ name: "Content-Type", value: "image/jpeg" }],
+});
+await sign(data, signer);
+`}</code>
+                  </pre>
+                  <button
+                    onClick={() => copyToClipboard(`import { ArweaveSigner } from "@ardrive/turbo-sdk/node";
+import { createData, sign } from "@dha-team/arbundles";
+import fs from "fs";
+import path from "path";
 
-  const __dirname = path.resolve();
-  const filePath = path.join(__dirname, "./public/stock.jpeg");
-  const fileAsUint8Array = new Uint8Array(fs.readFileSync(filePath));
+const jwk = JSON.parse(fs.readFileSync("./wallet.json", "utf8"));
+const signer = new ArweaveSigner(jwk);
+const filePath = path.join(process.cwd(), "./public/stock.jpeg");
+const data = createData(new Uint8Array(fs.readFileSync(filePath)), signer, {
+  tags: [{ name: "Content-Type", value: "image/jpeg" }],
+});
+await sign(data, signer);
+`)}
+                    className="absolute top-2 right-2 text-brand-night hover:text-brand-night/80 transition-colors"
+                    title="Copy to clipboard"
+                  >
+                    <ClipboardPen className="w-5 h-5" />
+                  </button>
+                </div>
+              </li>
+              <li>
+                <strong>Make the Upload Request</strong>
+                <div className="relative">
+                  <pre className="bg-gray-100 p-4 rounded-xl overflow-x-auto">
+                    <code>{`const response = await fetch("https://upload.ardrive.io/v1/tx", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/octet-stream",
+    Accept: "application/json",
+    "x-paid-by": "SPONSOR_WALLET_ADDRESS",
+  },
+  body: data.getRaw(),
+});
+const result = await response.json();
+console.log("Upload result:", result);
+`}</code>
+                  </pre>
+                  <button
+                    onClick={() => copyToClipboard(`const response = await fetch("https://upload.ardrive.io/v1/tx", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/octet-stream",
+    Accept: "application/json",
+    "x-paid-by": "SPONSOR_WALLET_ADDRESS",
+  },
+  body: data.getRaw(),
+});
+const result = await response.json();
+console.log("Upload result:", result);
+`)}
+                    className="absolute top-2 right-2 text-brand-night hover:text-brand-night/80 transition-colors"
+                    title="Copy to clipboard"
+                  >
+                    <ClipboardPen className="w-5 h-5" />
+                  </button>
+                </div>
+                <p className="my-2">Adding the <code className="bg-gray-200 px-1 rounded">x-paid-by</code> header tells ArDrive to use sponsored credits.</p>
+              </li>
+            </ol>
 
-  const data = createData(fileAsUint8Array, signer, {
-    tags: [
-      {
-        name: "Content-Type",
-        value: "image/jpeg",
-      },
-    ],
-  });
-
-  const signedData = await sign(data, signer);
-
-  // ... (rest of the HTTP call)
-})();`}
-            </pre>
-
-            <h4 className="text-base font-semibold mt-4 mb-2">2. Making the HTTP POST Request</h4>
-            <p className="mb-4">You will send the raw binary data of the signed data item in the body of a POST request to <code>https://upload.ardrive.io/v1/tx</code>.</p>
-
-            <h4 className="text-base font-semibold mt-4 mb-2">3. Using Sponsored Credits with x-paid-by Header</h4>
-            <p className="mb-4">To use credits from a Bloom Faucets Faucet via the HTTP API, include the <code>x-paid-by</code> header in your request, with its value set to the sponsor's Arweave wallet address.</p>
-            <pre className="bg-gray-100 p-4 rounded-xl mb-4">
-{`// src/index-http.js (Relevant Part)
-// ...
-try {
-  const response = await fetch(\`https://upload.ardrive.io/v1/tx\`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/octet-stream",
-      Accept: "application/json",
-      // Specify the sponsor's wallet address to use their Bloom Faucets credits
-      "x-paid-by": "1-5C9_RbavjM4fG5nwLK9EOlpmTDmffb72WGQ5tvfgc", // Replace with actual sponsor wallet address
-    },
-    body: data.getRaw(), // Send the raw data item
-  });
-
-  if (!response.ok) {
-    throw new Error(\`Upload failed: \${response.statusText}\`);
-  }
-  const result = await response.json();
-  console.dir(result);
-} catch (error) {
-  console.error("Failed to upload image:", error);
-}
-// ...`}
-            </pre>
-            <p className="mb-4">When the <code>x-paid-by</code> header is present and valid, the ArDrive service will attempt to use the specified sponsor's Bloom Faucets credits for the upload.</p>
-
-            <h3 className="text-lg font-semibold mt-6 mb-3">Additional Resources</h3>
-            <p className="mb-4">Check out <a href="https://docs.ardrive.io/turbo" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">Turbo docs</a> for more information on using the Turbo CLI, SDK, or API.</p>
-
-            <h3 className="text-lg font-semibold mt-6 mb-3">Need Help?</h3>
-            <ul className="list-disc pl-6 mb-4 space-y-2">
-              <li>Email <a href="mailto:nityaprotocol@gmail.com" className="text-blue-600 underline hover:text-blue-800">nityaprotocol@gmail.com</a> via <strong>Mail Us</strong> on the homepage.</li>
-              <li>Join the <a href="https://discord.gg/9cJyqrJUHh" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">Discord</a> for support.</li>
+            <h2 className="text-xl font-semibold mt-8 mb-4">Resources</h2>
+            <ul className="list-disc pl-6 mb-4 space-y-2 text-gray-600">
+              <li><strong>Full Turbo CLI / SDK / API Docs</strong>: Check <a href="https://docs.ardrive.io/docs/turbo/turbo-sdk/" className="text-blue-600 underline hover:text-blue-800">Turbo Documentation</a></li>
+              <li><strong>Email support</strong>: <a href="https://mail.google.com/mail/u/0/#inbox?compose=GTvVlcSMSqVsmVCqFrJFNLRZsrWQMfmVkQdrKWJfLwJkfkpmtcBzFMsBqGWGFRhXrDqLqXtsfBpTm" className="text-blue-600 underline hover:text-blue-800">nityaprotocol@gmail.com</a></li>
+              <li><strong>Join our Discord Community</strong> for help</li>
+              <li><strong>Beta Notice</strong>: This is a beta tool. Expect updates.</li>
             </ul>
-
-            <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-8 rounded-xl">
-              <p className="font-semibold text-red-800">
-                Note: This is a beta application. Read the Disclaimer.
-              </p>
-            </div>
           </div>
         </div>
       )}
@@ -546,7 +607,7 @@ try {
               <X className="w-6 h-6" />
             </button>
 
-            <p className="mb-6">For any inquiries or support mail us at.</p>
+            <p className="mb-6 text-gray-600">For any inquiries or support mail us at.</p>
             <p>
               <strong>Email:</strong>{" "}
               <a href="mailto:support@bloomfaucets.com" className="text-blue-600 underline hover:text-blue-800">
