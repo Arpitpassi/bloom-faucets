@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState } from "react"
@@ -221,118 +220,117 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {connected && (
-          <div>
-            {showPoolActions && selectedPool ? (
-              <div className="bg-brand-snow-drift rounded-xl shadow-sm border border-gray-200 p-8">
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-lg font-semibold">FAUCET ACTIONS - {selectedPool.name}</h3>
+        {showPoolActions && selectedPool ? (
+          <div className="bg-brand-snow-drift rounded-xl shadow-sm border border-gray-200 p-8">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-semibold">FAUCET ACTIONS - {selectedPool.name}</h3>
+              <button
+                onClick={() => setShowPoolActions(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <h4 className="text-sm font-semibold text-gray-700">REVOKE ACCESS</h4>
                   <button
-                    onClick={() => setShowPoolActions(false)}
-                    className="text-gray-500 hover:text-gray-700"
+                    onClick={() => setShowAddressesModal(true)}
+                    className="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-2 py-1 rounded border border-gray-300 text-sm"
                   >
-                    <X className="w-4 h-4" />
+                    <Users className="w-3 h-3" />
+                    View
                   </button>
                 </div>
-                <div className="space-y-6">
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <h4 className="text-sm font-semibold text-gray-700">REVOKE ACCESS</h4>
-                      <button
-                        onClick={() => setShowAddressesModal(true)}
-                        className="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-2 py-1 rounded border border-gray-300 text-sm"
-                      >
-                        <Users className="w-3 h-3" />
-                        View
-                      </button>
-                    </div>
-                    <Input
-                      type="text"
-                      value={revokeAddress}
-                      onChange={(e) => setRevokeAddress(e.target.value)}
-                      placeholder="Enter wallet address to revoke"
-                      className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
-                    />
-                    <Button
-                      onClick={() => handleRevokeAccess(revokeAddress)}
-                      className="w-full bg-orange-500 text-white p-3 rounded-xl text-sm font-medium hover:bg-orange-600 transition-colors"
-                    >
-                      Revoke Access
-                    </Button>
+                <Input
+                  type="text"
+                  value={revokeAddress}
+                  onChange={(e) => setRevokeAddress(e.target.value)}
+                  placeholder="Enter wallet address to revoke"
+                  className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-xl"
+                />
+                <Button
+                  onClick={() => handleRevokeAccess(revokeAddress)}
+                  className="w-full bg-orange-500 text-white p-3 rounded-xl text-sm font-medium hover:bg-orange-600 transition-colors"
+                >
+                  Revoke Access
+                </Button>
+              </div>
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold text-gray-700">DELETE FAUCET</h4>
+                <Button
+                  onClick={handleDeletePool}
+                  className="w-full bg-red-500 text-white p-3 rounded-xl text-sm font-medium hover:bg-red-600 transition-colors"
+                >
+                  Delete Faucet
+                </Button>
+              </div>
+            </div>
+          </div>
+        ) : selectedPool ? (
+          <div className="bg-brand-snow-drift rounded-xl shadow-sm border border-gray-200 p-8">
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-6 text-gray-900">FAUCET INFORMATION</h3>
+              <div className="flex justify-between items-start mb-6">
+                <div className="flex-1 space-y-4">
+                  <div className="flex justify-between py-3 border-b border-gray-100">
+                    <span className="text-gray-600 font-medium">Name:</span>
+                    <span className="font-semibold text-gray-900">{selectedPool.name}</span>
                   </div>
-                  <div className="space-y-3">
-                    <h4 className="text-sm font-semibold text-gray-700">DELETE FAUCET</h4>
-                    <Button
-                      onClick={handleDeletePool}
-                      className="w-full bg-red-500 text-white p-3 rounded-xl text-sm font-medium hover:bg-red-600 transition-colors"
+                  <div className="flex justify-between py-3 border-b border-gray-100">
+                    <span className="text-gray-600 font-medium">Status:</span>
+                    <span
+                      className={`font-semibold ${selectedPool.status === "Active" ? "text-green-600" : "text-red-600"}`}
                     >
-                      Delete Faucet
+                      {selectedPool.status}
+                    </span>
+                  </div>
+                  <div className="flex justify-between py-3 border-b border-gray-100">
+                    <span className="text-gray-600 font-medium">
+                      Whitelisted Addresses ({selectedPool.addresses.length}):
+                    </span>
+                    <button
+                      onClick={() => setShowAddressesModal(true)}
+                      className="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-2 py-1 rounded border border-gray-300 text-sm"
+                    >
+                      <Users className="w-3 h-3" />
+                      View
+                    </button>
+                  </div>
+                  <div className="flex gap-4 pt-4">
+                    <Button
+                      onClick={() => setShowEditModal(true)}
+                      className="bg-blue-500 text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-blue-600 transition-colors"
+                    >
+                      Edit Faucet
+                    </Button>
+                    <Button
+                      onClick={handleSponsorCredits}
+                      className="bg-yellow-500 text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-yellow-600 transition-colors"
+                    >
+                      Sponsor Credits
                     </Button>
                   </div>
                 </div>
-              </div>
-            ) : selectedPool ? (
-              <div className="bg-brand-snow-drift rounded-xl shadow-sm border border-gray-200 p-8">
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold mb-6 text-gray-900">FAUCET INFORMATION</h3>
-                  <div className="flex justify-between items-start mb-6">
-                    <div className="flex-1 space-y-4">
-                      <div className="flex justify-between py-3 border-b border-gray-100">
-                        <span className="text-gray-600 font-medium">Name:</span>
-                        <span className="font-semibold text-gray-900">{selectedPool.name}</span>
-                      </div>
-                      <div className="flex justify-between py-3 border-b border-gray-100">
-                        <span className="text-gray-600 font-medium">Status:</span>
-                        <span
-                          className={`font-semibold ${selectedPool.status === "Active" ? "text-green-600" : "text-red-600"}`}
-                        >
-                          {selectedPool.status}
-                        </span>
-                      </div>
-                      <div className="flex justify-between py-3 border-b border-gray-100">
-                        <span className="text-gray-600 font-medium">
-                          Whitelisted Addresses ({selectedPool.addresses.length}):
-                        </span>
-                        <button
-                          onClick={() => setShowAddressesModal(true)}
-                          className="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-2 py-1 rounded border border-gray-300 text-sm"
-                        >
-                          <Users className="w-3 h-3" />
-                          View
-                        </button>
-                      </div>
-                      <div className="flex gap-4 pt-4">
-                        <Button
-                          onClick={() => setShowEditModal(true)}
-                          className="bg-blue-500 text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-blue-600 transition-colors"
-                        >
-                          Edit Faucet
-                        </Button>
-                        <Button
-                          onClick={handleSponsorCredits}
-                          className="bg-yellow-500 text-white px-6 py-2 rounded-xl text-sm font-medium hover:bg-yellow-600 transition-colors"
-                        >
-                          Sponsor Credits
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="ml-8 flex-shrink-0">
-                      <div className="text-center">
-                        <div className="text-gray-600 font-medium mb-2">Time Left:</div>
-                        <TimeLeftDial startTime={selectedPool.startTime} endTime={selectedPool.endTime} />
-                      </div>
-                    </div>
+                <div className="ml-8 flex-shrink-0">
+                  <div className="text-center">
+                    <div className="text-gray-600 font-medium mb-2">Time Left:</div>
+                    <TimeLeftDial startTime={selectedPool.startTime} endTime={selectedPool.endTime} />
                   </div>
                 </div>
               </div>
-            ) : (
-              <div className="bg-brand-snow-drift rounded-xl shadow-sm border border-gray-200 p-8">
-                <h3 className="text-lg font-semibold mb-4 text-gray-900">YOUR FAUCETS</h3>
-                <p className="text-gray-600">
-                  Your faucet will appear in the sidebar once loaded. Click on a faucet to view its details.
-                </p>
-              </div>
-            )}
+            </div>
+          </div>
+        ) : (
+          <div className="bg-brand-snow-drift rounded-xl shadow-sm border border-gray-200 p-8">
+            <h3 className="text-lg font-semibold mb-4 text-gray-900">YOUR FAUCETS</h3>
+            <p className="text-gray-600">
+              {connected && pools.length > 0
+                ? "Your faucet will appear in the sidebar once loaded. Click on a faucet to view its details."
+                : "Create new faucets to begin."}
+            </p>
+
           </div>
         )}
       </div>
