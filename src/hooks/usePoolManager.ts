@@ -177,7 +177,7 @@ export function usePoolManager(
       addresses,
       sponsoredAddresses: [],
       balance: await fetchBalance(),
-      status: "Active",
+      status: new Date() < new Date(endTime) ? "Active" : "Ended",
       poolId: poolId,
       sponsorInfo: "",
       expireBySeconds: Math.floor((new Date(endTime).getTime() - Date.now()) / 1000),
@@ -222,6 +222,7 @@ export function usePoolManager(
         addresses,
         sponsoredAddresses: selectedPool.sponsoredAddresses,
         balance,
+        status: new Date() < new Date(endTime) ? "Active" : "Ended",
         expireBySeconds: Math.floor((new Date(endTime).getTime() - Date.now()) / 1000),
       }
 
