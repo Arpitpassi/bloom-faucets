@@ -19,3 +19,11 @@ export const localToZulu = (localDateTime: string): string => {
 export const isValidArweaveAddress = (address: string): boolean => {
   return /^[a-zA-Z0-9\-_]{43}$/.test(address)
 }
+
+export const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text).then(() => {
+    alert("Code copied to clipboard!")
+  }).catch((err) => {
+    console.error("Failed to copy: ", err)
+  })
+}

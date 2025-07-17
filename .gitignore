@@ -12,4 +12,3 @@ dist/index.html
 .perma-deploy/config.json
 package.json
 .perma-deploy/manifest.json
-.perma-deploy
