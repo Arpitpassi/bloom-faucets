@@ -13,6 +13,7 @@ import AddressesModal from "../components/AddressesModal"
 import CreatePoolModal from "../components/CreatePoolModal"
 import EditPoolModal from "../components/EditPoolModal"
 import { Pool } from "../types/types"
+import { Button } from "../components/ui/button"
 
 export default function Dashboard() {
   const [showCreateModal, setShowCreateModal] = useState(false)
@@ -41,6 +42,9 @@ export default function Dashboard() {
     terminalError,
     terminalRawOutput,
     handleTerminalClose,
+    insufficientCredits,
+    proceedWithPartialSponsorship,
+    cancelSponsorship,
   } = usePoolManager(setShowPoolActions, setShowCreateModal, setShowEditModal, {
     showSuccess,
     showError,
@@ -176,6 +180,33 @@ export default function Dashboard() {
         onClose={() => setShowEditModal(false)}
         onEditPool={handleEditPool}
       />
+      {insufficientCredits.show && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white border-2 border-gray-300 p-8 rounded-xl">
+            <h3 className="text-lg font-semibold mb-4">Insufficient Credits</h3>
+            <p className="mb-4">
+              You have {insufficientCredits.availableCredits.toFixed(4)} credits available, but{" "}
+              {insufficientCredits.totalRequiredCredits.toFixed(4)} credits are needed to fund all{" "}
+              {insufficientCredits.addresses.length} wallets. <br />
+              You can fully fund {insufficientCredits.maxFundable} wallets with the available credits.
+            </p>
+            <div className="flex gap-4">
+              <Button
+                onClick={proceedWithPartialSponsorship}
+                className="bg-green-500 text-white px-4 py-2 rounded-xl"
+              >
+                Proceed with {insufficientCredits.maxFundable} wallets
+              </Button>
+              <Button
+                onClick={cancelSponsorship}
+                className="bg-red-500 text-white px-4 py-2 rounded-xl"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

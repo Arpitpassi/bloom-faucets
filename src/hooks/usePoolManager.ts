@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react"
 import { TurboFactory, ArconnectSigner } from "@ardrive/turbo-sdk/web"
 import { Pool } from "../types/types"
@@ -26,8 +25,15 @@ export function usePoolManager(
   const [terminalResult, setTerminalResult] = useState<string | null>(null)
   const [terminalError, setTerminalError] = useState<string | null>(null)
   const [terminalRawOutput, setTerminalRawOutput] = useState<any[]>([])
+  const [insufficientCredits, setInsufficientCredits] = useState<{
+    show: boolean
+    maxFundable: number
+    addresses: string[]
+    availableCredits: number
+    totalRequiredCredits: number
+  }>({ show: false, maxFundable: 0, addresses: [], availableCredits: 0, totalRequiredCredits: 0 })
   const { connected, address } = useUser()
-  const { showSuccess, showError, showWarning } = toastFunctions
+  const { showSuccess, showError, showWarning, showInfo } = toastFunctions
 
   useEffect(() => {
     if (connected && address) {
@@ -54,7 +60,6 @@ export function usePoolManager(
       expireBySeconds: pool.expireBySeconds ?? null,
     }))
 
-    // Fetch balance for each pool if connected
     if (connected && address && window.arweaveWallet) {
       try {
         const signer = new ArconnectSigner(window.arweaveWallet)
@@ -63,7 +68,7 @@ export function usePoolManager(
           token: "arweave",
         })
         const balanceResult = await turbo.getBalance()
-        const balance = Number(balanceResult.winc) / 1e12 // Convert winston to Turbo Credits
+        const balance = Number(balanceResult.winc) / 1e12
         poolArray = poolArray.map(pool => ({ ...pool, balance }))
       } catch (error) {
         showError("Balance Check Failed", `Failed to fetch balance: ${error instanceof Error ? error.message : String(error)}`)
@@ -82,7 +87,6 @@ export function usePoolManager(
   }
 
   const savePools = (updatedPools: Pool[]) => {
-    // Clear existing pool data to prevent stale entries
     localStorage.removeItem("pools")
     const poolObject = updatedPools.reduce((acc, pool) => {
       acc[pool.id] = {
@@ -115,7 +119,7 @@ export function usePoolManager(
         token: "arweave",
       })
       const balanceResult = await turbo.getBalance()
-      return Number(balanceResult.winc) / 1e12 // Convert winston to Turbo Credits
+      return Number(balanceResult.winc) / 1e12
     } catch (error) {
       showError("Balance Check Failed", `Failed to fetch balance: ${error instanceof Error ? error.message : String(error)}`)
       return null
@@ -267,14 +271,12 @@ export function usePoolManager(
       const response = await turbo.revokeCredits({ revokedAddress: revokeAddress })
       setTerminalRawOutput([{ address: revokeAddress, response }])
 
-      // Update pool state by removing the revoked address from both addresses and sponsoredAddresses
       const updatedPool: Pool = {
         ...selectedPool,
         addresses: selectedPool.addresses.filter((addr) => addr !== revokeAddress),
         sponsoredAddresses: selectedPool.sponsoredAddresses.filter((addr) => addr !== revokeAddress),
       }
 
-      // Verify address removal
       if (updatedPool.addresses.includes(revokeAddress)) {
         throw new Error(`Failed to remove ${revokeAddress} from whitelisted addresses`)
       }
@@ -285,7 +287,7 @@ export function usePoolManager(
       const updatedPools = pools.map((pool) => (pool.id === selectedPool.id ? updatedPool : pool))
       savePools(updatedPools)
       setSelectedPool(updatedPool)
-      await loadPools() // Refresh pool data
+      await loadPools()
       setTerminalResult(revokeAddress)
       setTerminalError(null)
       showSuccess("Access Revoked", `Successfully revoked access for ${revokeAddress.slice(0, 10)}...`)
@@ -295,6 +297,80 @@ export function usePoolManager(
       setTerminalResult(null)
       setTerminalRawOutput([])
       showError("Revoke Failed", errorMessage)
+    } finally {
+      setTerminalStatus('')
+      setShowTerminal(true)
+    }
+  }
+
+  const sponsorAddresses = async (addresses: string[]) => {
+    setShowTerminal(true)
+    setTerminalActionType('sponsor')
+    setTerminalStatus(`Sponsoring credits for ${addresses.length} addresses...`)
+    setTerminalRawOutput([])
+
+    try {
+      const signer = new ArconnectSigner(window.arweaveWallet)
+      const turbo = TurboFactory.authenticated({
+        signer,
+        token: "arweave",
+      })
+      const creditsPerAddressWinston = BigInt(Math.floor(selectedPool!.usageCap * 1e12))
+      const endTime = new Date(selectedPool!.endTime)
+      const currentTime = new Date()
+      const secondsUntilEnd = Math.floor((endTime.getTime() - currentTime.getTime()) / 1000)
+
+      let successfulShares = 0
+      const errors: string[] = []
+      const rawOutputs: any[] = []
+
+      for (const addr of addresses) {
+        setTerminalStatus(`Sponsoring credits for ${addr.slice(0, 10)}...`)
+        try {
+          const response = await turbo.shareCredits({
+            approvedAddress: addr,
+            approvedWincAmount: creditsPerAddressWinston.toString(),
+            expiresBySeconds: secondsUntilEnd,
+          })
+          rawOutputs.push({ address: addr, response })
+          successfulShares++
+        } catch (error) {
+          const errorMsg = `Failed to sponsor credits for ${addr.slice(0, 10)}...: ${error instanceof Error ? error.message : String(error)}`
+          console.error(errorMsg)
+          errors.push(errorMsg)
+        }
+      }
+      setTerminalRawOutput(rawOutputs)
+
+      if (successfulShares > 0) {
+        const message = `Successfully sponsored up to ${selectedPool!.usageCap.toFixed(4)} credits to ${successfulShares} of ${addresses.length} addresses`
+        setTerminalResult(message)
+        setTerminalError(null)
+        if (errors.length > 0) {
+          setTerminalError(errors.join("; "))
+          showWarning("Partial Success", `${message}. Errors: ${errors.join("; ")}`)
+        } else {
+          showSuccess("Credits Sponsored", message)
+        }
+
+        const updatedPool = {
+          ...selectedPool!,
+          sponsoredAddresses: [...selectedPool!.sponsoredAddresses, ...addresses],
+        }
+        const updatedPools = pools.map((p) => (p.id === selectedPool!.id ? updatedPool : p))
+        savePools(updatedPools)
+        setSelectedPool(updatedPool)
+        await loadPools()
+      } else {
+        setTerminalError(errors.length > 0 ? `Errors: ${errors.join("; ")}` : "No credits sponsored.")
+        setTerminalResult(null)
+        showError("Sponsor Failed", errors.length > 0 ? `Errors: ${errors.join("; ")}` : "No credits sponsored.")
+      }
+    } catch (error) {
+      const errorMessage = `Error sponsoring credits: ${error instanceof Error ? error.message : String(error)}`
+      setTerminalError(errorMessage)
+      setTerminalResult(null)
+      showError("Sponsor Failed", errorMessage)
     } finally {
       setTerminalStatus('')
       setShowTerminal(true)
@@ -311,21 +387,13 @@ export function usePoolManager(
       return
     }
 
-    // Check for unsponsored addresses
     let unsponsoredAddresses = selectedPool.addresses.filter(
       (addr) => !selectedPool.sponsoredAddresses.includes(addr)
     )
-    console.log("Sponsored Addresses:", selectedPool.sponsoredAddresses)
-    console.log("Unsponsored Addresses:", unsponsoredAddresses)
     if (unsponsoredAddresses.length === 0) {
       showError("No Addresses", "All whitelisted addresses have already been sponsored")
       return
     }
-
-    setShowTerminal(true)
-    setTerminalActionType('sponsor')
-    setTerminalStatus(`Sponsoring credits for ${unsponsoredAddresses.length} addresses...`)
-    setTerminalRawOutput([])
 
     try {
       const signer = new ArconnectSigner(window.arweaveWallet)
@@ -335,101 +403,37 @@ export function usePoolManager(
       })
       const balanceResp = await turbo.getBalance()
       const availableCredits = Number(balanceResp.winc) / 1e12
-      const usageCapCredits = selectedPool.usageCap
-      const creditsPerAddress = Math.min(usageCapCredits, availableCredits / unsponsoredAddresses.length)
-      const creditsPerAddressWinston = BigInt(Math.floor(creditsPerAddress * 1e12))
+      const totalRequiredCredits = unsponsoredAddresses.length * selectedPool.usageCap
 
-      if (creditsPerAddressWinston <= 0n) {
-        setTerminalError("Not enough credits available to sponsor")
-        setTerminalResult(null)
-        showError("Insufficient Credits", "Not enough credits available to sponsor")
+      if (availableCredits < totalRequiredCredits) {
+        const maxFundable = Math.floor(availableCredits / selectedPool.usageCap)
+        setInsufficientCredits({
+          show: true,
+          maxFundable,
+          addresses: unsponsoredAddresses,
+          availableCredits,
+          totalRequiredCredits,
+        })
         return
       }
 
-      // Calculate expireBySeconds based on endTime
-      const endTime = new Date(selectedPool.endTime)
-      const currentTime = new Date()
-      const secondsUntilEnd = Math.floor((endTime.getTime() - currentTime.getTime()) / 1000)
-      if (secondsUntilEnd <= 0) {
-        setTerminalError("Pool has already ended")
-        setTerminalResult(null)
-        showError("Pool Ended", "Cannot sponsor credits for an ended pool")
-        return
-      }
-
-      let successfulShares = 0
-      const errors: string[] = []
-      const rawOutputs: any[] = []
-      let currentSponsoredAddresses = [...selectedPool.sponsoredAddresses]
-
-      // Process each address sequentially to avoid race conditions
-      for (const addr of unsponsoredAddresses) {
-        // Re-check if address is already sponsored to handle any state inconsistencies
-        if (currentSponsoredAddresses.includes(addr)) {
-          console.log(`Skipping already sponsored address: ${addr}`)
-          continue
-        }
-
-        setTerminalStatus(`Sponsoring credits for ${addr.slice(0, 10)}...`)
-        try {
-          const response = await turbo.shareCredits({
-            approvedAddress: addr,
-            approvedWincAmount: creditsPerAddressWinston.toString(),
-            expiresBySeconds: secondsUntilEnd,
-          })
-          rawOutputs.push({ address: addr, response })
-
-          // Update sponsored addresses
-          currentSponsoredAddresses = [...currentSponsoredAddresses, addr]
-
-          // Update pool state immediately
-          const updatedPool = {
-            ...selectedPool,
-            sponsoredAddresses: currentSponsoredAddresses,
-            expireBySeconds: secondsUntilEnd,
-          }
-
-          // Update pools state and persist to localStorage
-          const updatedPools = pools.map((p) => (p.id === selectedPool.id ? updatedPool : p))
-          savePools(updatedPools)
-          setSelectedPool(updatedPool)
-
-          successfulShares++
-        } catch (error) {
-          const errorMsg = `Failed to sponsor credits for ${addr.slice(0, 10)}...: ${error instanceof Error ? error.message : String(error)}`
-          console.error(errorMsg)
-          errors.push(errorMsg)
-        }
-      }
-      setTerminalRawOutput(rawOutputs)
-
-      // Refresh pool data after sponsorship
-      await loadPools()
-
-      if (successfulShares > 0) {
-        const message = `Successfully sponsored up to ${creditsPerAddress.toFixed(4)} credits to ${successfulShares} of ${unsponsoredAddresses.length} addresses`
-        setTerminalResult(message)
-        setTerminalError(null)
-        if (errors.length > 0) {
-          setTerminalError(errors.join("; "))
-          showWarning("Partial Success", `${message}. Errors: ${errors.join("; ")}`)
-        } else {
-          showSuccess("Credits Sponsored", message)
-        }
-      } else {
-        setTerminalError(errors.length > 0 ? `Errors: ${errors.join("; ")}` : "No credits sponsored.")
-        setTerminalResult(null)
-        showError("Sponsor Failed", errors.length > 0 ? `Errors: ${errors.join("; ")}` : "No credits sponsored.")
-      }
+      await sponsorAddresses(unsponsoredAddresses)
     } catch (error) {
-      const errorMessage = `Error sponsoring credits: ${error instanceof Error ? error.message : String(error)}`
-      setTerminalError(errorMessage)
-      setTerminalResult(null)
-      showError("Sponsor Failed", errorMessage)
-    } finally {
-      setTerminalStatus('')
-      setShowTerminal(true)
+      showError("Sponsor Failed", `Error initiating sponsorship: ${error instanceof Error ? error.message : String(error)}`)
     }
+  }
+
+  const proceedWithPartialSponsorship = async () => {
+    if (insufficientCredits.show) {
+      const addressesToSponsor = insufficientCredits.addresses.slice(0, insufficientCredits.maxFundable)
+      await sponsorAddresses(addressesToSponsor)
+      setInsufficientCredits({ show: false, maxFundable: 0, addresses: [], availableCredits: 0, totalRequiredCredits: 0 })
+    }
+  }
+
+  const cancelSponsorship = () => {
+    setInsufficientCredits({ show: false, maxFundable: 0, addresses: [], availableCredits: 0, totalRequiredCredits: 0 })
+    showInfo("Operation Cancelled", "Sponsorship operation has been cancelled")
   }
 
   const handleTerminalClose = () => {
@@ -463,5 +467,8 @@ export function usePoolManager(
     terminalError,
     terminalRawOutput,
     handleTerminalClose,
+    insufficientCredits,
+    proceedWithPartialSponsorship,
+    cancelSponsorship,
   }
 }
