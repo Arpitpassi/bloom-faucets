@@ -118,7 +118,19 @@ export const useSponsorship = (
     if (!connected || !window.arweaveWallet) return showError("Wallet Error", "Please connect your wallet first")
 
     const unsponsoredAddresses = selectedPool.addresses.filter(addr => !selectedPool.sponsoredAddresses.includes(addr))
-    if (unsponsoredAddresses.length === 0) return showError("No Addresses", "All whitelisted addresses have already been sponsored")
+    const alreadySponsoredAddresses = selectedPool.addresses.filter(addr => selectedPool.sponsoredAddresses.includes(addr))
+
+    // Show toast for already sponsored addresses
+    if (alreadySponsoredAddresses.length > 0) {
+      showInfo(
+        "Already Sponsored",
+        `${alreadySponsoredAddresses.length} address${alreadySponsoredAddresses.length > 1 ? 'es' : ''} already sponsored, skipping credit sharing: ${alreadySponsoredAddresses.map(addr => addr.slice(0, 10) + '...').join(", ")}`
+      )
+    }
+
+    if (unsponsoredAddresses.length === 0) {
+      return showError("No Addresses", "All whitelisted addresses have already been sponsored")
+    }
 
     setPendingAddresses(unsponsoredAddresses)
 
@@ -141,7 +153,7 @@ export const useSponsorship = (
     }
 
     await sponsorAddresses(unsponsoredAddresses)
-  }, [pools, selectedPool, connected, sponsorAddresses, showError])
+  }, [pools, selectedPool, connected, sponsorAddresses, showError, showInfo])
 
   const proceedWithPartialSponsorship = useCallback(async () => {
     const { show, maxFundable, addresses } = insufficientCredits
@@ -168,26 +180,42 @@ export const useSponsorship = (
       return
     }
 
+    const alreadySponsoredAddresses = pendingAddresses.filter(addr => selectedPool!.sponsoredAddresses.includes(addr))
+    const unsponsoredPendingAddresses = pendingAddresses.filter(addr => !selectedPool!.sponsoredAddresses.includes(addr))
+
+    // Show toast for already sponsored addresses in pending list
+    if (alreadySponsoredAddresses.length > 0) {
+      showInfo(
+        "Already Sponsored",
+        `${alreadySponsoredAddresses.length} address${alreadySponsoredAddresses.length > 1 ? 'es' : ''} already sponsored, skipping credit sharing: ${alreadySponsoredAddresses.map(addr => addr.slice(0, 10) + '...').join(", ")}`
+      )
+    }
+
+    if (unsponsoredPendingAddresses.length === 0) {
+      showInfo("No Addresses to Sponsor", "All pending addresses have already been sponsored")
+      return
+    }
+
     const signer = new ArconnectSigner(window.arweaveWallet)
     const turbo = TurboFactory.authenticated({ signer, token: "arweave" })
     const balanceResp = await turbo.getBalance()
     const availableCredits = Number(balanceResp.winc) / 1e12
-    const totalRequiredCredits = pendingAddresses.length * selectedPool!.usageCap
+    const totalRequiredCredits = unsponsoredPendingAddresses.length * selectedPool!.usageCap
 
     if (availableCredits < totalRequiredCredits) {
       const maxFundable = Math.floor(availableCredits / selectedPool!.usageCap)
       setInsufficientCredits({
         show: true,
         maxFundable,
-        addresses: pendingAddresses,
+        addresses: unsponsoredPendingAddresses,
         availableCredits,
         totalRequiredCredits,
       })
-      showWarning("Insufficient Credits", `You have ${availableCredits.toFixed(4)} credits, but ${totalRequiredCredits.toFixed(4)} credits are needed for ${pendingAddresses.length} addresses.`)
+      showWarning("Insufficient Credits", `You have ${availableCredits.toFixed(4)} credits, but ${totalRequiredCredits.toFixed(4)} credits are needed for ${unsponsoredPendingAddresses.length} addresses.`)
       return
     }
 
-    await sponsorAddresses(pendingAddresses)
+    await sponsorAddresses(unsponsoredPendingAddresses)
   }, [pendingAddresses, selectedPool, sponsorAddresses, showInfo, showWarning])
 
   return {

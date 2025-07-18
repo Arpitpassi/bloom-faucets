@@ -84,7 +84,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-brand-spring-wood text-gray-900 font-inter antialiased flex">
-      <ToastContainer toasts={toasts} onRemove={removeToast} />
+      <ToastContainer toasts={toasts} onRemove={removeToast} className="z-[100]" />
       <TerminalLoading
         isActive={showTerminal && !!terminalStatus}
         status={terminalStatus}
