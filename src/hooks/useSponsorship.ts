@@ -1,7 +1,7 @@
 import { useCallback } from "react"
 import { TurboFactory, ArconnectSigner } from "@ardrive/turbo-sdk/web"
 import { Pool } from "../types/types"
-import { savePools } from "./poolUtils"
+import { savePools, fetchBalance } from "./poolUtils"
 
 export const useSponsorship = (
   pools: Pool[],
@@ -81,10 +81,19 @@ export const useSponsorship = (
           showSuccess("Credits Sponsored", message)
         }
 
+        // Update the pool with sponsored addresses
         const updatedPool = {
           ...selectedPool!,
           sponsoredAddresses: [...selectedPool!.sponsoredAddresses, ...addresses],
         }
+
+        // Refresh the balance
+        const newBalance = await fetchBalance(connected, showError)
+        if (newBalance !== null) {
+          updatedPool.balance = newBalance
+        }
+
+        // Save the updated pool
         const updatedPools = pools.map(p => p.id === selectedPool!.id ? updatedPool : p)
         savePools(updatedPools, setPools, setTotalPools, setActivePools)
         setSelectedPool(updatedPool)

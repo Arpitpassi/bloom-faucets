@@ -55,11 +55,13 @@ export default function Dashboard() {
   const handlePoolSelect = async (pool: Pool) => {
     setSelectedPool({ ...pool, balance: pool.balance ?? null })
     setShowPoolActions(false)
-    if (pool.balance === null) {
-      const balance = await fetchBalance()
+    if (pool.balance === null && connected) { // Check if wallet is connected
+      const balance = await fetchBalance(connected, showError) // Pass required arguments
       if (balance !== null) {
         setSelectedPool((prev) => (prev ? { ...prev, balance } : prev))
       }
+    } else if (!connected) {
+      showError("Wallet Error", "Please connect your wallet to fetch balance")
     }
   }
 
