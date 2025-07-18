@@ -41,7 +41,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-primary:hover {
-  background: #09130F; /* Slightly darker Night on hover */
+  background: #0B1713; /* Slightly darker Night on hover */
   transform: translateY(-1px);
 }
 
