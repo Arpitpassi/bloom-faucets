@@ -107,5 +107,7 @@ export function usePoolManager(
     insufficientCredits,
     proceedWithPartialSponsorship: sponsorOps.proceedWithPartialSponsorship,
     cancelSponsorship: sponsorOps.cancelSponsorship,
+    retryPendingSponsorship: sponsorOps.retryPendingSponsorship,
+    pendingAddresses: sponsorOps.pendingAddresses,
   }
 }

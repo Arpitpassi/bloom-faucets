@@ -1,4 +1,4 @@
-import { useCallback } from "react"
+import { useCallback, useState } from "react"
 import { TurboFactory, ArconnectSigner } from "@ardrive/turbo-sdk/web"
 import { Pool } from "../types/types"
 import { savePools, fetchBalance } from "./poolUtils"
@@ -36,6 +36,8 @@ export const useSponsorship = (
   showWarning: (title: string, message: string) => void,
   showInfo: (title: string, message: string) => void
 ) => {
+  const [pendingAddresses, setPendingAddresses] = useState<string[]>([])
+
   const sponsorAddresses = useCallback(async (addresses: string[]) => {
     setShowTerminal(true)
     setTerminalActionType('sponsor')
@@ -51,6 +53,7 @@ export const useSponsorship = (
       let successfulShares = 0
       const errors: string[] = []
       const rawOutputs: any[] = []
+      const successfullySponsored: string[] = []
 
       for (const addr of addresses) {
         setTerminalStatus(`Sponsoring credits for ${addr.slice(0, 10)}...`)
@@ -62,6 +65,7 @@ export const useSponsorship = (
           })
           rawOutputs.push({ address: addr, response })
           successfulShares++
+          successfullySponsored.push(addr)
         } catch (error) {
           const errorMsg = `Failed to sponsor credits for ${addr.slice(0, 10)}...: ${error instanceof Error ? error.message : String(error)}`
           console.error(errorMsg)
@@ -69,6 +73,9 @@ export const useSponsorship = (
         }
       }
       setTerminalRawOutput(rawOutputs)
+
+      // Update pending addresses
+      setPendingAddresses(prev => prev.filter(addr => !successfullySponsored.includes(addr)))
 
       if (successfulShares > 0) {
         const message = `Successfully sponsored up to ${selectedPool!.usageCap.toFixed(4)} credits to ${successfulShares} of ${addresses.length} addresses`
@@ -81,19 +88,12 @@ export const useSponsorship = (
           showSuccess("Credits Sponsored", message)
         }
 
-        // Update the pool with sponsored addresses
+        // Update pool with only successfully sponsored addresses
         const updatedPool = {
           ...selectedPool!,
-          sponsoredAddresses: [...selectedPool!.sponsoredAddresses, ...addresses],
+          sponsoredAddresses: [...new Set([...selectedPool!.sponsoredAddresses, ...successfullySponsored])],
+          balance: await fetchBalance(connected, showError) ?? selectedPool!.balance,
         }
-
-        // Refresh the balance
-        const newBalance = await fetchBalance(connected, showError)
-        if (newBalance !== null) {
-          updatedPool.balance = newBalance
-        }
-
-        // Save the updated pool
         const updatedPools = pools.map(p => p.id === selectedPool!.id ? updatedPool : p)
         savePools(updatedPools, setPools, setTotalPools, setActivePools)
         setSelectedPool(updatedPool)
@@ -120,6 +120,8 @@ export const useSponsorship = (
     const unsponsoredAddresses = selectedPool.addresses.filter(addr => !selectedPool.sponsoredAddresses.includes(addr))
     if (unsponsoredAddresses.length === 0) return showError("No Addresses", "All whitelisted addresses have already been sponsored")
 
+    setPendingAddresses(unsponsoredAddresses)
+
     const signer = new ArconnectSigner(window.arweaveWallet)
     const turbo = TurboFactory.authenticated({ signer, token: "arweave" })
     const balanceResp = await turbo.getBalance()
@@ -145,15 +147,54 @@ export const useSponsorship = (
     const { show, maxFundable, addresses } = insufficientCredits
     if (show) {
       const addressesToSponsor = addresses.slice(0, maxFundable)
+      setPendingAddresses(addresses.slice(maxFundable))
       await sponsorAddresses(addressesToSponsor)
       setInsufficientCredits({ show: false, maxFundable: 0, addresses: [], availableCredits: 0, totalRequiredCredits: 0 })
+      if (addresses.slice(maxFundable).length > 0) {
+        showInfo("Pending Addresses", `There are ${addresses.slice(maxFundable).length} addresses still pending sponsorship. Please add more credits to continue.`)
+      }
     }
-  }, [insufficientCredits, sponsorAddresses])
+  }, [insufficientCredits, sponsorAddresses, showInfo])
 
   const cancelSponsorship = useCallback(() => {
+    setPendingAddresses([])
     setInsufficientCredits({ show: false, maxFundable: 0, addresses: [], availableCredits: 0, totalRequiredCredits: 0 })
     showInfo("Operation Cancelled", "Sponsorship operation has been cancelled")
   }, [showInfo])
 
-  return { handleSponsorCredits, proceedWithPartialSponsorship, cancelSponsorship }
+  const retryPendingSponsorship = useCallback(async () => {
+    if (pendingAddresses.length === 0) {
+      showInfo("No Pending Addresses", "There are no addresses pending sponsorship")
+      return
+    }
+
+    const signer = new ArconnectSigner(window.arweaveWallet)
+    const turbo = TurboFactory.authenticated({ signer, token: "arweave" })
+    const balanceResp = await turbo.getBalance()
+    const availableCredits = Number(balanceResp.winc) / 1e12
+    const totalRequiredCredits = pendingAddresses.length * selectedPool!.usageCap
+
+    if (availableCredits < totalRequiredCredits) {
+      const maxFundable = Math.floor(availableCredits / selectedPool!.usageCap)
+      setInsufficientCredits({
+        show: true,
+        maxFundable,
+        addresses: pendingAddresses,
+        availableCredits,
+        totalRequiredCredits,
+      })
+      showWarning("Insufficient Credits", `You have ${availableCredits.toFixed(4)} credits, but ${totalRequiredCredits.toFixed(4)} credits are needed for ${pendingAddresses.length} addresses.`)
+      return
+    }
+
+    await sponsorAddresses(pendingAddresses)
+  }, [pendingAddresses, selectedPool, sponsorAddresses, showInfo, showWarning])
+
+  return {
+    handleSponsorCredits,
+    proceedWithPartialSponsorship,
+    cancelSponsorship,
+    retryPendingSponsorship,
+    pendingAddresses,
+  }
 }
