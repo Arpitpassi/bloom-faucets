@@ -10,7 +10,8 @@ export interface Pool {
   addresses: string[]
   poolId: string
   sponsoredAddresses: string[]
-  expireBySeconds: number | null // New field for expiration in seconds
+  expireBySeconds: number | null
+  history: { timestamp: string; action: string; details: string; outputs?: any[] }[]
 }
 
 export interface Strategy {

@@ -1,7 +1,9 @@
-import { Users } from "lucide-react"
+import { useState } from "react"
+import { Users, ChevronDown, ChevronUp } from "lucide-react"
 import { Button } from "./ui/button"
 import { TimeLeftDial } from "./TimeLeftDial"
 import { Pool } from "../types/types"
+import { formatDateTime } from "../utils/utils"
 
 interface PoolInfoProps {
   pool: Pool
@@ -11,6 +13,9 @@ interface PoolInfoProps {
 }
 
 export default function PoolInfo({ pool, onEditPool, onSponsorCredits, onViewAddresses }: PoolInfoProps) {
+  const [showHistory, setShowHistory] = useState(false)
+  const [expandedHistoryIndices, setExpandedHistoryIndices] = useState<number[]>([])
+
   return (
     <div className="bg-brand-snow-drift rounded-xl shadow-sm border border-gray-200 p-8">
       <div className="mb-6">
@@ -63,6 +68,56 @@ export default function PoolInfo({ pool, onEditPool, onSponsorCredits, onViewAdd
             </div>
           </div>
         </div>
+      </div>
+      <div className="mt-6">
+        <button
+          onClick={() => setShowHistory(!showHistory)}
+          className="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-2 py-1 rounded border border-gray-300 text-sm"
+        >
+          {showHistory ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+          Faucet History
+        </button>
+        {showHistory && (
+          <div className="mt-4 space-y-2">
+            {pool.history && pool.history.length > 0 ? (
+              [...pool.history]
+                .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+                .map((entry, index) => (
+                  <div key={index} className="text-sm text-gray-600">
+                    <div className="flex items-center">
+                      <span className="font-medium">{formatDateTime(entry.timestamp)}:</span> {entry.action} - {entry.details}
+                      {entry.outputs && entry.outputs.length > 0 && (
+                        <button
+                          onClick={() => {
+                            if (expandedHistoryIndices.includes(index)) {
+                              setExpandedHistoryIndices(expandedHistoryIndices.filter(i => i !== index))
+                            } else {
+                              setExpandedHistoryIndices([...expandedHistoryIndices, index])
+                            }
+                          }}
+                          className="ml-2 text-blue-500 hover:text-blue-700"
+                        >
+                          {expandedHistoryIndices.includes(index) ? "Collapse" : "Expand"}
+                        </button>
+                      )}
+                    </div>
+                    {expandedHistoryIndices.includes(index) && entry.outputs && (
+                      <div className="mt-2 pl-4">
+                        {entry.outputs.map((output, idx) => (
+                          <div key={idx} className="mb-2">
+                            <div>Address: {output.address}</div>
+                            <pre className="bg-gray-100 p-2 rounded text-xs">{JSON.stringify(output.response, null, 2)}</pre>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))
+            ) : (
+              <div className="text-sm text-gray-600">No history available</div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

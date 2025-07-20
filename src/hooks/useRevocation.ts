@@ -43,6 +43,15 @@ export const useRevocation = (
         ...selectedPool,
         addresses: selectedPool.addresses.filter(addr => addr !== revokeAddress),
         sponsoredAddresses: selectedPool.sponsoredAddresses.filter(addr => addr !== revokeAddress),
+        history: [
+          ...(selectedPool.history || []),
+          {
+            timestamp: new Date().toISOString(),
+            action: "Revoked Access",
+            details: `Access to credits has been revoked`,
+            outputs: [{ address: revokeAddress, response }],
+          },
+        ],
       }
 
       if (updatedPool.addresses.includes(revokeAddress) || updatedPool.sponsoredAddresses.includes(revokeAddress)) {

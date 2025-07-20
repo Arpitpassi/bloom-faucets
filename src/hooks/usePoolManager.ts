@@ -49,11 +49,11 @@ export function usePoolManager(
       setSelectedPool(null)
       setShowPoolActions(false)
     }
-  }, [connected, address])
+  }, [connected, address, setShowPoolActions, setShowCreateModal, setShowEditModal])
 
   const poolOps = usePoolOperations(
     pools, setPools, selectedPool, setSelectedPool, setTotalPools, setActivePools,
-    connected, address, showError, showSuccess, setShowCreateModal, setShowEditModal, setShowPoolActions
+    connected, address, setShowCreateModal, setShowEditModal, setShowPoolActions, showError, showSuccess
   )
 
   const balanceOps = useBalance(

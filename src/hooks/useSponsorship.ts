@@ -74,7 +74,6 @@ export const useSponsorship = (
       }
       setTerminalRawOutput(rawOutputs)
 
-      // Update pending addresses
       setPendingAddresses(prev => prev.filter(addr => !successfullySponsored.includes(addr)))
 
       if (successfulShares > 0) {
@@ -88,11 +87,19 @@ export const useSponsorship = (
           showSuccess("Credits Sponsored", message)
         }
 
-        // Update pool with only successfully sponsored addresses
         const updatedPool = {
           ...selectedPool!,
           sponsoredAddresses: [...new Set([...selectedPool!.sponsoredAddresses, ...successfullySponsored])],
           balance: await fetchBalance(connected, showError) ?? selectedPool!.balance,
+          history: [
+            ...(selectedPool!.history || []),
+            {
+              timestamp: new Date().toISOString(),
+              action: "Sponsored Credits",
+              details: `Sponsored credits to ${successfulShares} addresses`,
+              outputs: rawOutputs,
+            },
+          ],
         }
         const updatedPools = pools.map(p => p.id === selectedPool!.id ? updatedPool : p)
         savePools(updatedPools, setPools, setTotalPools, setActivePools)
@@ -120,7 +127,6 @@ export const useSponsorship = (
     const unsponsoredAddresses = selectedPool.addresses.filter(addr => !selectedPool.sponsoredAddresses.includes(addr))
     const alreadySponsoredAddresses = selectedPool.addresses.filter(addr => selectedPool.sponsoredAddresses.includes(addr))
 
-    // Show toast for already sponsored addresses
     if (alreadySponsoredAddresses.length > 0) {
       showInfo(
         "Already Sponsored",
@@ -183,7 +189,6 @@ export const useSponsorship = (
     const alreadySponsoredAddresses = pendingAddresses.filter(addr => selectedPool!.sponsoredAddresses.includes(addr))
     const unsponsoredPendingAddresses = pendingAddresses.filter(addr => !selectedPool!.sponsoredAddresses.includes(addr))
 
-    // Show toast for already sponsored addresses in pending list
     if (alreadySponsoredAddresses.length > 0) {
       showInfo(
         "Already Sponsored",

@@ -21,6 +21,7 @@ export const loadPools = async (
     poolId: id,
     sponsoredAddresses: pool.sponsoredAddresses || [],
     expireBySeconds: pool.expireBySeconds ?? null,
+    history: pool.history || [], // Ensure history field exists
   }))
 
   if (connected && address && window.arweaveWallet) {
@@ -61,6 +62,7 @@ export const savePools = (
       sponsoredAddresses: pool.sponsoredAddresses,
       sponsorInfo: pool.sponsorInfo,
       expireBySeconds: pool.expireBySeconds,
+      history: pool.history, // Include history field
     }
     return acc
   }, {} as { [key: string]: Omit<Pool, "id" | "status" | "poolId" | "balance"> })
