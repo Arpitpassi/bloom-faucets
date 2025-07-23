@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useCallback } from "react"
 import { X } from "lucide-react"
 
@@ -27,17 +29,13 @@ export const useToast = () => {
       setToasts((prev) => [...prev, { id, title, message, type }])
       setTimeout(() => removeToast(id), 3000)
     },
-    [removeToast]
+    [removeToast],
   )
 
-  const showSuccess = (title: string, message: string) =>
-    showToast("success", title, message)
-  const showError = (title: string, message: string) =>
-    showToast("error", title, message)
-  const showWarning = (title: string, message: string) =>
-    showToast("warning", title, message)
-  const showInfo = (title: string, message: string) =>
-    showToast("info", title, message)
+  const showSuccess = (title: string, message: string) => showToast("success", title, message)
+  const showError = (title: string, message: string) => showToast("error", title, message)
+  const showWarning = (title: string, message: string) => showToast("warning", title, message)
+  const showInfo = (title: string, message: string) => showToast("info", title, message)
 
   return { toasts, removeToast, showSuccess, showError, showWarning, showInfo }
 }
@@ -48,14 +46,14 @@ export function ToastContainer({ toasts, onRemove, className }: ToastProps) {
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className={`relative p-4 rounded-xl border-2 shadow-sm ${
+          className={`relative p-4 rounded-none border-2 shadow-sm ${
             toast.type === "success"
               ? "bg-green-100 border-green-300 text-green-800"
               : toast.type === "error"
-              ? "bg-red-100 border-red-300 text-red-800"
-              : toast.type === "warning"
-              ? "bg-yellow-100 border-yellow-300 text-yellow-800"
-              : "bg-blue-100 border-blue-300 text-blue-800"
+                ? "bg-red-100 border-red-300 text-red-800"
+                : toast.type === "warning"
+                  ? "bg-yellow-100 border-yellow-300 text-yellow-800"
+                  : "bg-blue-100 border-blue-300 text-blue-800"
           }`}
         >
           <div className="pr-8">
@@ -64,7 +62,7 @@ export function ToastContainer({ toasts, onRemove, className }: ToastProps) {
           </div>
           <button
             onClick={() => onRemove(toast.id)}
-            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-200 transition-colors"
+            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-1 rounded-none hover:bg-gray-200 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>

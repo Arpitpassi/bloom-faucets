@@ -1,3 +1,5 @@
+"use client"
+
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { X, ExternalLink, Calculator, FileText, Database, Shield, BarChart3 } from "lucide-react"
@@ -23,16 +25,12 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-brand-snow-drift text-brand-night font-mono relative overflow-hidden">
-      {/* Geometric Decorations */}
-      <div className="fixed top-0 right-0 w-48 h-48 border-2 border-gray-300 bg-black/5 rounded-bl-full -z-10" />
-      <div className="fixed bottom-0 left-0 w-48 h-48 border-2 border-gray-300 bg-black/5 rounded-tr-full -z-10" />
-
       {/* Header */}
-      <header className="bg spring-wood shadow-sm border-b border-gray-300">
+      <header className="bg-brand-snow-drift shadow-sm border-b border-gray-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <img src={Logo} alt="Bloom Faucets Logo" className="h-5 w-auto" />
+              <img src={Logo || "/placeholder.svg"} alt="Bloom Faucets Logo" className="h-5 w-auto" />
             </div>
             <button
               onClick={() => setShowContactModal(true)}
@@ -45,20 +43,14 @@ export default function HomePage() {
       </header>
 
       {/* Hero Section */}
-      <section className="py-16">
+      <section className="py-16 bg-brand-snow-drift">
         <div className="max-w-7xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <SplitText
             text="faucets.beta"
             className="text-3xl md:text-6xl font-inter-tight-bold mb-6 inline-block text-faucets-beta"
-            delay={100}
+            delay={0.1} // Start animation slightly after load
             duration={0.6}
-            ease="power3.out"
             splitType="chars"
-            from={{ opacity: 0, transform: "translateY(40px)" }}
-            to={{ opacity: 1, transform: "translateY(0)" }}
-            threshold={0.1}
-            rootMargin="-100px"
-            textAlign="center"
             onLetterAnimationComplete={handleAnimationComplete}
           />
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
@@ -67,13 +59,13 @@ export default function HomePage() {
           <div className="flex justify-center gap-6 flex-wrap">
             <button
               onClick={handleGetStarted}
-              className="bg-white text-brand-night border-2 border-brand-night px-8 py-4 text-lg font-semibold hover:bg-brand-night hover:text-white transition-colors rounded-xl"
+              className="bg-white text-brand-night border-2 border-brand-night px-8 py-4 text-lg font-semibold hover:bg-brand-night hover:text-white transition-colors rounded-none"
             >
               Get Started
             </button>
             <button
               onClick={() => setShowHowToModal(true)}
-              className="bg-white text-brand-night border-2 border-brand-night px-8 py-4 text-lg font-semibold hover:bg-brand-night hover:text-white transition-colors rounded-xl"
+              className="bg-white text-brand-night border-2 border-brand-night px-8 py-4 text-lg font-semibold hover:bg-brand-night hover:text-white transition-colors rounded-none"
             >
               Guides
             </button>
@@ -82,36 +74,59 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 bg-brand spring-wood">
+      <section className="py-16 bg-brand-spring-wood">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center mb-12">Features</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-6 text-center hover:bg-gray-100 transition-colors rounded-2xl">
+            <div className="p-6 text-center hover:bg-gray-100 transition-colors rounded-none">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 border-2 border-blue-300 flex items-center justify-center mb-4 mx-auto rounded-2xl">
                 <Database className="w-8 h-8 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold mb-3">Faucet Management</h3>
-              <p className="text-gray-600">
-                Create multiple sponsor faucets to fund them with turbo credits.
-              </p>
+              <p className="text-gray-600">Create multiple sponsor faucets to fund them with turbo credits.</p>
             </div>
-            <div className="p-6 text-center hover:bg-gray-100 transition-colors rounded-2xl">
+            <div className="p-6 text-center hover:bg-gray-100 transition-colors rounded-none">
               <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 border-2 border-green-300 flex items-center justify-center mb-4 mx-auto rounded-2xl">
                 <Shield className="w-8 h-8 text-green-600" />
               </div>
               <h3 className="text-xl font-semibold mb-3">Access Control</h3>
-              <p className="text-gray-600">
-                Whitelist specific addresses and manage user access.
-              </p>
+              <p className="text-gray-600">Whitelist specific addresses and manage user access.</p>
             </div>
-            <div className="p-6 text-center hover:bg-gray-100 transition-colors rounded-2xl">
+            <div className="p-6 text-center hover:bg-gray-100 transition-colors rounded-none">
               <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 border-2 border-purple-300 flex items-center justify-center mb-4 mx-auto rounded-2xl">
                 <BarChart3 className="w-8 h-8 text-purple-600" />
               </div>
               <h3 className="text-xl font-semibold mb-3">Real-time Analytics</h3>
-              <p className="text-gray-600">
-                Monitor faucet usage and complete control over faucet activites
-              </p>
+              <p className="text-gray-600">Monitor faucet usage and complete control over faucet activites</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Product Tour Section */}
+      <section className="py-16 bg-brand-spring-wood">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center mb-12">Product Tour</h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="relative w-full pb-[56.25%] h-0 shadow-lg border-2 border-gray-300 rounded-lg overflow-hidden">
+              <iframe
+                className="absolute top-0 left-0 w-full h-full"
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ" // Placeholder YouTube video 1
+                title="Product Demo 1"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+            <div className="relative w-full pb-[56.25%] h-0 shadow-lg border-2 border-gray-300 rounded-lg overflow-hidden">
+              <iframe
+                className="absolute top-0 left-0 w-full h-full"
+                src="https://www.youtube.com/embed/oHg5SJYRHA0" // Placeholder YouTube video 2
+                title="Product Demo 2"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
             </div>
           </div>
         </div>
@@ -183,10 +198,10 @@ export default function HomePage() {
       {/* How To Modal */}
       {showHowToModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-2 border-gray-300 max-w-lg w-full p-8 relative rounded-2xl">
+          <div className="bg-white border-2 border-gray-300 max-w-lg w-full p-8 relative rounded-none">
             <button
               onClick={() => setShowHowToModal(false)}
-              className="absolute top-4 right-4 text-2xl font-bold hover:text-gray-600 p-1 rounded-xl hover:bg-gray-100 transition-colors"
+              className="absolute top-4 right-4 text-2xl font-bold hover:text-gray-600 p-1 rounded-none hover:bg-gray-100 transition-colors"
             >
               <X className="w-6 h-6" />
             </button>
@@ -197,7 +212,7 @@ export default function HomePage() {
                   setShowHowToModal(false)
                   setShowPoolsGuide(true)
                 }}
-                className="bg-white text-brand-night border-2 border-brand-night px-10 py-4 text-lg font-semibold hover:bg-brand-night hover:text-white transition-colors rounded-xl flex-1"
+                className="bg-white text-brand-night border-2 border-brand-night px-10 py-4 text-lg font-semibold hover:bg-brand-night hover:text-white transition-colors rounded-none flex-1"
               >
                 Setup Faucets
               </button>
@@ -206,7 +221,7 @@ export default function HomePage() {
                   setShowHowToModal(false)
                   setShowCreditsGuide(true)
                 }}
-                className="bg-white text-brand-night border-2 border-brand-night px-10 py-4 text-lg font-semibold hover:bg-brand-night hover:text-white transition-colors rounded-xl flex-1"
+                className="bg-white text-brand-night border-2 border-brand-night px-10 py-4 text-lg font-semibold hover:bg-brand-night hover:text-white transition-colors rounded-none flex-1"
               >
                 Use Shared Credits
               </button>
@@ -221,10 +236,10 @@ export default function HomePage() {
       {/* Contact Modal */}
       {showContactModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-2 border-gray-300 max-w-md w-full p-8 relative rounded-2xl">
+          <div className="bg-white border-2 border-gray-300 max-w-md w-full p-8 relative rounded-none">
             <button
               onClick={() => setShowContactModal(false)}
-              className="absolute top-4 right-4 text-2xl font-bold hover:text-gray-600 p-1 rounded-xl hover:bg-gray-100 transition-colors"
+              className="absolute top-4 right-4 text-2xl font-bold hover:text-gray-600 p-1 rounded-none hover:bg-gray-100 transition-colors"
             >
               <X className="w-6 h-6" />
             </button>
