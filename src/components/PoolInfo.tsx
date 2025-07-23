@@ -11,6 +11,7 @@ interface PoolInfoProps {
   onSponsorCredits: () => void
   onViewAddresses: () => void
   onViewHistory: () => void
+  showTerminal: boolean // Added prop
 }
 
 export default function PoolInfo({
@@ -19,6 +20,7 @@ export default function PoolInfo({
   onSponsorCredits,
   onViewAddresses,
   onViewHistory,
+  showTerminal, // Destructure prop
 }: PoolInfoProps) {
   return (
     <div className="bg-brand-snow-drift shadow-md p-8 rounded-xs">
@@ -56,6 +58,7 @@ export default function PoolInfo({
               <Button
                 onClick={onSponsorCredits}
                 className="bg-yellow-500 text-white px-6 py-2 text-sm font-medium hover:bg-yellow-600 transition-colors"
+                disabled={showTerminal} // Disable when terminal is active
               >
                 Sponsor Credits
               </Button>

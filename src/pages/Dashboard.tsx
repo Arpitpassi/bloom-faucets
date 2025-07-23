@@ -160,6 +160,7 @@ export default function Dashboard() {
                   onSponsorCredits={handleSponsorCredits}
                   onViewAddresses={() => setShowAddressesModal(true)}
                   onViewHistory={() => setShowHistoryModal(true)}
+                  showTerminal={showTerminal} // Pass showTerminal prop
                 />
                 {pendingAddresses.length > 0 && (
                   <div className="bg-yellow-100 border-2 border-yellow-300 p-4 mt-4 shadow-md rounded-xs">
