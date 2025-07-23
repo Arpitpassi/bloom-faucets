@@ -26,10 +26,10 @@ export default function FaucetHistoryModal({ isOpen, pool, onClose }: FaucetHist
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-white border-2 border-gray-300 max-w-4xl w-full max-h-[85vh] overflow-y-auto p-8 sm:p-10 relative rounded-none">
+      <div className="bg-white max-w-4xl w-full max-h-[85vh] overflow-y-auto p-8 sm:p-10 relative rounded-xs">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-2xl font-bold hover:text-gray-600 p-1 hover:bg-gray-100 transition-colors rounded-none"
+          className="absolute top-4 right-4 text-2xl font-bold hover:text-gray-600 p-1 hover:bg-gray-100 transition-colors rounded-xs"
         >
           <X className="w-6 h-6" />
         </button>
@@ -47,7 +47,7 @@ export default function FaucetHistoryModal({ isOpen, pool, onClose }: FaucetHist
                     {entry.outputs && entry.outputs.length > 0 && (
                       <button
                         onClick={() => toggleHistoryEntry(index)}
-                        className="ml-2 text-blue-500 hover:text-blue-700 flex items-center gap-1"
+                        className="ml-2 text-blue-500 hover:text-blue-700 flex items-center gap-1 rounded-xs"
                       >
                         {expandedHistoryIndices.includes(index) ? (
                           <ChevronUp className="w-4 h-4" />
@@ -61,7 +61,7 @@ export default function FaucetHistoryModal({ isOpen, pool, onClose }: FaucetHist
                   {expandedHistoryIndices.includes(index) && entry.outputs && (
                     <div className="mt-2 pl-4 space-y-2">
                       {entry.outputs.map((output, idx) => (
-                        <div key={idx} className="bg-gray-100 p-3 rounded-none text-xs border border-gray-200">
+                        <div key={idx} className="bg-gray-100 p-3 text-xs border border-gray-200 rounded-xs">
                           <div className="font-semibold mb-1">Address: {output.address}</div>
                           <pre className="whitespace-pre-wrap text-gray-700">
                             {JSON.stringify(output.response, null, 2)}

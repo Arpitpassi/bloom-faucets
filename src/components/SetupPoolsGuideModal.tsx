@@ -12,10 +12,10 @@ export default function SetupPoolsGuideModal({ isOpen, onClose }: SetupPoolsGuid
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-white border-2 border-gray-300 max-w-4xl w-full max-h-[85vh] overflow-y-auto p-8 sm:p-10 relative rounded-none">
+      <div className="bg-white max-w-4xl w-full max-h-[85vh] overflow-y-auto p-8 sm:p-10 relative rounded-xs">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-2xl font-bold hover:text-gray-600 p-1 hover:bg-gray-100 transition-colors rounded-none"
+          className="absolute top-4 right-4 text-2xl font-bold hover:text-gray-600 p-1 hover:bg-gray-100 transition-colors rounded-xs"
         >
           <X className="w-6 h-6" />
         </button>
@@ -174,7 +174,7 @@ export default function SetupPoolsGuideModal({ isOpen, onClose }: SetupPoolsGuid
             for support.
           </li>
         </ul>
-        <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-8 rounded-none">
+        <div className="bg-red-50 border-l-4 border-red-500 p-4 mt-8 rounded-xs">
           <p className="font-semibold text-red-800">Note: This is a beta application. Read the Disclaimer.</p>
         </div>
       </div>

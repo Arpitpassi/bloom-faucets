@@ -15,11 +15,11 @@ interface PoolListProps {
 
 export default function PoolList({ pools, selectedPool, onPoolSelect, onCreatePool, onPoolActions }: PoolListProps) {
   return (
-    <div className="w-80 bg-brand-snow-drift rounded-none shadow-lg border-r border-gray-200 p-6 overflow-y-auto">
+    <div className="w-80 bg-brand-snow-drift shadow-lg p-6 overflow-y-auto rounded-xs">
       <h2 className="text-lg font-semibold mb-6 pb-3 border-b border-gray-200">FAUCETS</h2>
       <Button
         onClick={onCreatePool}
-        className="w-full bg-white text-brand-night border-2 border-brand-night p-3 rounded-none text-sm font-medium mb-6 hover:bg-brand-night hover:text-white transition-colors"
+        className="w-full bg-white text-brand-night border-2 border-brand-night p-3 text-sm font-medium mb-6 hover:bg-brand-night hover:text-white transition-colors"
       >
         + New Faucet
       </Button>
@@ -35,9 +35,9 @@ export default function PoolList({ pools, selectedPool, onPoolSelect, onCreatePo
             <div className="flex justify-between items-center mb-3">
               <div className="font-semibold text-base">{pool.name}</div>
               <Badge
-                className={`text-xs font-medium px-2 py-1 rounded-none ${
+                className={`text-xs font-medium px-2 py-1 ${
                   pool.status === "Active" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-                }`}
+                } rounded-xs`}
               >
                 {pool.status}
               </Badge>
@@ -65,7 +65,7 @@ export default function PoolList({ pools, selectedPool, onPoolSelect, onCreatePo
                   e.stopPropagation()
                   onPoolActions()
                 }}
-                className="w-full bg-white text-brand-night border-2 border-brand-night p-2 mt-3 rounded-none text-sm font-medium hover:bg-brand-night hover:text-white transition-colors"
+                className="w-full bg-white text-brand-night border-2 border-brand-night p-2 mt-3 text-sm font-medium hover:bg-brand-night hover:text-white transition-colors"
               >
                 Faucet Actions
               </Button>

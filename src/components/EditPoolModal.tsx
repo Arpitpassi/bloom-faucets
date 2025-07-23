@@ -31,8 +31,8 @@ export default function EditPoolModal({ isOpen, pool, onClose, onEditPool }: Edi
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-brand-snow-drift border-2 border-gray-200 shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 rounded-none">
-        <Button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 rounded-none">
+      <div className="bg-brand-snow-drift shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8">
+        <Button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
           <X className="w-6 h-6" />
         </Button>
         <h3 className="text-xl font-semibold mb-6 text-gray-900">EDIT FAUCET - {pool.name}</h3>
@@ -43,7 +43,7 @@ export default function EditPoolModal({ isOpen, pool, onClose, onEditPool }: Edi
               name="poolName"
               type="text"
               defaultValue={pool.name}
-              className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-none"
+              className="w-full p-3 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent"
               required
             />
           </div>
@@ -54,7 +54,7 @@ export default function EditPoolModal({ isOpen, pool, onClose, onEditPool }: Edi
                 name="startTime"
                 type="datetime-local"
                 defaultValue={toDateTimeLocal(pool.startTime)}
-                className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-none"
+                className="w-full p-3 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                 required
               />
             </div>
@@ -64,7 +64,7 @@ export default function EditPoolModal({ isOpen, pool, onClose, onEditPool }: Edi
                 name="endTime"
                 type="datetime-local"
                 defaultValue={toDateTimeLocal(pool.endTime)}
-                className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-none"
+                className="w-full p-3 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:focus:border-transparent"
                 required
               />
             </div>
@@ -78,7 +78,7 @@ export default function EditPoolModal({ isOpen, pool, onClose, onEditPool }: Edi
               min="0"
               pattern="^\d*(\.\d{0,6})?$"
               defaultValue={pool.usageCap}
-              className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-none"
+              className="w-full p-3 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent"
               required
             />
           </div>
@@ -89,20 +89,20 @@ export default function EditPoolModal({ isOpen, pool, onClose, onEditPool }: Edi
               rows={4}
               defaultValue={pool.addresses.join("\n")}
               placeholder="Enter one Arweave address per line"
-              className="w-full p-3 border-2 border-gray-300 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent rounded-none"
+              className="w-full p-3 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent"
             />
           </div>
           <div className="flex gap-4">
             <Button
               type="submit"
-              className="flex-1 bg-white text-brand-night border-2 border-brand-night p-3 rounded-none text-sm font-medium hover:bg-brand-night hover:text-white transition-colors"
+              className="flex-1 bg-white text-brand-night border-2 border-brand-night p-3 text-sm font-medium hover:bg-brand-night hover:text-white transition-colors"
             >
               Save Changes
             </Button>
             <Button
               type="button"
               onClick={onClose}
-              className="bg-white text-gray-700 border-2 border-gray-300 p-3 rounded-none text-sm font-medium hover:bg-gray-50 transition-colors"
+              className="bg-white text-gray-700 border-2 border-gray-300 p-3 text-sm font-medium hover:bg-gray-50 transition-colors"
             >
               Cancel
             </Button>

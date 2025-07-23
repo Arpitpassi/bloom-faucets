@@ -52,7 +52,7 @@ const TerminalLoading: React.FC<TerminalLoadingProps> = ({
         !isActive && !result && !error && "hidden",
       )}
     >
-      <div className="bg-white border-2 border-gray-300 shadow-xl max-w-xl w-full p-8 rounded-none">
+      <div className="bg-white shadow-xl max-w-xl w-full p-8 rounded-xs">
         <div className="flex items-center space-x-2 mb-4">
           <Terminal className="w-5 h-5 text-gray-900" />
           <span className="text-gray-900 font-mono font-semibold">
@@ -105,7 +105,7 @@ const TerminalLoading: React.FC<TerminalLoadingProps> = ({
             )}
             {(actionType === "sponsor" || actionType === "revoke") && rawOutput && rawOutput.length > 0 && (
               <div className="mt-4">
-                <pre className="text-gray-700 text-sm font-mono whitespace-pre-wrap max-h-64 overflow-auto bg-gray-50 border-2 border-gray-200 p-4 rounded-none">
+                <pre className="text-gray-700 text-sm font-mono whitespace-pre-wrap max-h-64 overflow-auto bg-gray-50 p-4 rounded-xs">
                   {rawOutput.map((output, index) => (
                     <div key={index} className="mb-2">
                       <span className="text-gray-900">Address: {output.address}</span>
@@ -121,7 +121,7 @@ const TerminalLoading: React.FC<TerminalLoadingProps> = ({
         <div className="mt-6 text-center">
           <button
             onClick={onComplete}
-            className="bg-white text-black border-2 border-black px-6 py-3 rounded-none text-sm font-semibold hover:bg-black hover:text-white transition-colors"
+            className="bg-white text-black border-2 border-black px-6 py-3 text-sm font-semibold hover:bg-black hover:text-white transition-colors rounded-xs"
           >
             Close Terminal
           </button>

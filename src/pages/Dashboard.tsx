@@ -107,7 +107,7 @@ export default function Dashboard() {
       />
 
       <div className="flex-1 p-6 overflow-y-auto">
-        <div className="bg-brand-snow-drift rounded-none shadow-md border border-gray-200 p-4 text-center mb-6">
+        <div className="bg-brand-snow-drift shadow-md p-4 text-center mb-6 rounded-xs">
           <h2 className="text-lg font-bold mb-3 text-gray-900">FAUCET MANAGER</h2>
           <div className="flex items-center justify-around">
             <div className="text-center">
@@ -162,14 +162,14 @@ export default function Dashboard() {
                   onViewHistory={() => setShowHistoryModal(true)}
                 />
                 {pendingAddresses.length > 0 && (
-                  <div className="bg-yellow-100 border-2 border-yellow-300 p-4 rounded-none mt-4 shadow-md">
+                  <div className="bg-yellow-100 border-2 border-yellow-300 p-4 mt-4 shadow-md rounded-xs">
                     <div className="flex justify-between items-center mb-2">
                       <h3 className="text-lg font-semibold text-yellow-800">
                         Pending Sponsorships ({pendingAddresses.length})
                       </h3>
                       <Button
                         onClick={() => setShowPendingAddresses(!showPendingAddresses)}
-                        className="bg-yellow-500 text-white px-2 py-1 rounded-none"
+                        className="bg-yellow-500 text-white px-2 py-1"
                       >
                         {showPendingAddresses ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                       </Button>
@@ -186,17 +186,14 @@ export default function Dashboard() {
                         ))}
                       </div>
                     )}
-                    <Button
-                      onClick={retryPendingSponsorship}
-                      className="mt-2 bg-yellow-500 text-white px-4 py-2 rounded-none"
-                    >
+                    <Button onClick={retryPendingSponsorship} className="mt-2 bg-yellow-500 text-white px-4 py-2">
                       Retry Sponsorship for {pendingAddresses.length} Addresses
                     </Button>
                   </div>
                 )}
               </>
             ) : (
-              <div className="bg-brand-snow-drift rounded-none shadow-md border border-gray-200 p-8">
+              <div className="bg-brand-snow-drift shadow-md border border-gray-200 p-8 rounded-xs">
                 <h3 className="text-lg font-semibold mb-4 text-gray-900">YOUR FAUCETS</h3>
                 <p className="text-gray-600">
                   Already created faucets will appear in the sidebar once loaded. Click on a faucet to view its details.
@@ -226,7 +223,7 @@ export default function Dashboard() {
       />
       {insufficientCredits.show && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-2 border-gray-300 p-8 rounded-none">
+          <div className="bg-white p-8 rounded-xs">
             <h3 className="text-lg font-semibold mb-4">Insufficient Credits</h3>
             <p className="mb-4">
               You have {insufficientCredits.availableCredits.toFixed(4)} credits available, but{" "}
@@ -235,13 +232,10 @@ export default function Dashboard() {
               You can fully fund {insufficientCredits.maxFundable} wallets with the available credits.
             </p>
             <div className="flex gap-4">
-              <Button
-                onClick={proceedWithPartialSponsorship}
-                className="bg-green-500 text-white px-4 py-2 rounded-none"
-              >
+              <Button onClick={proceedWithPartialSponsorship} className="bg-green-500 text-white px-4 py-2">
                 Proceed with {insufficientCredits.maxFundable} wallets
               </Button>
-              <Button onClick={cancelSponsorship} className="bg-red-500 text-white px-4 py-2 rounded-none">
+              <Button onClick={cancelSponsorship} className="bg-red-500 text-white px-4 py-2">
                 Cancel
               </Button>
             </div>

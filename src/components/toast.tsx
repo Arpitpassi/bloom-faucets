@@ -46,7 +46,7 @@ export function ToastContainer({ toasts, onRemove, className }: ToastProps) {
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className={`relative p-4 rounded-none border-2 shadow-sm ${
+          className={`relative p-4 border-2 shadow-sm rounded-xs ${
             toast.type === "success"
               ? "bg-green-100 border-green-300 text-green-800"
               : toast.type === "error"
@@ -62,7 +62,7 @@ export function ToastContainer({ toasts, onRemove, className }: ToastProps) {
           </div>
           <button
             onClick={() => onRemove(toast.id)}
-            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-1 rounded-none hover:bg-gray-200 transition-colors"
+            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-1 hover:bg-gray-200 transition-colors rounded-xs"
           >
             <X className="w-4 h-4" />
           </button>

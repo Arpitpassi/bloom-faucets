@@ -59,13 +59,13 @@ export default function HomePage() {
           <div className="flex justify-center gap-6 flex-wrap">
             <button
               onClick={handleGetStarted}
-              className="bg-white text-brand-night border-2 border-brand-night px-8 py-4 text-lg font-semibold hover:bg-brand-night hover:text-white transition-colors rounded-none"
+              className="bg-white text-brand-night border-2 border-brand-night px-8 py-4 text-lg font-semibold hover:bg-brand-night hover:text-white transition-colors rounded-xs"
             >
               Get Started
             </button>
             <button
               onClick={() => setShowHowToModal(true)}
-              className="bg-white text-brand-night border-2 border-brand-night px-8 py-4 text-lg font-semibold hover:bg-brand-night hover:text-white transition-colors rounded-none"
+              className="bg-white text-brand-night border-2 border-brand-night px-8 py-4 text-lg font-semibold hover:bg-brand-night hover:text-white transition-colors rounded-xs"
             >
               Guides
             </button>
@@ -212,7 +212,7 @@ export default function HomePage() {
                   setShowHowToModal(false)
                   setShowPoolsGuide(true)
                 }}
-                className="bg-white text-brand-night border-2 border-brand-night px-10 py-4 text-lg font-semibold hover:bg-brand-night hover:text-white transition-colors rounded-none flex-1"
+                className="bg-white text-brand-night border-2 border-brand-night px-10 py-4 text-lg font-semibold hover:bg-brand-night hover:text-white transition-colors rounded-xs flex-1"
               >
                 Setup Faucets
               </button>
@@ -221,7 +221,7 @@ export default function HomePage() {
                   setShowHowToModal(false)
                   setShowCreditsGuide(true)
                 }}
-                className="bg-white text-brand-night border-2 border-brand-night px-10 py-4 text-lg font-semibold hover:bg-brand-night hover:text-white transition-colors rounded-none flex-1"
+                className="bg-white text-brand-night border-2 border-brand-night px-10 py-4 text-lg font-semibold hover:bg-brand-night hover:text-white transition-colors rounded-xs flex-1"
               >
                 Use Shared Credits
               </button>
