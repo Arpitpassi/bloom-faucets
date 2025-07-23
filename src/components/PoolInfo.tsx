@@ -40,7 +40,7 @@ export default function PoolInfo({
               <span className="text-gray-600 font-medium">Whitelisted Addresses ({pool.addresses.length}):</span>
               <button
                 onClick={onViewAddresses}
-                className="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-2 py-1 text-sm rounded-xs"
+                className="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-2 py-1 text-sm rounded-xs bg-gray-200 hover:bg-gray-300"
               >
                 <Users className="w-3 h-3" />
                 View

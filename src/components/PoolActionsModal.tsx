@@ -38,7 +38,7 @@ export default function PoolActionsModal({
             <h4 className="text-sm font-semibold text-gray-700">REVOKE ACCESS</h4>
             <button
               onClick={onViewAddresses}
-              className="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-2 py-1 text-sm rounded-xs"
+              className="flex items-center gap-2 text-gray-700 hover:text-gray-900 px-2 py-1 text-sm rounded-xs bg-gray-200 hover:bg-gray-300"
             >
               <Users className="w-3 h-3" />
               View

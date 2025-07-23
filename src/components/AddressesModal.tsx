@@ -16,7 +16,7 @@ export default function AddressesModal({ isOpen, pool, onClose, onCopyAddress }:
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-brand-snow-drift border shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8">
+      <div className="bg-brand-snow-drift shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 rounded-xs">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold text-gray-900">Whitelisted Addresses ({pool.addresses.length})</h3>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
@@ -25,10 +25,7 @@ export default function AddressesModal({ isOpen, pool, onClose, onCopyAddress }:
         </div>
         <div className="space-y-3">
           {pool.addresses.map((address, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between bg-white border-2 border-gray-300 p-4 rounded-none"
-            >
+            <div key={index} className="flex items-center justify-between bg-white p-4 rounded-none">
               <span className="text-sm break-all">{address}</span>
               <Button
                 onClick={() => onCopyAddress(address)}
