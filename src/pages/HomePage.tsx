@@ -111,8 +111,8 @@ export default function HomePage() {
             <div className="relative w-full pb-[56.25%] h-0 shadow-lg border-2 border-gray-300 rounded-lg overflow-hidden">
               <iframe
                 className="absolute top-0 left-0 w-full h-full"
-                src="https://www.youtube.com/embed/dQw4w9WgXcQ" // Placeholder YouTube video 1
-                title="Product Demo 1"
+                src="https://www.youtube.com/embed/3cKWv34cd94" // Placeholder YouTube video 1
+                title="Guide to setup Bloom faucets"
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
@@ -121,8 +121,8 @@ export default function HomePage() {
             <div className="relative w-full pb-[56.25%] h-0 shadow-lg border-2 border-gray-300 rounded-lg overflow-hidden">
               <iframe
                 className="absolute top-0 left-0 w-full h-full"
-                src="https://www.youtube.com/embed/oHg5SJYRHA0" // Placeholder YouTube video 2
-                title="Product Demo 2"
+                src="https://www.youtube.com/embed/OBVfwiCWVpQ" // Placeholder YouTube video 2
+                title="How to use shared credits"
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
