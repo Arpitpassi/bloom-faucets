@@ -246,7 +246,7 @@ export default function HomePage() {
             <p className="mb-6 text-gray-600">For any inquiries or support mail us at.</p>
             <p>
               <strong>Email:</strong>{" "}
-              <a href="mailto:support@bloomfaucets.com" className="text-blue-600 underline hover:text-blue-800">
+              <a href="mailto:nityaprotocol@gmail.com" className="text-blue-600 underline hover:text-blue-800">
                 nityaprotocol@gmail.com
               </a>
             </p>
