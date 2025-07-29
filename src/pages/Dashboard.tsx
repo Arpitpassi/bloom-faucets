@@ -176,7 +176,7 @@ export default function Dashboard() {
                       </Button>
                     </div>
                     <p className="text-yellow-800 mb-2">
-                      {pendingAddresses.length} addresses are still pending sponsorship. Add more credits to continue.
+                      {pendingAddresses.length} addresses are still pending sponsorship.
                     </p>
                     {showPendingAddresses && (
                       <div className="space-y-2 max-h-48 overflow-y-auto">
