@@ -87,10 +87,14 @@ export const useSponsorship = (
           showSuccess("Credits Sponsored", message)
         }
 
+        // Fetch the updated balance after sponsoring credits
+        const updatedBalance = await fetchBalance(connected, showError)
+
+        // Update the selected pool with new sponsored addresses and history
         const updatedPool = {
           ...selectedPool!,
           sponsoredAddresses: [...new Set([...selectedPool!.sponsoredAddresses, ...successfullySponsored])],
-          balance: await fetchBalance(connected, showError) ?? selectedPool!.balance,
+          balance: updatedBalance ?? selectedPool!.balance,
           history: [
             ...(selectedPool!.history || []),
             {
@@ -101,7 +105,14 @@ export const useSponsorship = (
             },
           ],
         }
-        const updatedPools = pools.map(p => p.id === selectedPool!.id ? updatedPool : p)
+
+        // Update all pools with the new balance, applying selectedPool updates only to the matching pool
+        const updatedPools = pools.map(p => ({
+          ...p,
+          balance: updatedBalance ?? p.balance,
+          ...(p.id === selectedPool!.id ? updatedPool : {})
+        }))
+
         savePools(updatedPools, setPools, setTotalPools, setActivePools)
         setSelectedPool(updatedPool)
       } else {
