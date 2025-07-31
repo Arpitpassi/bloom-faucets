@@ -209,7 +209,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 border-t border-gray-300">
         <div className="max-w-7xl mx-auto text-center">
-          <p className="text-gray-600">© 2025 Bloom. All rights reserved. Version 0.0.25</p>
+          <p className="text-gray-600">© 2025 Bloom. All rights reserved. Version 0.0.26</p>
         </div>
       </footer>
 
