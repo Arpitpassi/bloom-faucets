@@ -32,12 +32,30 @@ export default function HomePage() {
             <div className="flex items-center">
               <img src={Logo || "/placeholder.svg"} alt="Bloom Faucets Logo" className="h-5 w-auto" />
             </div>
-            <button
-              onClick={() => setShowContactModal(true)}
-              className="text-brand-night hover:underline font-semibold transition-all duration-200 cursor-pointer"
-            >
-              Mail Us
-            </button>
+            <div className="flex items-center space-x-4">
+              <a
+                href="https://x.com/usebloom_x"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-brand-night hover:underline font-semibold"
+              >
+                X
+              </a>
+              <a
+                href="https://bloom-uploads.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-brand-night hover:underline font-semibold"
+              >
+                Bloom Uploads
+              </a>
+              <button
+                onClick={() => setShowContactModal(true)}
+                className="text-brand-night hover:underline font-semibold transition-all duration-200 cursor-pointer"
+              >
+                Mail Us
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -48,7 +66,7 @@ export default function HomePage() {
           <SplitText
             text="faucets.beta"
             className="text-3xl md:text-6xl font-inter-tight-bold mb-6 inline-block text-faucets-beta"
-            delay={0.1} // Start animation slightly after load
+            delay={0.1}
             duration={0.6}
             splitType="chars"
             onLetterAnimationComplete={handleAnimationComplete}
@@ -111,7 +129,7 @@ export default function HomePage() {
             <div className="relative w-full pb-[56.25%] h-0 shadow-lg border-2 border-gray-300 rounded-lg overflow-hidden">
               <iframe
                 className="absolute top-0 left-0 w-full h-full"
-                src="https://www.youtube.com/embed/3cKWv34cd94" // Placeholder YouTube video 1
+                src="https://www.youtube.com/embed/3cKWv34cd94"
                 title="Guide to setup Bloom faucets"
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -121,7 +139,7 @@ export default function HomePage() {
             <div className="relative w-full pb-[56.25%] h-0 shadow-lg border-2 border-gray-300 rounded-lg overflow-hidden">
               <iframe
                 className="absolute top-0 left-0 w-full h-full"
-                src="https://www.youtube.com/embed/OBVfwiCWVpQ" // Placeholder YouTube video 2
+                src="https://www.youtube.com/embed/OBVfwiCWVpQ"
                 title="How to use shared credits"
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
