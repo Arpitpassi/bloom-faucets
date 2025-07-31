@@ -39,7 +39,7 @@ export default function HomePage() {
                 rel="noopener noreferrer"
                 className="text-brand-night hover:underline font-semibold"
               >
-                X
+                X Profile
               </a>
               <a
                 href="https://bloom-uploads.vercel.app/"
@@ -47,7 +47,7 @@ export default function HomePage() {
                 rel="noopener noreferrer"
                 className="text-brand-night hover:underline font-semibold"
               >
-                Bloom Uploads
+               Bloom Uploads
               </a>
               <button
                 onClick={() => setShowContactModal(true)}
