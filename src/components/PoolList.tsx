@@ -15,11 +15,11 @@ interface PoolListProps {
 
 export default function PoolList({ pools, selectedPool, onPoolSelect, onCreatePool, onPoolActions }: PoolListProps) {
   return (
-    <div className="w-80 bg-brand-snow-drift shadow-lg p-6 overflow-y-auto rounded-xs">
-      <h2 className="text-lg font-semibold mb-6 pb-3 border-b border-gray-200">FAUCETS</h2>
+    <div className="w-80 bg-card shadow-lg p-6 overflow-y-auto rounded-xs border border-border">
+      <h2 className="text-lg font-semibold mb-6 pb-3 border-b border-border text-foreground">FAUCETS</h2>
       <Button
         onClick={onCreatePool}
-        className="w-full bg-white text-brand-night border-2 border-brand-night p-3 text-sm font-medium mb-6 hover:bg-brand-night hover:text-white transition-colors"
+        className="w-full bg-primary text-primary-foreground border-2 border-primary p-3 text-sm font-medium mb-6 hover:bg-primary/90 hover:text-primary-foreground transition-colors"
       >
         + New Faucet
       </Button>
@@ -28,12 +28,12 @@ export default function PoolList({ pools, selectedPool, onPoolSelect, onCreatePo
           <div
             key={pool.id}
             onClick={() => onPoolSelect(pool)}
-            className={`bg-brand-snow-drift border border-gray-200 rounded-xl p-4 cursor-pointer transition-all hover:shadow-md ${
-              selectedPool?.id === pool.id ? "ring-2 ring-gray-900 bg-gray-50 shadow-lg" : "shadow-sm"
+            className={`bg-background border border-border rounded-xs p-4 cursor-pointer transition-all hover:shadow-md ${
+              selectedPool?.id === pool.id ? "ring-2 ring-primary bg-muted shadow-lg" : "shadow-sm"
             }`}
           >
             <div className="flex justify-between items-center mb-3">
-              <div className="font-semibold text-base">{pool.name}</div>
+              <div className="font-semibold text-base text-foreground">{pool.name}</div>
               <Badge
                 className={`text-xs font-medium px-2 py-1 ${
                   pool.status === "Active" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
@@ -42,21 +42,21 @@ export default function PoolList({ pools, selectedPool, onPoolSelect, onCreatePo
                 {pool.status}
               </Badge>
             </div>
-            <div className="text-sm text-gray-600 space-y-1">
+            <div className="text-sm text-muted-foreground space-y-1">
               <div>
                 Balance:{" "}
-                <span className="font-medium text-gray-900">
+                <span className="font-medium text-foreground">
                   {pool.balance !== null ? pool.balance.toFixed(4) : "Loading..."}
                 </span>
               </div>
               <div>
-                Usage Cap: <span className="font-medium text-gray-900">{pool.usageCap}</span>
+                Usage Cap: <span className="font-medium text-foreground">{pool.usageCap}</span>
               </div>
               <div className="text-xs">
                 Duration: {formatDateTime(pool.startTime)} - {formatDateTime(pool.endTime)}
               </div>
               <div>
-                Addresses: <span className="font-medium text-gray-900">{pool.addresses.length}</span>
+                Addresses: <span className="font-medium text-foreground">{pool.addresses.length}</span>
               </div>
             </div>
             {selectedPool?.id === pool.id && (
@@ -65,7 +65,7 @@ export default function PoolList({ pools, selectedPool, onPoolSelect, onCreatePo
                   e.stopPropagation()
                   onPoolActions()
                 }}
-                className="w-full bg-white text-brand-night border-2 border-brand-night p-2 mt-3 text-sm font-medium hover:bg-brand-night hover:text-white transition-colors"
+                className="w-full bg-primary text-primary-foreground border-2 border-primary p-2 mt-3 text-sm font-medium hover:bg-primary/90 hover:text-primary-foreground transition-colors"
               >
                 Faucet Actions
               </Button>

@@ -18,73 +18,75 @@ export default function CreatePoolModal({ isOpen, onClose, onCreatePool }: Creat
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-brand-snow-drift shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 rounded-xs">
-        <Button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+      <div className="bg-card shadow-xl max-w-xl w-full max-h-[80vh] overflow-y-auto p-8 rounded-xs border border-border">
+        <Button onClick={onClose} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground">
           <X className="w-6 h-6" />
         </Button>
-        <h3 className="text-xl font-semibold mb-6 text-gray-900">CREATE NEW FAUCET</h3>
+        <h3 className="text-xl font-semibold mb-6 text-foreground">CREATE NEW FAUCET</h3>
         <form onSubmit={onCreatePool} className="space-y-5">
           <div>
-            <label className="block text-sm font-semibold mb-2 text-gray-700">FAUCET NAME</label>
+            <label className="block text-sm font-semibold mb-2 text-muted-foreground">FAUCET NAME</label>
             <Input
               name="poolName"
               type="text"
-              className="w-full p-3 border-2 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+              className="w-full p-3 border border-input bg-input text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
               required
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold mb-2 text-gray-700">START TIME</label>
+              <label className="block text-sm font-semibold mb-2 text-muted-foreground">START TIME</label>
               <Input
                 name="startTime"
                 type="datetime-local"
-                className="w-full p-3 border-2 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                className="w-full p-3 border border-input bg-input text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold mb-2 text-gray-700">END TIME</label>
+              <label className="block text-sm font-semibold mb-2 text-muted-foreground">END TIME</label>
               <Input
                 name="endTime"
                 type="datetime-local"
-                className="w-full p-3 border-2 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                className="w-full p-3 border border-input bg-input text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
                 required
               />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-semibold mb-2 text-gray-700">MAX CREDITS PER WALLET (USAGE CAP)</label>
+            <label className="block text-sm font-semibold mb-2 text-muted-foreground">
+              MAX CREDITS PER WALLET (USAGE CAP)
+            </label>
             <Input
               name="usageCap"
               type="number"
               step="0.000001"
               min="0"
               pattern="^\d*(\.\d{0,6})?$"
-              className="w-full p-3 border-2 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+              className="w-full p-3 border border-input bg-input text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold mb-2 text-gray-700">WHITELISTED ADDRESSES</label>
+            <label className="block text-sm font-semibold mb-2 text-muted-foreground">WHITELISTED ADDRESSES</label>
             <Textarea
               name="addresses"
               rows={4}
               placeholder="Enter one Arweave address per line"
-              className="w-full p-3 border-2 bg-white text-sm focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+              className="w-full p-3 border border-input bg-input text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
             />
           </div>
           <div className="flex gap-4">
             <Button
               type="submit"
-              className="flex-1 bg-white text-brand-night border-2 border-brand-night p-3 text-sm font-medium hover:bg-brand-night hover:text-white transition-colors"
+              className="flex-1 bg-primary text-primary-foreground border-2 border-primary p-3 text-sm font-medium hover:bg-primary/90 transition-colors"
             >
               Create Faucet
             </Button>
             <Button
               type="button"
               onClick={onClose}
-              className="bg-white text-gray-700 border-2 border-gray-300 p-3 text-sm font-medium hover:bg-gray-50 transition-colors"
+              className="bg-secondary text-secondary-foreground border-2 border-border p-3 text-sm font-medium hover:bg-accent transition-colors"
             >
               Cancel
             </Button>

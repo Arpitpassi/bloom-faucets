@@ -89,18 +89,18 @@ export function TimeLeftDial({ startTime, endTime, size = 120 }: TimeLeftDialPro
 
   const getStatusColor = () => {
     if (!timeLeft.isActive) {
-      return timeLeft.percentage === 100 ? "text-red-500" : "text-gray-500"
+      return timeLeft.percentage === 100 ? "text-destructive" : "text-muted-foreground"
     }
-    if (timeLeft.percentage > 75) return "text-red-500"
-    if (timeLeft.percentage > 50) return "text-yellow-500"
-    return "text-green-500"
+    if (timeLeft.percentage > 75) return "text-destructive"
+    if (timeLeft.percentage > 50) return "text-yellow-500" // Keep yellow for warning
+    return "text-green-500" // Keep green for active
   }
 
   const getStrokeColor = () => {
     if (!timeLeft.isActive) {
-      return timeLeft.percentage === 100 ? "#ef4444" : "#6b7280"
+      return timeLeft.percentage === 100 ? "hsl(0 84.2% 60.2%)" : "hsl(0 0% 40%)" // Destructive or muted-foreground
     }
-    if (timeLeft.percentage > 75) return "#ef4444"
+    if (timeLeft.percentage > 75) return "hsl(0 84.2% 60.2%)"
     if (timeLeft.percentage > 50) return "#eab308"
     return "#22c55e"
   }
@@ -115,7 +115,8 @@ export function TimeLeftDial({ startTime, endTime, size = 120 }: TimeLeftDialPro
     <div className="flex flex-col items-center space-y-4">
       <div className="relative" style={{ width: size, height: size }}>
         <svg width={size} height={size} className="transform -rotate-90">
-          <circle cx={size / 2} cy={size / 2} r={radius} stroke="#e5e7eb" strokeWidth="8" fill="transparent" />
+          <circle cx={size / 2} cy={size / 2} r={radius} stroke="hsl(0 0% 95%)" strokeWidth="8" fill="transparent" />{" "}
+          {/* Muted background */}
           <circle
             cx={size / 2}
             cy={size / 2}
@@ -140,30 +141,30 @@ export function TimeLeftDial({ startTime, endTime, size = 120 }: TimeLeftDialPro
                   ? `${timeLeft.minutes}m`
                   : `${timeLeft.seconds}s`}
           </div>
-          <div className="text-xs text-gray-500 font-medium">{getStatusText()}</div>
+          <div className="text-xs text-muted-foreground font-medium">{getStatusText()}</div>
         </div>
       </div>
 
       <div className="text-center">
         <div className="grid grid-cols-4 gap-2 text-xs">
           <div className="text-center">
-            <div className="font-bold text-gray-900">{timeLeft.days}</div>
-            <div className="text-gray-500">Days</div>
+            <div className="font-bold text-foreground">{timeLeft.days}</div>
+            <div className="text-muted-foreground">Days</div>
           </div>
           <div className="text-center">
-            <div className="font-bold text-gray-900">{timeLeft.hours}</div>
-            <div className="text-gray-500">Hours</div>
+            <div className="font-bold text-foreground">{timeLeft.hours}</div>
+            <div className="text-muted-foreground">Hours</div>
           </div>
           <div className="text-center">
-            <div className="font-bold text-gray-900">{timeLeft.minutes}</div>
-            <div className="text-gray-500">Min</div>
+            <div className="font-bold text-foreground">{timeLeft.minutes}</div>
+            <div className="text-muted-foreground">Min</div>
           </div>
           <div className="text-center">
-            <div className="font-bold text-gray-900">{timeLeft.seconds}</div>
-            <div className="text-gray-500">Sec</div>
+            <div className="font-bold text-foreground">{timeLeft.seconds}</div>
+            <div className="text-muted-foreground">Sec</div>
           </div>
         </div>
-        <div className="mt-2 text-xs text-gray-500">{Math.round(timeLeft.percentage)}% Complete</div>
+        <div className="mt-2 text-xs text-muted-foreground">{Math.round(timeLeft.percentage)}% Complete</div>
       </div>
     </div>
   )

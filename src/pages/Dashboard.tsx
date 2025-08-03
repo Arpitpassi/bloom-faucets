@@ -85,7 +85,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-spring-wood text-gray-900 font-inter antialiased flex">
+    <div className="min-h-screen bg-background text-foreground font-sans antialiased flex">
       <ToastContainer toasts={toasts} onRemove={removeToast} className="z-[100]" />
       <TerminalLoading
         isActive={showTerminal && !!terminalStatus}
@@ -107,12 +107,12 @@ export default function Dashboard() {
       />
 
       <div className="flex-1 p-6 overflow-y-auto">
-        <div className="bg-brand-snow-drift shadow-md p-4 text-center mb-6 rounded-xs">
-          <h2 className="text-lg font-bold mb-3 text-gray-900">FAUCET MANAGER</h2>
+        <div className="bg-card shadow-md p-4 text-center mb-6 rounded-xs border border-border">
+          <h2 className="text-lg font-bold mb-3 text-foreground">FAUCET MANAGER</h2>
           <div className="flex items-center justify-around">
             <div className="text-center">
-              <div className="text-2xl font-bold text-gray-900">{totalPools}</div>
-              <div className="text-xs text-gray-500 font-medium">TOTAL FAUCETS</div>
+              <div className="text-2xl font-bold text-foreground">{totalPools}</div>
+              <div className="text-xs text-muted-foreground font-medium">TOTAL FAUCETS</div>
             </div>
             <WalletStatus
               connected={connected}
@@ -134,8 +134,8 @@ export default function Dashboard() {
               }}
             />
             <div className="text-center">
-              <div className="text-2xl font-bold text-gray-900">{activePools}</div>
-              <div className="text-xs text-gray-500 font-medium">ACTIVE FAUCETS</div>
+              <div className="text-2xl font-bold text-foreground">{activePools}</div>
+              <div className="text-xs text-muted-foreground font-medium">ACTIVE FAUCETS</div>
             </div>
           </div>
         </div>
@@ -194,9 +194,9 @@ export default function Dashboard() {
                 )}
               </>
             ) : (
-              <div className="bg-brand-snow-drift shadow-md border border-gray-200 p-8 rounded-xs">
-                <h3 className="text-lg font-semibold mb-4 text-gray-900">YOUR FAUCETS</h3>
-                <p className="text-gray-600">
+              <div className="bg-card shadow-md border border-border p-8 rounded-xs">
+                <h3 className="text-lg font-semibold mb-4 text-foreground">YOUR FAUCETS</h3>
+                <p className="text-muted-foreground">
                   Already created faucets will appear in the sidebar once loaded. Click on a faucet to view its details.
                 </p>
               </div>
@@ -224,9 +224,9 @@ export default function Dashboard() {
       />
       {insufficientCredits.show && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white p-8 rounded-xs">
-            <h3 className="text-lg font-semibold mb-4">Insufficient Credits</h3>
-            <p className="mb-4">
+          <div className="bg-card p-8 rounded-xs border border-border">
+            <h3 className="text-lg font-semibold mb-4 text-foreground">Insufficient Credits</h3>
+            <p className="mb-4 text-muted-foreground">
               You have {insufficientCredits.availableCredits.toFixed(4)} credits available, but{" "}
               {insufficientCredits.totalRequiredCredits.toFixed(4)} credits are needed to fund all{" "}
               {insufficientCredits.addresses.length} wallets. <br />
@@ -236,7 +236,7 @@ export default function Dashboard() {
               <Button onClick={proceedWithPartialSponsorship} className="bg-green-500 text-white px-4 py-2">
                 Proceed with {insufficientCredits.maxFundable} wallets
               </Button>
-              <Button onClick={cancelSponsorship} className="bg-red-500 text-white px-4 py-2">
+              <Button onClick={cancelSponsorship} className="bg-destructive text-destructive-foreground px-4 py-2">
                 Cancel
               </Button>
             </div>

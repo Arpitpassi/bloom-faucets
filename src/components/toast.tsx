@@ -62,7 +62,7 @@ export function ToastContainer({ toasts, onRemove, className }: ToastProps) {
           </div>
           <button
             onClick={() => onRemove(toast.id)}
-            className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 p-1 hover:bg-gray-200 transition-colors rounded-xs"
+            className="absolute top-2 right-2 text-muted-foreground hover:text-foreground p-1 hover:bg-muted transition-colors rounded-xs"
           >
             <X className="w-4 h-4" />
           </button>
