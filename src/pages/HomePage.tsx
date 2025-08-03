@@ -12,11 +12,11 @@ import {
   Database,
   Shield,
   BarChart3,
+  Upload,
 } from "lucide-react"
 import Logo from "../assets/logo.svg"
 import SetupPoolsGuideModal from "../components/SetupPoolsGuideModal"
 import UseSharedCreditsGuideModal from "../components/UseSharedCreditsGuideModal"
-// Removed import of 'next/image' since it's not available outside Next.js
 
 export default function HomePage() {
   const [showHowToModal, setShowHowToModal] = useState(false)
@@ -28,10 +28,11 @@ export default function HomePage() {
   const handleGetStarted = () => {
     navigate("/dashboard")
   }
+
   return (
     <div className="min-h-screen bg-background text-foreground font-sans relative overflow-hidden">
       {/* Floating Dock Navigation */}
-      <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-card border border-border shadow-lg rounded-full px-12 py-3 flex items-center space-x-10">
+      <nav className="fixed top-4 left-[15%] w-[70%] z-50 bg-card border border-border shadow-lg rounded-full px-12 py-[0.8rem] flex items-center justify-between">
         <div className="flex items-center">
           <img src={Logo || "/placeholder.svg"} alt="Bloom Faucets Logo" className="h-7 w-auto" />
         </div>
@@ -40,13 +41,14 @@ export default function HomePage() {
             href="https://bloom-uploads.vercel.app/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-muted-foreground hover:text-foreground transition-colors text-xl font-medium"
+            className="text-muted-foreground hover:text-foreground transition-colors rounded-full p-2"
           >
-            Bloom Uploads
+            <Upload className="w-6 h-6" />
+            <span className="sr-only">Bloom Uploads</span>
           </a>
           <button
             onClick={() => setShowContactModal(true)}
-            className="text-muted-foreground hover:text-foreground transition-colors text-xl font-medium"
+            className="text-muted-foreground hover:text-foreground transition-colors text-xl font-medium rounded-full px-4 py-2"
           >
             Mail Us
           </button>
@@ -86,7 +88,7 @@ export default function HomePage() {
       {/* Features Section */}
       <section className="w-full py-20 md:py-28 bg-card">
         <div className="container mx-auto px-4 md:px-6">
-          <h2 className="text-4xl font-heading font-extrabold text-center mb-16">Features</h2>
+          <h2 className="text-4xl font-heading font-extrabold text-center mb-16">FEATURES</h2>
           <div className="grid md:grid-cols-3 gap-12">
             <div className="flex flex-col items-center text-center p-6 border border-border rounded-xs shadow-sm bg-background">
               <div className="p-4 mb-4 rounded-full border-2 border-foreground text-foreground">
@@ -116,7 +118,7 @@ export default function HomePage() {
       {/* Video Section */}
       <section className="w-full py-20 md:py-28 bg-background">
         <div className="container mx-auto px-4 md:px-6 max-w-7xl">
-          <h2 className="text-4xl font-heading font-extrabold text-center mb-20">Product Tour</h2>
+          <h2 className="text-4xl font-heading font-extrabold text-center mb-20">GUIDES</h2>
           
           {/* Video 1: Video on left, text on right */}
           <div className="grid lg:grid-cols-2 gap-16 items-center mb-24">
