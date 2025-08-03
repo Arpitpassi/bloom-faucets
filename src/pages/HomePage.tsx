@@ -31,30 +31,22 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-background text-foreground font-sans relative overflow-hidden">
       {/* Floating Dock Navigation */}
-      <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-card border border-border shadow-lg rounded-full px-10 py-5 flex items-center space-x-10">
+      <nav className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-card border border-border shadow-lg rounded-full px-12 py-3 flex items-center space-x-10">
         <div className="flex items-center">
-          <img src={Logo || "/placeholder.svg"} alt="Bloom Faucets Logo" className="h-8 w-auto" />
+          <img src={Logo || "/placeholder.svg"} alt="Bloom Faucets Logo" className="h-7 w-auto" />
         </div>
         <div className="flex items-center space-x-8">
-          <a
-            href="https://x.com/usebloom_x"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-muted-foreground hover:text-foreground transition-colors text-2xl font-medium"
-          >
-            X Profile
-          </a>
           <a
             href="https://bloom-uploads.vercel.app/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-muted-foreground hover:text-foreground transition-colors text-2xl font-medium"
+            className="text-muted-foreground hover:text-foreground transition-colors text-xl font-medium"
           >
             Bloom Uploads
           </a>
           <button
             onClick={() => setShowContactModal(true)}
-            className="text-muted-foreground hover:text-foreground transition-colors text-2xl font-medium"
+            className="text-muted-foreground hover:text-foreground transition-colors text-xl font-medium"
           >
             Mail Us
           </button>
@@ -294,12 +286,6 @@ export default function HomePage() {
           </div>
           <p className="text-muted-foreground text-sm">
             © {new Date().getFullYear()} Bloom. All rights reserved. Version 0.0.26
-          </p>
-          <p className="text-muted-foreground text-sm">
-            For inquiries, email:{" "}
-            <a href="mailto:nityaprotocol@gmail.com" className="text-foreground hover:underline">
-              nityaprotocol@gmail.com
-            </a>
           </p>
         </div>
       </footer>
