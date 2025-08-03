@@ -1,8 +1,9 @@
 import { useCallback } from "react"
 import { TurboFactory, ArconnectSigner } from "@ardrive/turbo-sdk/web"
 import { Pool } from "../types/types"
-import { isValidArweaveAddress } from "../utils/utils"
 import { savePools, loadPools } from "./poolUtils"
+import { useErrorHandler } from "./useErrorHandler"
+import { isValidArweaveAddress } from "../utils/utils"
 
 export const useRevocation = (
   pools: Pool[],
@@ -22,11 +23,13 @@ export const useRevocation = (
   showError: (title: string, message: string) => void,
   showSuccess: (title: string, message: string) => void
 ) => {
+  const { handleError } = useErrorHandler()
+
   const handleRevokeAccess = useCallback(async (revokeAddress: string) => {
-    if (!revokeAddress.trim()) return showError("Invalid Address", "Please enter a valid wallet address")
-    if (!isValidArweaveAddress(revokeAddress)) return showError("Invalid Address", "Please enter a valid Arweave address")
-    if (!selectedPool) return showError("No Pool Selected", "Please select a pool first")
-    if (!connected || !window.arweaveWallet) return showError("Wallet Error", "Please connect your wallet first")
+    if (!revokeAddress.trim()) return handleError(null, "Please enter a valid wallet address")
+    if (!isValidArweaveAddress(revokeAddress)) return handleError(null, "Please enter a valid Arweave address")
+    if (!selectedPool) return handleError(null, "Please select a pool first")
+    if (!connected || !window.arweaveWallet) return handleError(null, "Please connect your wallet first")
 
     setShowTerminal(true)
     setTerminalActionType('revoke')
@@ -48,7 +51,7 @@ export const useRevocation = (
           {
             timestamp: new Date().toISOString(),
             action: "Revoked Access",
-            details: `Access to credits has been revoked`,
+            details: `Access to credits has been revoked for ${revokeAddress}`,
             outputs: [{ address: revokeAddress, response }],
           },
         ],
@@ -66,16 +69,35 @@ export const useRevocation = (
       setTerminalError(null)
       showSuccess("Access Revoked", `Successfully revoked access for ${revokeAddress.slice(0, 10)}...`)
     } catch (error) {
-      const errorMessage = `Error revoking access: ${error instanceof Error ? error.message : String(error)}`
+      const errorMessage = `Error revoking access: ${error instanceof Error ? error.stack || error.message : String(error)}`
       setTerminalError(errorMessage)
       setTerminalResult(null)
-      setTerminalRawOutput([])
-      showError("Revoke Failed", errorMessage)
+      setTerminalRawOutput([{ address: revokeAddress, error: error instanceof Error ? error.stack || error.message : String(error) }])
+
+      if (selectedPool) {
+        const updatedPool = {
+          ...selectedPool,
+          history: [
+            ...(selectedPool.history || []),
+            {
+              timestamp: new Date().toISOString(),
+              action: "Revoke Access Failed",
+              details: `Failed to revoke access for ${revokeAddress}: ${errorMessage}`,
+              errors: [errorMessage],
+            },
+          ],
+        }
+        const updatedPools = pools.map(pool => pool.id === selectedPool.id ? updatedPool : pool)
+        savePools(updatedPools, setPools, setTotalPools, setActivePools)
+        setSelectedPool(updatedPool)
+      }
+
+      handleError(error, "Failed to revoke access")
     } finally {
       setTerminalStatus('')
       setShowTerminal(true)
     }
-  }, [pools, selectedPool, connected, address, showError, showSuccess])
+  }, [pools, selectedPool, connected, address, showError, showSuccess, handleError])
 
   return { handleRevokeAccess }
 }

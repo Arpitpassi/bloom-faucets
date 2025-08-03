@@ -2,6 +2,7 @@ import { useCallback, useState } from "react"
 import { TurboFactory, ArconnectSigner } from "@ardrive/turbo-sdk/web"
 import { Pool } from "../types/types"
 import { savePools, fetchBalance } from "./poolUtils"
+import { useErrorHandler } from "./useErrorHandler"
 
 export const useSponsorship = (
   pools: Pool[],
@@ -37,6 +38,7 @@ export const useSponsorship = (
   showInfo: (title: string, message: string) => void
 ) => {
   const [pendingAddresses, setPendingAddresses] = useState<string[]>([])
+  const { handleError } = useErrorHandler()
 
   const sponsorAddresses = useCallback(async (addresses: string[]) => {
     setShowTerminal(true)
@@ -67,9 +69,9 @@ export const useSponsorship = (
           successfulShares++
           successfullySponsored.push(addr)
         } catch (error) {
-          const errorMsg = `Failed to sponsor credits for ${addr.slice(0, 10)}...: ${error instanceof Error ? error.message : String(error)}`
-          console.error(errorMsg)
+          const errorMsg = `Failed to sponsor credits for ${addr}: ${error instanceof Error ? error.stack || error.message : String(error)}`
           errors.push(errorMsg)
+          rawOutputs.push({ address: addr, error: error instanceof Error ? error.stack || error.message : String(error) })
         }
       }
       setTerminalRawOutput(rawOutputs)
@@ -87,10 +89,7 @@ export const useSponsorship = (
           showSuccess("Credits Sponsored", message)
         }
 
-        // Fetch the updated balance after sponsoring credits
         const updatedBalance = await fetchBalance(connected, showError)
-
-        // Update the selected pool with new sponsored addresses and history
         const updatedPool = {
           ...selectedPool!,
           sponsoredAddresses: [...new Set([...selectedPool!.sponsoredAddresses, ...successfullySponsored])],
@@ -102,11 +101,11 @@ export const useSponsorship = (
               action: "Sponsored Credits",
               details: `Sponsored credits to ${successfulShares} addresses`,
               outputs: rawOutputs,
+              errors: errors.length > 0 ? errors : undefined,
             },
           ],
         }
 
-        // Update all pools with the new balance, applying selectedPool updates only to the matching pool
         const updatedPools = pools.map(p => ({
           ...p,
           balance: updatedBalance ?? p.balance,
@@ -121,19 +120,58 @@ export const useSponsorship = (
         showError("Sponsor Failed", errors.length > 0 ? `Errors: ${errors.join("; ")}` : "No credits sponsored.")
       }
     } catch (error) {
-      const errorMessage = `Error sponsoring credits: ${error instanceof Error ? error.message : String(error)}`
+      const errorMessage = `Error sponsoring credits: ${error instanceof Error ? error.stack || error.message : String(error)}`
+      handleError(error, "Failed to sponsor credits")
       setTerminalError(errorMessage)
       setTerminalResult(null)
-      showError("Sponsor Failed", errorMessage)
+      setTerminalRawOutput([{ error: error instanceof Error ? error.stack || error.message : String(error) }])
+
+      if (selectedPool) {
+        const updatedPool = {
+          ...selectedPool,
+          history: [
+            ...(selectedPool.history || []),
+            {
+              timestamp: new Date().toISOString(),
+              action: "Sponsor Credits Failed",
+              details: `Failed to sponsor credits: ${errorMessage}`,
+              errors: [errorMessage],
+            },
+          ],
+        }
+        const updatedPools = pools.map(pool => pool.id === selectedPool.id ? updatedPool : pool)
+        savePools(updatedPools, setPools, setTotalPools, setActivePools)
+        setSelectedPool(updatedPool)
+      }
     } finally {
       setTerminalStatus('')
       setShowTerminal(true)
     }
-  }, [pools, selectedPool, connected, showError, showSuccess, showWarning])
+  }, [pools, selectedPool, connected, showError, showSuccess, showWarning, handleError])
 
   const handleSponsorCredits = useCallback(async () => {
-    if (!selectedPool) return showError("No Pool Selected", "Please select a pool first")
-    if (!connected || !window.arweaveWallet) return showError("Wallet Error", "Please connect your wallet first")
+    if (!selectedPool) return handleError(null, "No Pool Selected")
+    if (!connected || !window.arweaveWallet) return handleError(null, "Please connect your wallet first")
+    if (selectedPool.addresses.length === 0) {
+      const errorMessage = "No wallets have been whitelisted"
+      handleError(null, errorMessage)
+      const updatedPool = {
+        ...selectedPool,
+        history: [
+          ...(selectedPool.history || []),
+          {
+            timestamp: new Date().toISOString(),
+            action: "Sponsor Credits Failed",
+            details: errorMessage,
+            errors: [errorMessage],
+          },
+        ],
+      }
+      const updatedPools = pools.map(pool => pool.id === selectedPool.id ? updatedPool : pool)
+      savePools(updatedPools, setPools, setTotalPools, setActivePools)
+      setSelectedPool(updatedPool)
+      return
+    }
 
     const unsponsoredAddresses = selectedPool.addresses.filter(addr => !selectedPool.sponsoredAddresses.includes(addr))
     const alreadySponsoredAddresses = selectedPool.addresses.filter(addr => selectedPool.sponsoredAddresses.includes(addr))
@@ -146,7 +184,7 @@ export const useSponsorship = (
     }
 
     if (unsponsoredAddresses.length === 0) {
-      return showError("No Addresses", "All whitelisted addresses have already been sponsored")
+      return handleError(null, "All whitelisted addresses have already been sponsored")
     }
 
     setPendingAddresses(unsponsoredAddresses)
@@ -170,7 +208,7 @@ export const useSponsorship = (
     }
 
     await sponsorAddresses(unsponsoredAddresses)
-  }, [pools, selectedPool, connected, sponsorAddresses, showError, showInfo])
+  }, [pools, selectedPool, connected, sponsorAddresses, handleError, showInfo])
 
   const proceedWithPartialSponsorship = useCallback(async () => {
     const { show, maxFundable, addresses } = insufficientCredits

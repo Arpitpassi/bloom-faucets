@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState, useEffect } from "react"
-import { Terminal } from "lucide-react"
+import { Terminal, Loader } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface TerminalLoadingProps {
@@ -56,14 +56,16 @@ const TerminalLoading: React.FC<TerminalLoadingProps> = ({
         <div className="flex items-center space-x-2 mb-4">
           <Terminal className="w-5 h-5 text-gray-900" />
           <span className="text-gray-900 font-mono font-semibold">
-            {actionType === "sponsor" ? "sponsor-credits" : "revoke-access"}
+            {actionType === "sponsor" ? "sponsor-credits" : actionType === "revoke" ? "revoke-access" : "processing"}
           </span>
         </div>
         {isActive && (
-          <pre className="text-gray-700 text-sm font-mono whitespace-pre-wrap max-h-64 overflow-auto">
-            {displayedText}
-            {isAnimating && <span className="animate-pulse">_</span>}
-          </pre>
+          <div className="flex items-center space-x-2">
+            <pre className="text-gray-700 text-sm font-mono whitespace-pre-wrap max-h-64 overflow-auto">
+              {displayedText}
+              {isAnimating && <span className="animate-pulse">_</span>}
+            </pre>
+          </div>
         )}
         {!isActive && (result || error) && (
           <div className="space-y-3">
@@ -110,12 +112,18 @@ const TerminalLoading: React.FC<TerminalLoadingProps> = ({
                     <div key={index} className="mb-2">
                       <span className="text-gray-900">Address: {output.address}</span>
                       <br />
-                      <span className="text-gray-900">{JSON.stringify(output.response, null, 2)}</span>
+                      <span className="text-gray-900">{JSON.stringify(output.response || output.error, null, 2)}</span>
                     </div>
                   ))}
                 </pre>
               </div>
             )}
+          </div>
+        )}
+        {isActive && status && (
+          <div className="mt-4 text-center text-gray-600 font-mono text-sm flex items-center justify-center gap-2">
+            <Loader className="w-4 h-4 text-gray-600 animate-spin" />
+            <span>Processing, please wait...</span>
           </div>
         )}
         <div className="mt-6 text-center">
