@@ -118,7 +118,7 @@ export default function HomePage() {
                 BLOOM
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground max-w-md">
-                Creating and managing sponsored credits for Arweave ecosystem made easy.
+                Creating and managing Turbo credit faucets for Arweave ecosystem made easy.
               </p>
               <div className="flex items-center gap-4 justify-start mt-2">
                 <button
