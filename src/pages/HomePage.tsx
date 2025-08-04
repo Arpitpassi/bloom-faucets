@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { X, ExternalLink, Calculator, Github, Database, Shield, BarChart3, Upload, ChevronDown } from "lucide-react"
+import { X, ExternalLink, Calculator, Github, Database, Shield, BarChart3, Upload, ChevronDown, Mail, ClipboardPenIcon } from "lucide-react"
 import Logo from "../assets/logo.svg"
 import SetupPoolsGuideModal from "../components/SetupPoolsGuideModal"
 import UseSharedCreditsGuideModal from "../components/UseSharedCreditsGuideModal"
@@ -33,6 +33,7 @@ export default function HomePage() {
   const [showPoolsGuide, setShowPoolsGuide] = useState(false)
   const [showCreditsGuide, setShowCreditsGuide] = useState(false)
   const [showContactModal, setShowContactModal] = useState(false)
+  const [copied, setCopied] = useState(false)
   const navigate = useNavigate()
 
   // URL for the text background image used in the BLOOM heading
@@ -50,6 +51,12 @@ export default function HomePage() {
       const y = guidesSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
+  }
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText("nityaprotocol@gmail.com")
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000) // Reset copied state after 2 seconds
   }
 
   return (
@@ -71,53 +78,68 @@ export default function HomePage() {
           </a>
           <button
             onClick={() => setShowContactModal(true)}
-            className="text-muted-foreground hover:text-foreground transition-colors text-xl font-medium rounded-full px-4 py-2"
+            className="text-muted-foreground hover:text-foreground transition-colors rounded-full p-2"
+            aria-label="Contact us via email"
           >
-            Mail Us
+            <Mail className="w-6 h-6" />
           </button>
         </div>
       </nav>
 
       {/* Hero Section */}
       <section className="relative w-full py-16 md:py-20 lg:py-24 bg-background overflow-hidden mt-16">
-  <div className="container mx-auto px-4 md:px-6 flex justify-end">
-    <div className="flex flex-col items-start space-y-6 text-left">
-      <h1
-        className="text-6xl md:text-8xl font-heading font-extrabold tracking-tighter"
-        style={{
-          backgroundImage: `url(${textBackgroundImage})`,
-          backgroundClip: "text",
-          WebkitBackgroundClip: "text",
-          color: "transparent",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        BLOOM
-      </h1>
-      <p className="text-lg md:text-xl text-muted-foreground max-w-lg">
-        Creating and managing sponsored credit faucets for the Arweave ecosystem made easy.
-      </p>
-      <div className="flex items-center gap-4 justify-start mt-2">
-        <button
-          onClick={handleGetStarted}
-          className="btn-primary px-12 py-5 text-xl font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.0375]"
-        >
-          Get Started
-        </button>
-        
-        {/* Scroll to Guides Button */}
-        <button
-          onClick={scrollToGuides}
-          className="w-16 h-16 bg-primary/10 hover:bg-primary/20 border-2 border-primary/30 hover:border-primary/50 text-primary rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 shadow-lg hover:shadow-xl"
-          aria-label="Scroll to guides section"
-        >
-          <ChevronDown className="w-8 h-8" />
-        </button>
-      </div>
-    </div>
-  </div>
-</section>
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="grid lg:grid-cols-2 gap-10 items-center">
+            <div className="flex justify-center lg:justify-start transform translate-x-[20%]">
+              <a
+                href="https://bloom-uploads.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full max-w-sm rounded-2xl overflow-hidden"
+              >
+                <img
+                  src="https://arweave.net/6yCfoHv1Ksulkz6z7etmyqyTDRb9_Xo3hLMreKQ4C3g"
+                  alt="Bloom Faucets"
+                  className="w-full h-auto object-cover"
+                />
+              </a>
+            </div>
+            <div className="flex flex-col items-start space-y-6 text-left">
+              <h1
+                className="text-6xl md:text-8xl font-heading font-extrabold tracking-tighter"
+                style={{
+                  backgroundImage: `url(${textBackgroundImage})`,
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  color: "transparent",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              >
+                BLOOM
+              </h1>
+              <p className="text-lg md:text-xl text-muted-foreground max-w-md">
+                Creating and managing sponsored credits for Arweave ecosystem made easy.
+              </p>
+              <div className="flex items-center gap-4 justify-start mt-2">
+                <button
+                  onClick={handleGetStarted}
+                  className="btn-primary px-12 py-5 text-xl font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.0375]"
+                >
+                  Get Started
+                </button>
+                <button
+                  onClick={scrollToGuides}
+                  className="w-16 h-16 bg-primary/10 hover:bg-primary/20 border-2 border-primary/30 hover:border-primary/50 text-primary rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 shadow-lg hover:shadow-xl"
+                  aria-label="Scroll to guides section"
+                >
+                  <ChevronDown className="w-8 h-8" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Features Section */}
       <section className="w-full py-16 md:py-20 bg-card">
@@ -176,7 +198,7 @@ export default function HomePage() {
                   src="https://www.youtube.com/embed/3cKWv34cd94"
                   title="Guide to setup Bloom faucets"
                   frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allow="accelerometer; autoplay; ClipboardPenIcon-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 ></iframe>
               </div>
@@ -225,7 +247,7 @@ export default function HomePage() {
                   src="https://www.youtube.com/embed/OBVfwiCWVpQ"
                   title="How to use shared credits"
                   frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allow="accelerometer; autoplay; ClipboardPenIcon-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 ></iframe>
               </div>
@@ -364,26 +386,38 @@ export default function HomePage() {
       <SetupPoolsGuideModal isOpen={showPoolsGuide} onClose={() => setShowPoolsGuide(false)} />
       <UseSharedCreditsGuideModal isOpen={showCreditsGuide} onClose={() => setShowCreditsGuide(false)} />
 
-      {/* Contact Modal */}
-      {showContactModal && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-card border border-border max-w-md w-full p-8 relative rounded-xs shadow-lg">
-            <button
-              onClick={() => setShowContactModal(false)}
-              className="absolute top-4 right-4 text-foreground hover:text-muted-foreground p-1 rounded-full transition-colors"
-            >
-              <X className="w-6 h-6" />
-            </button>
-            <p className="mb-6 text-muted-foreground">For any inquiries or support mail us at:</p>
-            <p className="text-foreground">
-              <strong>Email:</strong>{" "}
-              <a href="mailto:nityaprotocol@gmail.com" className="text-foreground hover:underline">
-                nityaprotocol@gmail.com
-              </a>
-            </p>
-          </div>
-        </div>
+{/* Contact Modal */}
+{showContactModal && (
+  <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+    <div className="bg-card border border-border max-w-md w-full p-8 relative rounded-xs shadow-lg">
+      <button
+        onClick={() => setShowContactModal(false)}
+        className="absolute top-4 right-4 text-foreground hover:text-muted-foreground p-1 rounded-full transition-colors"
+      >
+        <X className="w-6 h-6" />
+      </button>
+      <p className="mb-6 text-muted-foreground">For any inquiries or support, contact us at:</p>
+      <div className="flex items-center justify-start gap-2">
+        <p className="text-foreground">
+          <strong>Email:</strong>{" "}
+          <a href="mailto:nityaprotocol@gmail.com" className="text-foreground hover:underline">
+            nityaprotocol@gmail.com
+          </a>
+        </p>
+        <button
+          onClick={handleCopyEmail}
+          className="text-muted-foreground hover:text-foreground transition-colors p-1"
+          aria-label="Copy email address"
+        >
+          <ClipboardPenIcon className="w-5 h-5" />
+        </button>
+      </div>
+      {copied && (
+        <p className="mt-4 text-sm text-primary animate-fade-in">Email copied!</p>
       )}
+    </div>
+  </div>
+)}
     </div>
   )
 }
