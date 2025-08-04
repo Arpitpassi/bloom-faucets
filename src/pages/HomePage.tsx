@@ -2,13 +2,12 @@
 
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+
 import {
   X,
   ExternalLink,
   Calculator,
   Github,
-  DiscIcon as Discord,
-  Twitter,
   Database,
   Shield,
   BarChart3,
@@ -18,12 +17,39 @@ import Logo from "../assets/logo.svg"
 import SetupPoolsGuideModal from "../components/SetupPoolsGuideModal"
 import UseSharedCreditsGuideModal from "../components/UseSharedCreditsGuideModal"
 
+// Custom X.com Icon Component
+const XIcon = ({ className }: { className?: string }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    className={className}
+    viewBox="0 0 512 462.799"
+    fill="currentColor"
+  >
+    <path fillRule="nonzero" d="M403.229 0h78.506L310.219 196.04 512 462.799H354.002L230.261 301.007 88.669 462.799h-78.56l183.455-209.683L0 0h161.999l111.856 147.88L403.229 0zm-27.556 415.805h43.505L138.363 44.527h-46.68l283.99 371.278z"/>
+  </svg>
+)
+
+// Custom Discord Icon Component
+const DiscordIcon = ({ className }: { className?: string }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    className={className}
+    viewBox="0 0 512 388.049"
+    fill="currentColor"
+  >
+    <path fillRule="nonzero" d="M433.713 32.491A424.231 424.231 0 00328.061.005c-4.953 8.873-9.488 18.156-13.492 27.509a393.937 393.937 0 00-58.629-4.408c-19.594 0-39.284 1.489-58.637 4.37-3.952-9.33-8.543-18.581-13.525-27.476-36.435 6.212-72.045 17.196-105.676 32.555-66.867 98.92-84.988 195.368-75.928 290.446a425.967 425.967 0 00129.563 65.03c10.447-14.103 19.806-29.116 27.752-44.74a273.827 273.827 0 01-43.716-20.862c3.665-2.658 7.249-5.396 10.712-8.055 40.496 19.019 84.745 28.94 129.514 28.94 44.77 0 89.019-9.921 129.517-28.943 3.504 2.86 7.088 5.598 10.712 8.055a275.576 275.576 0 01-43.796 20.918 311.49 311.49 0 0027.752 44.705 424.235 424.235 0 00129.65-65.019l-.011.011c10.632-110.26-18.162-205.822-76.11-290.55zM170.948 264.529c-25.249 0-46.11-22.914-46.11-51.104 0-28.189 20.135-51.304 46.029-51.304 25.895 0 46.592 23.115 46.15 51.304-.443 28.19-20.336 51.104-46.069 51.104zm170.102 0c-25.29 0-46.069-22.914-46.069-51.104 0-28.189 20.135-51.304 46.069-51.304s46.472 23.115 46.029 51.304c-.443 28.19-20.296 51.104-46.029 51.104z"/>
+  </svg>
+)
+
 export default function HomePage() {
   const [showHowToModal, setShowHowToModal] = useState(false)
   const [showPoolsGuide, setShowPoolsGuide] = useState(false)
   const [showCreditsGuide, setShowCreditsGuide] = useState(false)
   const [showContactModal, setShowContactModal] = useState(false)
   const navigate = useNavigate()
+
+  // URL for the text background image used in the BLOOM heading
+  const textBackgroundImage = "https://gylvphy2l2vnfykcptlygxl44yu6z6e4lcldtpbkc5mqbvux4f2a.arweave.net/NhdXnxpeqtLhQnzXg1185ins-JxYljm8KhdZANaX4XQ"
 
   const handleGetStarted = () => {
     navigate("/dashboard")
@@ -58,26 +84,35 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="relative w-full py-24 md:py-32 lg:py-40 bg-background overflow-hidden">
         <div className="container mx-auto px-4 md:px-6 grid lg:grid-cols-2 gap-12 items-center">
-          <div className="relative grid grid-cols-3 gap-4 p-4 bg-card border border-border shadow-sm rounded-xs">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="aspect-square overflow-hidden rounded-xs border border-border">
-                <img
-                  src={`/placeholder.svg?height=150&width=150&query=floral+pattern+${i + 1}`}
-                  width={150}
-                  height={150}
-                  alt={`Floral image ${i + 1}`}
-                  className="object-cover w-full h-full"
-                />
-              </div>
-            ))}
+          <div
+            className="relative bg-card border border-border shadow-sm rounded-xs aspect-square"
+            style={{
+              backgroundImage: `url(${"https://g45crbo7kxjkkjihffo2iqnnhez4tvdfi4jqtokbxcxer4ddhvfa.arweave.net/Nzoohd9V0qUlByldpEGtOTPJ1GVHEwm5QbiuSPBjPUo"})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
+            {/* Placeholder for GIF - replace YOUR_GIF_URL_HERE with your actual GIF URL */}
           </div>
           <div className="flex flex-col items-start space-y-6 text-left">
-            <h1 className="text-6xl md:text-8xl font-heading font-extrabold text-foreground tracking-tighter">BLOOM</h1>
+            <h1
+              className="text-6xl md:text-8xl font-heading font-extrabold tracking-tighter"
+              style={{
+                backgroundImage: `url(${textBackgroundImage})`,
+                backgroundClip: "text",
+                WebkitBackgroundClip: "text",
+                color: "transparent",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
+              BLOOM
+            </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-lg">
               Creating and managing sponsored credit faucets for the Arweave ecosystem made easy.
             </p>
             <div className="flex justify-start mt-2">
-              <button onClick={handleGetStarted} className="btn-primary px-12 py-5 text-xl font-semibold rounded-xs shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.0375]">
+              <button onClick={handleGetStarted} className="btn-primary px-12 py-5 text-xl font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.0375]">
                 Get Started
               </button>
             </div>
@@ -86,30 +121,30 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="w-full py-20 md:py-28 bg-card">
+      <section className="w-full py-16 md:py-20 bg-card">
         <div className="container mx-auto px-4 md:px-6">
-          <h2 className="text-4xl font-heading font-extrabold text-center mb-16">FEATURES</h2>
-          <div className="grid md:grid-cols-3 gap-12">
-            <div className="flex flex-col items-center text-center p-6 border border-border rounded-xs shadow-sm bg-background">
-              <div className="p-4 mb-4 rounded-full border-2 border-foreground text-foreground">
-                <Database className="w-8 h-8" />
+          <h2 className="text-4xl font-heading font-extrabold text-center mb-12">FEATURES</h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="flex flex-col items-start text-left p-8 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300">
+              <div className="p-3 mb-6 rounded-xl bg-muted/50 text-foreground">
+                <Database className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Faucet Management</h3>
-              <p className="text-muted-foreground">Create multiple sponsor faucets to fund them with turbo credits.</p>
+              <h3 className="text-xl font-semibold mb-3 text-foreground">Faucet Management</h3>
+              <p className="text-muted-foreground leading-relaxed">Create multiple sponsor faucets to fund them with turbo credits.</p>
             </div>
-            <div className="flex flex-col items-center text-center p-6 border border-border rounded-xs shadow-sm bg-background">
-              <div className="p-4 mb-4 rounded-full border-2 border-foreground text-foreground">
-                <Shield className="w-8 h-8" />
+            <div className="flex flex-col items-start text-left p-8 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300">
+              <div className="p-3 mb-6 rounded-xl bg-muted/50 text-foreground">
+                <Shield className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Access Control</h3>
-              <p className="text-muted-foreground">Whitelist specific addresses and manage user access.</p>
+              <h3 className="text-xl font-semibold mb-3 text-foreground">Access Control</h3>
+              <p className="text-muted-foreground leading-relaxed">Whitelist specific addresses and manage user access.</p>
             </div>
-            <div className="flex flex-col items-center text-center p-6 border border-border rounded-xs shadow-sm bg-background">
-              <div className="p-4 mb-4 rounded-full border-2 border-foreground text-foreground">
-                <BarChart3 className="w-8 h-8" />
+            <div className="flex flex-col items-start text-left p-8 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300">
+              <div className="p-3 mb-6 rounded-xl bg-muted/50 text-foreground">
+                <BarChart3 className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-semibold mb-3">Real-time Analytics</h3>
-              <p className="text-muted-foreground">Monitor faucet usage and complete control over faucet activities.</p>
+              <h3 className="text-xl font-semibold mb-3 text-foreground">Analytics</h3>
+              <p className="text-muted-foreground leading-relaxed">Monitor faucet usage and complete control over faucet activities.</p>
             </div>
           </div>
         </div>
@@ -123,16 +158,13 @@ export default function HomePage() {
           {/* Video 1: Video on left, text on right */}
           <div className="grid lg:grid-cols-2 gap-16 items-center mb-24">
             <div className="relative w-full shadow-2xl border border-border rounded-lg overflow-hidden bg-foreground">
-              {/* Terminal Title Bar */}
               <div className="flex items-center p-3 bg-muted border-b border-border">
                 <div className="flex space-x-2">
                   <span className="w-3 h-3 bg-red-500 rounded-full"></span>
                   <span className="w-3 h-3 bg-yellow-500 rounded-full"></span>
                   <span className="w-3 h-3 bg-green-500 rounded-full"></span>
                 </div>
-                <span className="flex-1 text-center text-sm text-muted-foreground font-mono">setup-faucets.mp4</span>
               </div>
-              {/* Video Container */}
               <div className="relative pb-[56.25%] h-0">
                 <iframe
                   className="absolute top-0 left-0 w-full h-full"
@@ -147,13 +179,13 @@ export default function HomePage() {
             <div className="flex flex-col justify-center space-y-6">
               <h3 className="text-3xl md:text-4xl font-heading font-bold text-foreground">Setup Bloom Faucets</h3>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Learn how to create and configure your own sponsored credit faucets with ease. This comprehensive guide walks you through the entire setup process, from initial configuration to advanced customization options.
+                Learn how to create and configure your own sponsored credit faucets with ease. This comprehensive guide walks you through the entire setup process, from initial configuration to spoonsoring credits.
               </p>
               <button
                 onClick={() => setShowPoolsGuide(true)}
-                className="bg-primary text-primary-foreground px-6 py-3 rounded-xs font-semibold hover:bg-primary/90 transition-all duration-300 transform hover:scale-[1.0375] shadow-md hover:shadow-lg w-fit"
+                className="bg-primary text-primary-foreground px-7 py-5 text-xl font-semibold hover:bg-primary/90 transition-all duration-300 transform hover:scale-[1.0375] shadow-md hover:shadow-lg w-fit rounded-full"
               >
-                View Setup Guide
+                Setup Guide
               </button>
             </div>
           </div>
@@ -163,28 +195,23 @@ export default function HomePage() {
             <div className="flex flex-col justify-center space-y-6 lg:order-1">
               <h3 className="text-3xl md:text-4xl font-heading font-bold text-foreground">Use Shared Credits</h3>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Discover how users can leverage shared credits from your faucets for their Arweave uploads. This tutorial demonstrates the seamless integration process and shows how to maximize the benefits of shared credit systems.
+                Discover how users can leverage shared credits for their Arweave uploads. This tutorial demonstrates the seamless integration process with various tools and methods.
               </p>
               <button
                 onClick={() => setShowCreditsGuide(true)}
-                className="bg-secondary text-secondary-foreground border border-border px-6 py-3 rounded-xs font-semibold hover:bg-accent hover:text-accent-foreground transition-all duration-300 transform hover:scale-[1.0375] shadow-md hover:shadow-lg w-fit"
+                className="bg-primary text-primary-foreground px-7 py-5 text-xl font-semibold hover:bg-primary/90 transition-all duration-300 transform hover:scale-[1.0375] shadow-md hover:shadow-lg w-fit rounded-full"
               >
-                View Credits Guide
+                Credits Guide
               </button>
             </div>
             <div className="relative w-full shadow-2xl border border-border rounded-lg overflow-hidden bg-foreground lg:order-2">
-              {/* Terminal Title Bar */}
               <div className="flex items-center p-3 bg-muted border-b border-border">
                 <div className="flex space-x-2">
                   <span className="w-3 h-3 bg-red-500 rounded-full"></span>
                   <span className="w-3 h-3 bg-yellow-500 rounded-full"></span>
                   <span className="w-3 h-3 bg-green-500 rounded-full"></span>
                 </div>
-                <span className="flex-1 text-center text-sm text-muted-foreground font-mono">
-                  use-shared-credits.mp4
-                </span>
               </div>
-              {/* Video Container */}
               <div className="relative pb-[56.25%] h-0">
                 <iframe
                   className="absolute top-0 left-0 w-full h-full"
@@ -201,54 +228,54 @@ export default function HomePage() {
       </section>
 
       {/* Resources & Support Section */}
-      <section className="w-full py-20 md:py-28 bg-card">
+      <section className="w-full py-16 md:py-20 bg-card">
         <div className="container mx-auto px-4 md:px-6 text-center">
-          <h2 className="text-4xl font-heading font-extrabold mb-16">Resources & Support</h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <h2 className="text-4xl font-heading font-extrabold mb-12">RESOURCES & SUPPORT</h2>
+          <div className="grid md:grid-cols-3 gap-6">
             <a
               href="https://discord.gg/9cJyqrJUHh"
               target="_blank"
               rel="noopener noreferrer"
-              className="info-card flex flex-col items-center justify-center group"
+              className="flex flex-col items-start text-left p-8 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300 group"
             >
-              <div className="p-4 mb-4 rounded-full border-2 border-foreground text-foreground">
-                <Discord className="w-8 h-8" />
+              <div className="p-3 mb-6 rounded-xl bg-muted/50 text-foreground">
+                <DiscordIcon className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-semibold mb-2 flex items-center justify-center">
+              <h3 className="text-xl font-semibold mb-3 text-foreground flex items-center">
                 Join Discord
-                <ExternalLink className="w-4 h-4 ml-1 text-muted-foreground group-hover:text-foreground transition-colors" />
+                <ExternalLink className="w-4 h-4 ml-2 text-muted-foreground group-hover:text-foreground transition-colors" />
               </h3>
-              <p className="text-muted-foreground text-sm">Get community support and stay updated.</p>
+              <p className="text-muted-foreground leading-relaxed">Get community support and stay updated.</p>
             </a>
             <a
               href="https://prices.ardrive.io/"
               target="_blank"
               rel="noopener noreferrer"
-              className="info-card flex flex-col items-center justify-center group"
+              className="flex flex-col items-start text-left p-8 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300 group"
             >
-              <div className="p-4 mb-4 rounded-full border-2 border-foreground text-foreground">
-                <Calculator className="w-8 h-8" />
+              <div className="p-3 mb-6 rounded-xl bg-muted/50 text-foreground">
+                <Calculator className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-semibold mb-2 flex items-center justify-center">
+              <h3 className="text-xl font-semibold mb-3 text-foreground flex items-center">
                 Price Calculator
-                <ExternalLink className="w-4 h-4 ml-1 text-muted-foreground group-hover:text-foreground transition-colors" />
+                <ExternalLink className="w-4 h-4 ml-2 text-muted-foreground group-hover:text-foreground transition-colors" />
               </h3>
-              <p className="text-muted-foreground text-sm">Calculate Turbo credit costs.</p>
+              <p className="text-muted-foreground leading-relaxed">Calculate Turbo credit costs.</p>
             </a>
             <a
               href="https://github.com/Arpitpassi/bloom-faucets"
               target="_blank"
               rel="noopener noreferrer"
-              className="info-card flex flex-col items-center justify-center group"
+              className="flex flex-col items-start text-left p-8 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300 group"
             >
-              <div className="p-4 mb-4 rounded-full border-2 border-foreground text-foreground">
-                <Github className="w-8 h-8" />
+              <div className="p-3 mb-6 rounded-xl bg-muted/50 text-foreground">
+                <Github className="w-6 h-6" />
               </div>
-              <h3 className="text-lg font-semibold mb-2 flex items-center justify-center">
+              <h3 className="text-xl font-semibold mb-3 text-foreground flex items-center">
                 Documentation
-                <ExternalLink className="w-4 h-4 ml-1 text-muted-foreground group-hover:text-foreground transition-colors" />
+                <ExternalLink className="w-4 h-4 ml-2 text-muted-foreground group-hover:text-foreground transition-colors" />
               </h3>
-              <p className="text-muted-foreground text-sm">Look at the code behind Bloom faucets.</p>
+              <p className="text-muted-foreground leading-relaxed">Look at the code behind Bloom faucets.</p>
             </a>
           </div>
         </div>
@@ -264,8 +291,8 @@ export default function HomePage() {
               rel="noopener noreferrer"
               className="text-foreground hover:text-muted-foreground transition-colors"
             >
-              <Twitter className="w-6 h-6" />
-              <span className="sr-only">Twitter</span>
+              <XIcon className="w-6 h-6" />
+              <span className="sr-only">X</span>
             </a>
             <a
               href="https://github.com/Arpitpassi/bloom-faucets"
@@ -282,7 +309,7 @@ export default function HomePage() {
               rel="noopener noreferrer"
               className="text-foreground hover:text-muted-foreground transition-colors"
             >
-              <Discord className="w-6 h-6" />
+              <DiscordIcon className="w-6 h-6" />
               <span className="sr-only">Discord</span>
             </a>
           </div>
@@ -298,7 +325,7 @@ export default function HomePage() {
           <div className="bg-card border border-border max-w-lg w-full p-8 relative rounded-xs shadow-lg">
             <button
               onClick={() => setShowHowToModal(false)}
-              className="absolute top-4 right-4 text-foreground hover:text-muted-foreground p-1 rounded-xs transition-colors"
+              className="absolute top-4 right-4 text-foreground hover:text-muted-foreground p-1 rounded-full transition-colors"
             >
               <X className="w-6 h-6" />
             </button>
@@ -309,7 +336,7 @@ export default function HomePage() {
                   setShowHowToModal(false)
                   setShowPoolsGuide(true)
                 }}
-                className="bg-primary text-primary-foreground border border-primary px-10 py-4 text-lg font-semibold hover:bg-primary/90 transition-colors rounded-xs flex-1"
+                className="bg-primary text-primary-foreground border border-primary px-10 py-4 text-lg font-semibold hover:bg-primary/90 transition-colors rounded-full flex-1"
               >
                 Setup Faucets
               </button>
@@ -318,7 +345,7 @@ export default function HomePage() {
                   setShowHowToModal(false)
                   setShowCreditsGuide(true)
                 }}
-                className="bg-secondary text-secondary-foreground border border-border px-10 py-4 text-lg font-semibold hover:bg-accent hover:text-accent-foreground transition-colors rounded-xs flex-1"
+                className="bg-secondary text-secondary-foreground border border-border px-10 py-4 text-lg font-semibold hover:bg-accent hover:text-accent-foreground transition-colors rounded-full flex-1"
               >
                 Use Shared Credits
               </button>
@@ -336,7 +363,7 @@ export default function HomePage() {
           <div className="bg-card border border-border max-w-md w-full p-8 relative rounded-xs shadow-lg">
             <button
               onClick={() => setShowContactModal(false)}
-              className="absolute top-4 right-4 text-foreground hover:text-muted-foreground p-1 rounded-xs transition-colors"
+              className="absolute top-4 right-4 text-foreground hover:text-muted-foreground p-1 rounded-full transition-colors"
             >
               <X className="w-6 h-6" />
             </button>
