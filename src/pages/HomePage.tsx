@@ -1,43 +1,30 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useNavigate } from "react-router-dom"
 
-import {
-  X,
-  ExternalLink,
-  Calculator,
-  Github,
-  Database,
-  Shield,
-  BarChart3,
-  Upload,
-} from "lucide-react"
+import { X, ExternalLink, Calculator, Github, Database, Shield, BarChart3, Upload } from "lucide-react"
 import Logo from "../assets/logo.svg"
 import SetupPoolsGuideModal from "../components/SetupPoolsGuideModal"
 import UseSharedCreditsGuideModal from "../components/UseSharedCreditsGuideModal"
 
 // Custom X.com Icon Component
 const XIcon = ({ className }: { className?: string }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    className={className}
-    viewBox="0 0 512 462.799"
-    fill="currentColor"
-  >
-    <path fillRule="nonzero" d="M403.229 0h78.506L310.219 196.04 512 462.799H354.002L230.261 301.007 88.669 462.799h-78.56l183.455-209.683L0 0h161.999l111.856 147.88L403.229 0zm-27.556 415.805h43.505L138.363 44.527h-46.68l283.99 371.278z"/>
+  <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 512 462.799" fill="currentColor">
+    <path
+      fillRule="nonzero"
+      d="M403.229 0h78.506L310.219 196.04 512 462.799H354.002L230.261 301.007 88.669 462.799h-78.56l183.455-209.683L0 0h161.999l111.856 147.88L403.229 0zm-27.556 415.805h43.505L138.363 44.527h-46.68l283.99 371.278z"
+    />
   </svg>
 )
 
 // Custom Discord Icon Component
 const DiscordIcon = ({ className }: { className?: string }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    className={className}
-    viewBox="0 0 512 388.049"
-    fill="currentColor"
-  >
-    <path fillRule="nonzero" d="M433.713 32.491A424.231 424.231 0 00328.061.005c-4.953 8.873-9.488 18.156-13.492 27.509a393.937 393.937 0 00-58.629-4.408c-19.594 0-39.284 1.489-58.637 4.37-3.952-9.33-8.543-18.581-13.525-27.476-36.435 6.212-72.045 17.196-105.676 32.555-66.867 98.92-84.988 195.368-75.928 290.446a425.967 425.967 0 00129.563 65.03c10.447-14.103 19.806-29.116 27.752-44.74a273.827 273.827 0 01-43.716-20.862c3.665-2.658 7.249-5.396 10.712-8.055 40.496 19.019 84.745 28.94 129.514 28.94 44.77 0 89.019-9.921 129.517-28.943 3.504 2.86 7.088 5.598 10.712 8.055a275.576 275.576 0 01-43.796 20.918 311.49 311.49 0 0027.752 44.705 424.235 424.235 0 00129.65-65.019l-.011.011c10.632-110.26-18.162-205.822-76.11-290.55zM170.948 264.529c-25.249 0-46.11-22.914-46.11-51.104 0-28.189 20.135-51.304 46.029-51.304 25.895 0 46.592 23.115 46.15 51.304-.443 28.19-20.336 51.104-46.069 51.104zm170.102 0c-25.29 0-46.069-22.914-46.069-51.104 0-28.189 20.135-51.304 46.069-51.304s46.472 23.115 46.029 51.304c-.443 28.19-20.296 51.104-46.029 51.104z"/>
+  <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 512 388.049" fill="currentColor">
+    <path
+      fillRule="nonzero"
+      d="M433.713 32.491A424.231 424.231 0 00328.061.005c-4.953 8.873-9.488 18.156-13.492 27.509a393.937 393.937 0 00-58.629-4.408c-19.594 0-39.284 1.489-58.637 4.37-3.952-9.33-8.543-18.581-13.525-27.476-36.435 6.212-72.045 17.196-105.676 32.555-66.867 98.92-84.988 195.368-75.928 290.446a425.967 425.967 0 00129.563 65.03c10.447-14.103 19.806-29.116 27.752-44.74a273.827 273.827 0 01-43.716-20.862c3.665-2.658 7.249-5.396 10.712-8.055 40.496 19.019 84.745 28.94 129.514 28.94 44.77 0 89.019-9.921 129.517-28.943 3.504 2.86 7.088 5.598 10.712 8.055a275.576 275.576 0 01-43.796 20.918 311.49 311.49 0 0027.752 44.705 424.235 424.235 0 00129.65-65.019l-.011.011c10.632-110.26-18.162-205.822-76.11-290.55zM170.948 264.529c-25.249 0-46.11-22.914-46.11-51.104 0-28.189 20.135-51.304 46.029-51.304 25.895 0 46.592 23.115 46.15 51.304-.443 28.19-20.336 51.104-46.069 51.104zm170.102 0c-25.29 0-46.069-22.914-46.069-51.104 0-28.189 20.135-51.304 46.069-51.304s46.472 23.115 46.029 51.304c-.443 28.19-20.296 51.104-46.029 51.104z"
+    />
   </svg>
 )
 
@@ -47,9 +34,21 @@ export default function HomePage() {
   const [showCreditsGuide, setShowCreditsGuide] = useState(false)
   const [showContactModal, setShowContactModal] = useState(false)
   const navigate = useNavigate()
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   // URL for the text background image used in the BLOOM heading
-  const textBackgroundImage = "https://gylvphy2l2vnfykcptlygxl44yu6z6e4lcldtpbkc5mqbvux4f2a.arweave.net/NhdXnxpeqtLhQnzXg1185ins-JxYljm8KhdZANaX4XQ"
+  const textBackgroundImage =
+    "https://gylvphy2l2vnfykcptlygxl44yu6z6e4lcldtpbkc5mqbvux4f2a.arweave.net/NhdXnxpeqtLhQnzXg1185ins-JxYljm8KhdZANaX4XQ"
+
+  // Video URL
+  const videoUrl =
+    "https://c47qi4l4qzebmufg5bgness4nnlu35gswkkwgcb2rlgmn2p4ji5q.arweave.net/Fz8EcXyGSBZQpuhM0kpca1dN9NKylWMIOorMxun8Sjs"
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play()
+    }
+  }, [])
 
   const handleGetStarted = () => {
     navigate("/dashboard")
@@ -58,7 +57,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-background text-foreground font-sans relative overflow-hidden">
       {/* Floating Dock Navigation */}
-      <nav className="fixed top-4 left-[15%] w-[70%] z-50 bg-card border border-border shadow-lg rounded-full px-12 py-[0.8rem] flex items-center justify-between">
+      <nav className="fixed top-4 left-[15%] w-[70%] z-50 bg-card border border-border shadow-lg rounded-full px-8 py-[0.8rem] flex items-center justify-between">
         <div className="flex items-center">
           <img src={Logo || "/placeholder.svg"} alt="Bloom Faucets Logo" className="h-7 w-auto" />
         </div>
@@ -82,17 +81,16 @@ export default function HomePage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative w-full py-24 md:py-32 lg:py-40 bg-background overflow-hidden">
-        <div className="container mx-auto px-4 md:px-6 grid lg:grid-cols-2 gap-12 items-center">
+      <section className="relative w-full py-16 md:py-20 lg:py-24 bg-background overflow-hidden">
+        <div className="container mx-auto px-4 md:px-6 grid lg:grid-cols-2 gap-8 items-center">
           <div
-            className="relative bg-card border border-border shadow-sm rounded-xs aspect-square"
-            style={{
-              backgroundImage: `url(${"https://g45crbo7kxjkkjihffo2iqnnhez4tvdfi4jqtokbxcxer4ddhvfa.arweave.net/Nzoohd9V0qUlByldpEGtOTPJ1GVHEwm5QbiuSPBjPUo"})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
+            className="relative bg-card border border-border shadow-sm rounded-xs aspect-square overflow-hidden"
+            style={{ transform: "scale(0.85)" }}
           >
-            {/* Placeholder for GIF - replace YOUR_GIF_URL_HERE with your actual GIF URL */}
+            <video ref={videoRef} className="w-full h-full object-cover" muted playsInline preload="metadata">
+              <source src={videoUrl} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
           </div>
           <div className="flex flex-col items-start space-y-6 text-left">
             <h1
@@ -112,7 +110,10 @@ export default function HomePage() {
               Creating and managing sponsored credit faucets for the Arweave ecosystem made easy.
             </p>
             <div className="flex justify-start mt-2">
-              <button onClick={handleGetStarted} className="btn-primary px-12 py-5 text-xl font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.0375]">
+              <button
+                onClick={handleGetStarted}
+                className="btn-primary px-12 py-5 text-xl font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.0375]"
+              >
                 Get Started
               </button>
             </div>
@@ -123,40 +124,46 @@ export default function HomePage() {
       {/* Features Section */}
       <section className="w-full py-16 md:py-20 bg-card">
         <div className="container mx-auto px-4 md:px-6">
-          <h2 className="text-4xl font-heading font-extrabold text-center mb-12">FEATURES</h2>
+          <h2 className="text-4xl font-heading font-extrabold text-center mb-8">FEATURES</h2>
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="flex flex-col items-start text-left p-8 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300">
-              <div className="p-3 mb-6 rounded-xl bg-muted/50 text-foreground">
+            <div className="flex flex-col items-start text-left p-6 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300">
+              <div className="p-3 mb-4 rounded-xl bg-muted/50 text-foreground">
                 <Database className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-foreground">Faucet Management</h3>
-              <p className="text-muted-foreground leading-relaxed">Create multiple sponsor faucets to fund them with turbo credits.</p>
+              <h3 className="text-xl font-semibold mb-2 text-foreground">Faucet Management</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Create multiple sponsor faucets to fund them with turbo credits.
+              </p>
             </div>
-            <div className="flex flex-col items-start text-left p-8 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300">
-              <div className="p-3 mb-6 rounded-xl bg-muted/50 text-foreground">
+            <div className="flex flex-col items-start text-left p-6 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300">
+              <div className="p-3 mb-4 rounded-xl bg-muted/50 text-foreground">
                 <Shield className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-foreground">Access Control</h3>
-              <p className="text-muted-foreground leading-relaxed">Whitelist specific addresses and manage user access.</p>
+              <h3 className="text-xl font-semibold mb-2 text-foreground">Access Control</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Whitelist specific addresses and manage user access.
+              </p>
             </div>
-            <div className="flex flex-col items-start text-left p-8 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300">
-              <div className="p-3 mb-6 rounded-xl bg-muted/50 text-foreground">
+            <div className="flex flex-col items-start text-left p-6 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300">
+              <div className="p-3 mb-4 rounded-xl bg-muted/50 text-foreground">
                 <BarChart3 className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-foreground">Analytics</h3>
-              <p className="text-muted-foreground leading-relaxed">Monitor faucet usage and complete control over faucet activities.</p>
+              <h3 className="text-xl font-semibold mb-2 text-foreground">Analytics</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Monitor faucet usage and complete control over faucet activities.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Video Section */}
-      <section className="w-full py-20 md:py-28 bg-background">
+      <section className="w-full py-16 md:py-20 bg-background">
         <div className="container mx-auto px-4 md:px-6 max-w-7xl">
-          <h2 className="text-4xl font-heading font-extrabold text-center mb-20">GUIDES</h2>
-          
+          <h2 className="text-4xl font-heading font-extrabold text-center mb-12">GUIDES</h2>
+
           {/* Video 1: Video on left, text on right */}
-          <div className="grid lg:grid-cols-2 gap-16 items-center mb-24">
+          <div className="grid lg:grid-cols-2 gap-10 items-center mb-16">
             <div className="relative w-full shadow-2xl border border-border rounded-lg overflow-hidden bg-foreground">
               <div className="flex items-center p-3 bg-muted border-b border-border">
                 <div className="flex space-x-2">
@@ -176,10 +183,11 @@ export default function HomePage() {
                 ></iframe>
               </div>
             </div>
-            <div className="flex flex-col justify-center space-y-6">
+            <div className="flex flex-col justify-center space-y-4">
               <h3 className="text-3xl md:text-4xl font-heading font-bold text-foreground">Setup Bloom Faucets</h3>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Learn how to create and configure your own sponsored credit faucets with ease. This comprehensive guide walks you through the entire setup process, from initial configuration to spoonsoring credits.
+                Learn how to create and configure your own sponsored credit faucets with ease. This comprehensive guide
+                walks you through the entire setup process, from initial configuration to spoonsoring credits.
               </p>
               <button
                 onClick={() => setShowPoolsGuide(true)}
@@ -191,11 +199,12 @@ export default function HomePage() {
           </div>
 
           {/* Video 2: Text on left, video on right */}
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="flex flex-col justify-center space-y-6 lg:order-1">
+          <div className="grid lg:grid-cols-2 gap-10 items-center">
+            <div className="flex flex-col justify-center space-y-4 lg:order-1">
               <h3 className="text-3xl md:text-4xl font-heading font-bold text-foreground">Use Shared Credits</h3>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Discover how users can leverage shared credits for their Arweave uploads. This tutorial demonstrates the seamless integration process with various tools and methods.
+                Discover how users can leverage shared credits for their Arweave uploads. This tutorial demonstrates the
+                seamless integration process with various tools and methods.
               </p>
               <button
                 onClick={() => setShowCreditsGuide(true)}
@@ -230,18 +239,18 @@ export default function HomePage() {
       {/* Resources & Support Section */}
       <section className="w-full py-16 md:py-20 bg-card">
         <div className="container mx-auto px-4 md:px-6 text-center">
-          <h2 className="text-4xl font-heading font-extrabold mb-12">RESOURCES & SUPPORT</h2>
+          <h2 className="text-4xl font-heading font-extrabold mb-8">RESOURCES & SUPPORT</h2>
           <div className="grid md:grid-cols-3 gap-6">
             <a
               href="https://discord.gg/9cJyqrJUHh"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-col items-start text-left p-8 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300 group"
+              className="flex flex-col items-start text-left p-6 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300 group"
             >
-              <div className="p-3 mb-6 rounded-xl bg-muted/50 text-foreground">
+              <div className="p-3 mb-4 rounded-xl bg-muted/50 text-foreground">
                 <DiscordIcon className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-foreground flex items-center">
+              <h3 className="text-xl font-semibold mb-2 text-foreground flex items-center">
                 Join Discord
                 <ExternalLink className="w-4 h-4 ml-2 text-muted-foreground group-hover:text-foreground transition-colors" />
               </h3>
@@ -251,12 +260,12 @@ export default function HomePage() {
               href="https://prices.ardrive.io/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-col items-start text-left p-8 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300 group"
+              className="flex flex-col items-start text-left p-6 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300 group"
             >
-              <div className="p-3 mb-6 rounded-xl bg-muted/50 text-foreground">
+              <div className="p-3 mb-4 rounded-xl bg-muted/50 text-foreground">
                 <Calculator className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-foreground flex items-center">
+              <h3 className="text-xl font-semibold mb-2 text-foreground flex items-center">
                 Price Calculator
                 <ExternalLink className="w-4 h-4 ml-2 text-muted-foreground group-hover:text-foreground transition-colors" />
               </h3>
@@ -266,12 +275,12 @@ export default function HomePage() {
               href="https://github.com/Arpitpassi/bloom-faucets"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-col items-start text-left p-8 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300 group"
+              className="flex flex-col items-start text-left p-6 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300 group"
             >
-              <div className="p-3 mb-6 rounded-xl bg-muted/50 text-foreground">
+              <div className="p-3 mb-4 rounded-xl bg-muted/50 text-foreground">
                 <Github className="w-6 h-6" />
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-foreground flex items-center">
+              <h3 className="text-xl font-semibold mb-2 text-foreground flex items-center">
                 Documentation
                 <ExternalLink className="w-4 h-4 ml-2 text-muted-foreground group-hover:text-foreground transition-colors" />
               </h3>
@@ -282,8 +291,8 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-background py-12 px-4 sm:px-6 lg:px-8 border-t border-border">
-        <div className="max-w-7xl mx-auto text-center space-y-6">
+      <footer className="bg-background py-8 px-4 sm:px-6 lg:px-8 border-t border-border">
+        <div className="max-w-7xl mx-auto text-center space-y-4">
           <div className="flex justify-center space-x-6">
             <a
               href="https://x.com/usebloom_x"
