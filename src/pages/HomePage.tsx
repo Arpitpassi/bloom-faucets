@@ -1,9 +1,9 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 
-import { X, ExternalLink, Calculator, Github, Database, Shield, BarChart3, Upload } from "lucide-react"
+import { X, ExternalLink, Calculator, Github, Database, Shield, BarChart3, Upload, ChevronDown } from "lucide-react"
 import Logo from "../assets/logo.svg"
 import SetupPoolsGuideModal from "../components/SetupPoolsGuideModal"
 import UseSharedCreditsGuideModal from "../components/UseSharedCreditsGuideModal"
@@ -34,24 +34,22 @@ export default function HomePage() {
   const [showCreditsGuide, setShowCreditsGuide] = useState(false)
   const [showContactModal, setShowContactModal] = useState(false)
   const navigate = useNavigate()
-  const videoRef = useRef<HTMLVideoElement>(null)
 
   // URL for the text background image used in the BLOOM heading
   const textBackgroundImage =
     "https://gylvphy2l2vnfykcptlygxl44yu6z6e4lcldtpbkc5mqbvux4f2a.arweave.net/NhdXnxpeqtLhQnzXg1185ins-JxYljm8KhdZANaX4XQ"
 
-  // Video URL
-  const videoUrl =
-    "https://c47qi4l4qzebmufg5bgness4nnlu35gswkkwgcb2rlgmn2p4ji5q.arweave.net/Fz8EcXyGSBZQpuhM0kpca1dN9NKylWMIOorMxun8Sjs"
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.play()
-    }
-  }, [])
-
   const handleGetStarted = () => {
     navigate("/dashboard")
+  }
+
+  const scrollToGuides = () => {
+    const guidesSection = document.getElementById('guides-section')
+    if (guidesSection) {
+      const yOffset = -100; // Adjust this value to account for fixed header
+      const y = guidesSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
   }
 
   return (
@@ -81,45 +79,45 @@ export default function HomePage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative w-full py-16 md:py-20 lg:py-24 bg-background overflow-hidden">
-        <div className="container mx-auto px-4 md:px-6 grid lg:grid-cols-2 gap-8 items-center">
-          <div
-            className="relative bg-card border border-border shadow-sm rounded-xs aspect-square overflow-hidden"
-            style={{ transform: "scale(0.85)" }}
-          >
-            <video ref={videoRef} className="w-full h-full object-cover" muted playsInline preload="metadata">
-              <source src={videoUrl} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          </div>
-          <div className="flex flex-col items-start space-y-6 text-left">
-            <h1
-              className="text-6xl md:text-8xl font-heading font-extrabold tracking-tighter"
-              style={{
-                backgroundImage: `url(${textBackgroundImage})`,
-                backgroundClip: "text",
-                WebkitBackgroundClip: "text",
-                color: "transparent",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-            >
-              BLOOM
-            </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-lg">
-              Creating and managing sponsored credit faucets for the Arweave ecosystem made easy.
-            </p>
-            <div className="flex justify-start mt-2">
-              <button
-                onClick={handleGetStarted}
-                className="btn-primary px-12 py-5 text-xl font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.0375]"
-              >
-                Get Started
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
+      <section className="relative w-full py-16 md:py-20 lg:py-24 bg-background overflow-hidden mt-16">
+  <div className="container mx-auto px-4 md:px-6 flex justify-end">
+    <div className="flex flex-col items-start space-y-6 text-left">
+      <h1
+        className="text-6xl md:text-8xl font-heading font-extrabold tracking-tighter"
+        style={{
+          backgroundImage: `url(${textBackgroundImage})`,
+          backgroundClip: "text",
+          WebkitBackgroundClip: "text",
+          color: "transparent",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        BLOOM
+      </h1>
+      <p className="text-lg md:text-xl text-muted-foreground max-w-lg">
+        Creating and managing sponsored credit faucets for the Arweave ecosystem made easy.
+      </p>
+      <div className="flex items-center gap-4 justify-start mt-2">
+        <button
+          onClick={handleGetStarted}
+          className="btn-primary px-12 py-5 text-xl font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.0375]"
+        >
+          Get Started
+        </button>
+        
+        {/* Scroll to Guides Button */}
+        <button
+          onClick={scrollToGuides}
+          className="w-16 h-16 bg-primary/10 hover:bg-primary/20 border-2 border-primary/30 hover:border-primary/50 text-primary rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 shadow-lg hover:shadow-xl"
+          aria-label="Scroll to guides section"
+        >
+          <ChevronDown className="w-8 h-8" />
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* Features Section */}
       <section className="w-full py-16 md:py-20 bg-card">
@@ -158,13 +156,13 @@ export default function HomePage() {
       </section>
 
       {/* Video Section */}
-      <section className="w-full py-16 md:py-20 bg-background">
+      <section id="guides-section" className="w-full py-16 md:py-20 bg-background">
         <div className="container mx-auto px-4 md:px-6 max-w-7xl">
           <h2 className="text-4xl font-heading font-extrabold text-center mb-12">GUIDES</h2>
 
           {/* Video 1: Video on left, text on right */}
           <div className="grid lg:grid-cols-2 gap-10 items-center mb-16">
-            <div className="relative w-full shadow-2xl border border-border rounded-lg overflow-hidden bg-foreground">
+            <div className="relative w-full shadow-2xl border border-border rounded-2xl overflow-hidden bg-foreground">
               <div className="flex items-center p-3 bg-muted border-b border-border">
                 <div className="flex space-x-2">
                   <span className="w-3 h-3 bg-red-500 rounded-full"></span>
@@ -213,7 +211,7 @@ export default function HomePage() {
                 Credits Guide
               </button>
             </div>
-            <div className="relative w-full shadow-2xl border border-border rounded-lg overflow-hidden bg-foreground lg:order-2">
+            <div className="relative w-full shadow-2xl border border-border rounded-2xl overflow-hidden bg-foreground lg:order-2">
               <div className="flex items-center p-3 bg-muted border-b border-border">
                 <div className="flex space-x-2">
                   <span className="w-3 h-3 bg-red-500 rounded-full"></span>
