@@ -2,11 +2,10 @@
 
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-
-import { X, ExternalLink, Calculator, Github, Database, Shield, BarChart3, Upload, ChevronDown, Mail, ClipboardPenIcon } from "lucide-react"
-import Logo from "../assets/logo.svg"
+import { Mail, ExternalLink } from 'lucide-react'
 import SetupPoolsGuideModal from "../components/SetupPoolsGuideModal"
 import UseSharedCreditsGuideModal from "../components/UseSharedCreditsGuideModal"
+import Logo from "../assets/logo.svg"
 
 // Custom X.com Icon Component
 const XIcon = ({ className }: { className?: string }) => (
@@ -29,394 +28,248 @@ const DiscordIcon = ({ className }: { className?: string }) => (
 )
 
 export default function HomePage() {
-  const [showHowToModal, setShowHowToModal] = useState(false)
-  const [showPoolsGuide, setShowPoolsGuide] = useState(false)
-  const [showCreditsGuide, setShowCreditsGuide] = useState(false)
-  const [showContactModal, setShowContactModal] = useState(false)
-  const [copied, setCopied] = useState(false)
   const navigate = useNavigate()
 
-  const textBackgroundImage =
-    "https://gylvphy2l2vnfykcptlygxl44yu6z6e4lcldtpbkc5mqbvux4f2a.arweave.net/NhdXnxpeqtLhQnzXg1185ins-JxYljm8KhdZANaX4XQ"
+  // Guides flow
+  const [showGuidesPicker, setShowGuidesPicker] = useState(false)
+  const [showPoolsGuide, setShowPoolsGuide] = useState(false)
+  const [showCreditsGuide, setShowCreditsGuide] = useState(false)
 
-  const handleGetStarted = () => {
-    navigate("/dashboard")
+  // Contact modal
+  const [showContactModal, setShowContactModal] = useState(false)
+  const [copied, setCopied] = useState(false)
+
+  // Video toggle
+  const [activeVideo, setActiveVideo] = useState<"credits" | "setup">("credits")
+  const videos = {
+    credits: "https://www.youtube.com/embed/CrL-lNtN140",
+    setup: "https://www.youtube.com/embed/8Uw_eL7-XtI",
   }
 
-  const scrollToGuides = () => {
-    const guidesSection = document.getElementById('guides-section')
-    if (guidesSection) {
-      const yOffset = -40;
-      const y = guidesSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
-  }
+  const handleGetStarted = () => navigate("/dashboard")
 
-  const handleCopyEmail = () => {
-    navigator.clipboard.writeText("nityaprotocol@gmail.com")
+  const handleCopyEmail = async () => {
+    await navigator.clipboard.writeText("nityaprotocol@gmail.com")
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans relative overflow-hidden">
-      {/* Floating Dock Navigation */}
-      <nav className="fixed top-4 left-[15%] w-[70%] z-50 bg-card border border-border shadow-lg rounded-full px-8 py-[0.8rem] flex items-center justify-between">
-        <div className="flex items-center">
-          <img src={Logo || "/placeholder.svg"} alt="Bloom Faucets Logo" className="h-7 w-auto" />
-        </div>
-        <div className="flex items-center space-x-4 sm:space-x-6 md:space-x-8">
-          <a
-            href="https://bloom-uploads.vercel.app/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-muted-foreground hover:text-foreground transition-colors rounded-full p-2"
-          >
-            <Upload className="w-6 h-6" />
-            <span className="sr-only">Bloom Uploads</span>
-          </a>
-          <button
-            onClick={() => setShowContactModal(true)}
-            className="text-muted-foreground hover:text-foreground transition-colors rounded-full p-2"
-            aria-label="Contact us via email"
-          >
-            <Mail className="w-6 h-6" />
-          </button>
-        </div>
-      </nav>
+    <div className="relative min-h-screen text-white">
+      {/* Background image + gradient overlay */}
+      <div
+        className="absolute inset-0 -z-10 bg-cover bg-center"
+        style={{
+          backgroundImage: "url('https://unsplash.com/s/photos/background-image')", // placeholder per instructions
+        }}
+      />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/70 via-black/50 to-black/80" />
 
-      {/* Hero Section */}
-      <section className="relative w-full py-16 md:py-20 lg:py-24 bg-background overflow-hidden mt-16">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="grid lg:grid-cols-2 gap-10 items-center">
-            <div className="flex justify-center lg:justify-start transform translate-x-[20%]">
+      {/* Top Navigation */}
+      <header className="relative z-10">
+        <div className="mx-auto w-full max-w-7xl px-6 pt-6 flex items-center justify-between">
+          {/* Left: Logo + left-side links cluster */}
+          <div className="flex items-center gap-8">
+            <a href="/" className="flex items-center gap-2">
+              {/* Per instruction, logo must be an image using the provided placeholder URL.
+                 Fallback to local logo if the placeholder fails to load. */}
+              <img
+                src="https://www.youtube.com/watch?v=AoosTei0ZsE"
+                alt="Bloom Logo"
+                className="h-7 w-auto object-contain"
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).src = Logo
+                }}
+              />
+            </a>
+
+            <nav className="hidden md:flex items-center gap-6 text-sm">
               <a
                 href="https://bloom-uploads.vercel.app/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block w-full max-w-sm rounded-2xl overflow-hidden"
+                className="text-white/80 hover:text-white transition-colors"
               >
-                <img
-                  src="https://arweave.net/6yCfoHv1Ksulkz6z7etmyqyTDRb9_Xo3hLMreKQ4C3g"
-                  alt="Bloom Faucets"
-                  className="w-full h-auto object-cover"
-                />
+                Uploads
               </a>
-            </div>
-            <div className="flex flex-col items-start space-y-6 text-left">
-              <h1
-                className="text-6xl md:text-8xl font-heading font-extrabold tracking-tighter"
-                style={{
-                  backgroundImage: `url(${textBackgroundImage})`,
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  color: "transparent",
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                }}
+              <a
+                href="https://prices.ardrive.io/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/80 hover:text-white transition-colors"
               >
-                BLOOM
-              </h1>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-md">
-                Creating and managing Turbo credit faucets for Arweave ecosystem made easy.
-              </p>
-              <div className="flex items-center gap-4 justify-start mt-2">
-                <button
-                  onClick={handleGetStarted}
-                  className="btn-primary px-12 py-5 text-xl font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.0375]"
-                >
-                  Get Started
-                </button>
-                <button
-                  onClick={scrollToGuides}
-                  className="w-16 h-16 bg-primary/10 hover:bg-primary/20 border-2 border-primary/30 hover:border-primary/50 text-primary rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 shadow-lg hover:shadow-xl"
-                  aria-label="Scroll to guides section"
-                >
-                  <ChevronDown className="w-8 h-8" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="w-full py-16 md:py-20 bg-card">
-        <div className="container mx-auto px-4 md:px-6">
-          <h2 className="text-4xl font-heading font-extrabold text-center mb-8">FEATURES</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="flex flex-col items-start text-left p-6 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300">
-              <div className="p-3 mb-4 rounded-xl bg-muted/50 text-foreground">
-                <Database className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-foreground">Faucet Management</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Create multiple sponsor faucets to fund them with turbo credits.
-              </p>
-            </div>
-            <div className="flex flex-col items-start text-left p-6 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300">
-              <div className="p-3 mb-4 rounded-xl bg-muted/50 text-foreground">
-                <Shield className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-foreground">Access Control</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Whitelist specific addresses and manage user access.
-              </p>
-            </div>
-            <div className="flex flex-col items-start text-left p-6 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300">
-              <div className="p-3 mb-4 rounded-xl bg-muted/50 text-foreground">
-                <BarChart3 className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-foreground">Analytics</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Monitor faucet usage and complete control over faucet activities.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Guides Section */}
-      <section id="guides-section" className="w-full py-16 md:py-20 bg-background">
-        <div className="container mx-auto px-4 md:px-6 max-w-7xl">
-          <h2 className="text-4xl font-heading font-extrabold text-center mb-12">GUIDES</h2>
-
-          {/* First Guide: Video on left, text on right on large screens; video then text on mobile */}
-          <div className="flex flex-col lg:flex-row gap-10 items-center mb-16">
-            <div className="relative w-full shadow-2xl border border-border rounded-2xl overflow-hidden bg-foreground">
-              <div className="flex items-center p-3 bg-muted border-b border-border">
-                <div className="flex space-x-2">
-                  <span className="w-3 h-3 bg-red-500 rounded-full"></span>
-                  <span className="w-3 h-3 bg-yellow-500 rounded-full"></span>
-                  <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-                </div>
-              </div>
-              <div className="relative pb-[56.25%] h-0">
-                <iframe
-                  className="absolute top-0 left-0 w-full h-full"
-                  src="https://www.youtube.com/embed/3cKWv34cd94"
-                  title="Guide to setup Bloom faucets"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
-            </div>
-            <div className="flex flex-col justify-center space-y-4 w-full">
-              <h3 className="text-3xl md:text-4xl font-heading font-bold text-foreground">Setup Bloom Faucets</h3>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Learn how to create and configure your own sponsored credit faucets with ease. This comprehensive guide
-                walks you through the entire setup process, from initial configuration to sponsoring credits.
-              </p>
+                Price Calculator
+              </a>
               <button
-                onClick={() => setShowPoolsGuide(true)}
-                className="bg-primary text-primary-foreground px-7 py-5 text-xl font-semibold hover:bg-primary/90 transition-all duration-300 transform hover:scale-[1.0375] shadow-md hover:shadow-lg w-fit rounded-full"
+                onClick={() => setShowContactModal(true)}
+                className="text-white/80 hover:text-white transition-colors inline-flex items-center gap-2"
               >
-                Setup Guide
+                Contact Us <ExternalLink className="w-4 h-4" />
               </button>
-            </div>
+            </nav>
           </div>
 
-          {/* Second Guide: Text on left, video on right on large screens; video then text on mobile */}
-          <div className="flex flex-col lg:flex-row-reverse gap-10 items-center">
-            <div className="relative w-full shadow-2xl border border-border rounded-2xl overflow-hidden bg-foreground">
-              <div className="flex items-center p-3 bg-muted border-b border-border">
-                <div className="flex space-x-2">
-                  <span className="w-3 h-3 bg-red-500 rounded-full"></span>
-                  <span className="w-3 h-3 bg-yellow-500 rounded-full"></span>
-                  <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-                </div>
-              </div>
-              <div className="relative pb-[56.25%] h-0">
-                <iframe
-                  className="absolute top-0 left-0 w-full h-full"
-                  src="https://www.youtube.com/embed/OBVfwiCWVpQ"
-                  title="How to use shared credits"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
-            </div>
-            <div className="flex flex-col justify-center space-y-4 w-full">
-              <h3 className="text-3xl md:text-4xl font-heading font-bold text-foreground">Use Shared Credits</h3>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Discover how users can leverage shared credits for their Arweave uploads. This tutorial demonstrates the
-                seamless integration process with various tools and methods.
-              </p>
-              <button
-                onClick={() => setShowCreditsGuide(true)}
-                className="bg-primary text-primary-foreground px-7 py-5 text-xl font-semibold hover:bg-primary/90 transition-all duration-300 transform hover:scale-[1.0375] shadow-md hover:shadow-lg w-fit rounded-full"
-              >
-                Credits Guide
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Resources & Support Section */}
-      <section className="w-full py-16 md:py-20 bg-card">
-        <div className="container mx-auto px-4 md:px-6 text-center">
-          <h2 className="text-4xl font-heading font-extrabold mb-8">RESOURCES & SUPPORT</h2>
-          <div className="grid md:grid-cols-3 gap-6">
+          {/* Right: social icons + Guides */}
+          <div className="flex items-center gap-4">
             <a
               href="https://discord.gg/9cJyqrJUHh"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-col items-start text-left p-6 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300 group"
+              className="hidden sm:inline-flex text-white/80 hover:text-white transition-colors"
             >
-              <div className="p-3 mb-4 rounded-xl bg-muted/50 text-foreground">
-                <DiscordIcon className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-foreground flex items-center">
-                Join Discord
-                <ExternalLink className="w-4 h-4 ml-2 text-muted-foreground group-hover:text-foreground transition-colors" />
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">Get community support and stay updated.</p>
+              <DiscordIcon className="w-5 h-5" />
+              <span className="sr-only">Discord</span>
             </a>
-            <a
-              href="https://prices.ardrive.io/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex flex-col items-start text-left p-6 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300 group"
-            >
-              <div className="p-3 mb-4 rounded-xl bg-muted/50 text-foreground">
-                <Calculator className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-foreground flex items-center">
-                Price Calculator
-                <ExternalLink className="w-4 h-4 ml-2 text-muted-foreground group-hover:text-foreground transition-colors" />
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">Calculate Turbo credit costs.</p>
-            </a>
-            <a
-              href="https://github.com/Arpitpassi/bloom-faucets"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex flex-col items-start text-left p-6 border border-border rounded-2xl shadow-sm bg-background hover:shadow-md transition-shadow duration-300 group"
-            >
-              <div className="p-3 mb-4 rounded-xl bg-muted/50 text-foreground">
-                <Github className="w-6 h-6" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-foreground flex items-center">
-                Documentation
-                <ExternalLink className="w-4 h-4 ml-2 text-muted-foreground group-hover:text-foreground transition-colors" />
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">Look at the code behind Bloom faucets.</p>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-background py-8 px-4 sm:px-6 lg:px-8 border-t border-border">
-        <div className="max-w-7xl mx-auto text-center space-y-4">
-          <div className="flex justify-center space-x-6">
             <a
               href="https://x.com/usebloom_x"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-foreground hover:text-muted-foreground transition-colors"
+              className="hidden sm:inline-flex text-white/80 hover:text-white transition-colors"
             >
-              <XIcon className="w-6 h-6" />
-              <span className="sr-only">X</span>
+              <XIcon className="w-5 h-5" />
+              <span className="sr-only">X/Twitter</span>
             </a>
-            <a
-              href="https://github.com/Arpitpassi/bloom-faucets"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-foreground hover:text-muted-foreground transition-colors"
-            >
-              <Github className="w-6 h-6" />
-              <span className="sr-only">GitHub</span>
-            </a>
-            <a
-              href="https://discord.gg/9cJyqrJUHh"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-foreground hover:text-muted-foreground transition-colors"
-            >
-              <DiscordIcon className="w-6 h-6" />
-              <span className="sr-only">Discord</span>
-            </a>
-          </div>
-          <p className="text-muted-foreground text-sm">
-            © {new Date().getFullYear()} Bloom. All rights reserved. Version 0.0.26
-          </p>
-        </div>
-      </footer>
 
-      {/* How To Modal */}
-      {showHowToModal && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-card border border-border max-w-lg w-full p-8 relative rounded-xs shadow-lg">
             <button
-              onClick={() => setShowHowToModal(false)}
-              className="absolute top-4 right-4 text-foreground hover:text-muted-foreground p-1 rounded-full transition-colors"
+              onClick={() => setShowGuidesPicker(true)}
+              className="inline-flex items-center justify-center h-9 px-4 rounded-full bg-white text-black text-sm font-semibold hover:bg-white/90 transition-colors"
             >
-              <X className="w-6 h-6" />
+              Guides
             </button>
-            <h1 className="text-3xl font-heading font-extrabold mb-6 text-center">How To</h1>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
+          </div>
+        </div>
+      </header>
+
+      {/* Hero */}
+      <main className="relative z-10">
+        <section className="pt-16 md:pt-24 lg:pt-28">
+          <div className="mx-auto max-w-4xl px-6 text-center">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
+              <span className="block">Onboarding Onto</span>
+              <span className="block text-blue-300">Arweave Made Easy</span>
+            </h1>
+            <p className="mt-4 text-white/80 max-w-2xl mx-auto">
+              Creating and managing sponsored credit faucets for the Arweave ecosystem made easy.
+            </p>
+            <div className="mt-8">
               <button
-                onClick={() => {
-                  setShowHowToModal(false)
-                  setShowPoolsGuide(true)
-                }}
-                className="bg-primary text-primary-foreground border border-primary px-10 py-4 text-lg font-semibold hover:bg-primary/90 transition-colors rounded-full flex-1"
+                onClick={handleGetStarted}
+                className="inline-flex items-center justify-center rounded-full bg-black/90 text-white px-6 py-3 font-semibold shadow-lg hover:bg-black transition-colors"
+              >
+                Get Started
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Video Player Card (bottom-middle) */}
+        <section className="mt-12 md:mt-16 lg:mt-20 pb-16">
+          <div className="mx-auto w-full max-w-4xl px-6">
+            {/* Toggle */}
+            <div className="mx-auto mb-4 flex w-fit items-center rounded-full bg-white/10 p-1 backdrop-blur-sm">
+              <button
+                onClick={() => setActiveVideo("credits")}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  activeVideo === "credits" ? "bg-white text-black" : "text-white/80 hover:text-white"
+                }`}
+              >
+                Credits
+              </button>
+              <button
+                onClick={() => setActiveVideo("setup")}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  activeVideo === "setup" ? "bg-white text-black" : "text-white/80 hover:text-white"
+                }`}
               >
                 Setup Faucets
               </button>
+            </div>
+
+            {/* Player */}
+            <div className="rounded-2xl overflow-hidden border border-white/10 bg-black/50 shadow-2xl">
+              <div className="relative w-full pb-[56.25%]">
+                <iframe
+                  className="absolute inset-0 h-full w-full"
+                  src={videos[activeVideo]}
+                  title={activeVideo === "credits" ? "Credits Video" : "Setup Faucets Video"}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* Guides Picker Modal (single popup) */}
+      {showGuidesPicker && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-white text-black max-w-lg w-full rounded-md shadow-xl p-8 relative">
+            <button
+              onClick={() => setShowGuidesPicker(false)}
+              className="absolute top-3 right-3 text-black/60 hover:text-black"
+            >
+              ✕
+            </button>
+            <h2 className="text-2xl font-bold mb-6 text-center">Guides</h2>
+            <div className="flex flex-col sm:flex-row gap-4">
               <button
                 onClick={() => {
-                  setShowHowToModal(false)
+                  setShowGuidesPicker(false)
                   setShowCreditsGuide(true)
                 }}
-                className="bg-secondary text-secondary-foreground border border-border px-10 py-4 text-lg font-semibold hover:bg-accent hover:text-accent-foreground transition-colors rounded-full flex-1"
+                className="flex-1 rounded-full bg-black text-white px-6 py-4 font-semibold hover:bg-black/85 transition-colors"
               >
                 Use Shared Credits
               </button>
+              <button
+                onClick={() => {
+                  setShowGuidesPicker(false)
+                  setShowPoolsGuide(true)
+                }}
+                className="flex-1 rounded-full bg-gray-100 text-black px-6 py-4 font-semibold hover:bg-gray-200 transition-colors border border-gray-200"
+              >
+                Setup Faucets
+              </button>
             </div>
           </div>
         </div>
       )}
-
-      <SetupPoolsGuideModal isOpen={showPoolsGuide} onClose={() => setShowPoolsGuide(false)} />
-      <UseSharedCreditsGuideModal isOpen={showCreditsGuide} onClose={() => setShowCreditsGuide(false)} />
 
       {/* Contact Modal */}
       {showContactModal && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-card border border-border max-w-md w-full p-8 relative rounded-xs shadow-lg">
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+          <div className="bg-white text-black max-w-md w-full rounded-md shadow-xl p-8 relative">
             <button
               onClick={() => setShowContactModal(false)}
-              className="absolute top-4 right-4 text-foreground hover:text-muted-foreground p-1 rounded-full transition-colors"
+              className="absolute top-3 right-3 text-black/60 hover:text-black"
             >
-              <X className="w-6 h-6" />
+              ✕
             </button>
-            <p className="mb-6 text-muted-foreground">For any inquiries or support, contact us at:</p>
-            <div className="flex items-center justify-start gap-2">
-              <p className="text-foreground">
-                <strong>Email:</strong>{" "}
-                <a href="mailto:nityaprotocol@gmail.com" className="text-foreground hover:underline">
-                  nityaprotocol@gmail.com
-                </a>
-              </p>
+            <h3 className="text-xl font-semibold mb-4">Contact Us</h3>
+            <p className="text-black/70 mb-4">For any inquiries or support, contact us at:</p>
+            <div className="flex items-center gap-2">
+              <Mail className="w-5 h-5" />
+              <a href="mailto:nityaprotocol@gmail.com" className="underline font-medium">
+                nityaprotocol@gmail.com
+              </a>
               <button
                 onClick={handleCopyEmail}
-                className="text-muted-foreground hover:text-foreground transition-colors p-1"
+                className="text-black/60 hover:text-black transition-colors"
                 aria-label="Copy email address"
               >
-                <ClipboardPenIcon className="w-5 h-5" />
+                Copy
               </button>
             </div>
-            {copied && (
-              <p className="mt-4 text-sm text-primary animate-fade-in">Email copied!</p>
-            )}
+            {copied && <p className="mt-3 text-sm text-green-600">Email copied!</p>}
           </div>
         </div>
       )}
+
+      {/* Keep original guides content; opened from Guides picker */}
+      <SetupPoolsGuideModal isOpen={showPoolsGuide} onClose={() => setShowPoolsGuide(false)} />
+      <UseSharedCreditsGuideModal isOpen={showCreditsGuide} onClose={() => setShowCreditsGuide(false)} />
     </div>
   )
 }
