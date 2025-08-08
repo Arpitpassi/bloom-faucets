@@ -155,14 +155,13 @@ export default function HomePage() {
         <main className="relative z-10">
           <section className="pt-16 md:pt-24 lg:pt-28">
             <div className="mx-auto max-w-4xl px-6 text-center">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight leading-tight">
-                <span className="block">
-                  <span className="text-blue-300">Onboarding</span> Onto
-                </span>
-                <span className="block">
-                  Arweave <span className="text-blue-300">Made Easy</span>
-                </span>
-              </h1>
+              <a href="/dashboard">
+                <img
+                  src="https://arweave.net/FmsDNjiVuS-_VcfY98o_mvWiJ49Y1i9X63PWV2D7zPM" // Replace with actual Arweave image ID
+                  alt="Onboarding Onto Arweave Made Easy"
+                  className="mx-auto max-w-full h-auto"
+                />
+              </a>
               {/* Increased font size for subtitle */}
               <p className="mt-4 text-white/80 max-w-2xl mx-auto text-lg md:text-xl">
                 Creating and managing sponsored credit faucets for the Arweave ecosystem made easy.
