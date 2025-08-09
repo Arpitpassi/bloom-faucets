@@ -209,27 +209,36 @@ export default function HomePage() {
           {/* Video Player Section - Reduced gap with top tabs */}
           <section className="mt-6 sm:mt-8 pb-12 sm:pb-16 lg:pb-20">
             <div className="mx-auto w-full max-w-5xl px-4 sm:px-6">
-              {/* Video Toggle - Above the video */}
-              <div className="mx-auto mb-0 flex w-fit items-center rounded-full bg-white/15 backdrop-blur-md p-1.5 shadow-lg">
+              {/* Video Toggle - Animated toggle button */}
+              <div className="mx-auto mb-0 flex w-fit items-center rounded-full bg-white/15 backdrop-blur-md p-1.5 shadow-lg relative overflow-hidden">
+                {/* Animated background slider */}
+                <div 
+                  className={`absolute top-1.5 bottom-1.5 bg-white rounded-full shadow-lg transition-all duration-500 ease-out ${
+                    activeVideo === "credits" 
+                      ? "left-1.5 w-[calc(50%-0.375rem)]" 
+                      : "left-1/2 w-[calc(50%-0.375rem)]"
+                  }`}
+                />
+                
                 <button
                   onClick={() => setActiveVideo("credits")}
-                  className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
+                  className={`relative z-10 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 transform ${
                     activeVideo === "credits" 
-                      ? "bg-white text-black shadow-lg" 
-                      : "text-white/80 hover:text-white hover:bg-white/10"
+                      ? "text-black scale-105" 
+                      : "text-white/80 hover:text-white hover:scale-102"
                   }`}
                 >
                   Credits
                 </button>
                 <button
                   onClick={() => setActiveVideo("setup")}
-                  className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
+                  className={`relative z-10 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 transform ${
                     activeVideo === "setup" 
-                      ? "bg-white text-black shadow-lg" 
-                      : "text-white/80 hover:text-white hover:bg-white/10"
+                      ? "text-black scale-105" 
+                      : "text-white/80 hover:text-white hover:scale-102"
                   }`}
                 >
-                  Faucets
+                  Faucet
                 </button>
               </div>
 
