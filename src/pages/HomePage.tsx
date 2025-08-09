@@ -73,11 +73,14 @@ export default function HomePage() {
         }
       `}</style>
       <div className="relative min-h-screen text-white overflow-x-hidden">
-        {/* Background image */}
+        {/* Background image - Fixed to prevent cropping */}
         <div
-          className="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat"
+          className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: "url('https://arweave.net/kHcegJ4QYY5df5V2J3tKz6WcbM7jI03JaZXtcUcGSCw')",
+            backgroundAttachment: "fixed",
+            backgroundSize: "cover",
+            backgroundPosition: "center center"
           }}
         />
 
@@ -91,7 +94,7 @@ export default function HomePage() {
                   <img
                     src="https://arweave.net/muAW35Xu2H1yHkJxfcLzjaL-_ONmy1k4og8AX_dfmT0"
                     alt="Bloom Logo"
-                    className="h-6 sm:h-7 w-auto object-contain"
+                    className="h-6 sm:h-6 w-auto object-contain"
                   />
                 </a>
               </div>
@@ -158,7 +161,7 @@ export default function HomePage() {
           </div>
         </header>
 
-        {/* Hero Section - Better proportions and responsive sizing */}
+        {/* Hero Section - Reduced hero image size to 75% */}
         <main className="relative z-10">
           <section className="pt-8 sm:pt-12 md:pt-16 lg:pt-20 xl:pt-24">
             <div className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
@@ -166,7 +169,8 @@ export default function HomePage() {
                 <img
                   src="https://arweave.net/FmsDNjiVuS-_VcfY98o_mvWiJ49Y1i9X63PWV2D7zPM"
                   alt="Onboarding Onto Arweave Made Easy"
-                  className="mx-auto max-w-full h-auto w-full max-w-4xl"
+                  className="mx-auto max-w-full h-auto w-full max-w-3xl"
+                  style={{ transform: "scale(0.95)" }}
                 />
               </a>
               {/* Improved subtitle typography */}
