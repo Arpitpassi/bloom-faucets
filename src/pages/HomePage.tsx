@@ -40,7 +40,7 @@ export default function HomePage() {
   }
 
   const handleGetStarted = () => {
-    console.log("Navigate to dashboard")
+    window.location.href = "/dashboard"
   }
 
   const handleCopyEmail = async () => {
@@ -239,7 +239,7 @@ export default function HomePage() {
                 <div className="absolute inset-0 bg-blue-500/20 rounded-3xl blur-3xl transform scale-105"></div>
                 
                 {/* Main player container */}
-                <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border border-white/20 shadow-2xl backdrop-blur-sm">
+                <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl backdrop-blur-sm">
                   <div className="bg-gradient-to-br from-black/30 to-black/60 p-2 sm:p-4">
                     <div className="relative w-full pb-[56.25%] bg-black rounded-xl sm:rounded-2xl overflow-hidden">
                       <iframe
