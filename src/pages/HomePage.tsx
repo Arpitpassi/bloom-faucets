@@ -255,13 +255,13 @@ export default function HomePage() {
             <div className="grid grid-cols-3 items-center">
               {/* Logo */}
               <div className="flex items-center justify-start">
-                <a href="/" className="flex items-center gap-2">
+                <div className="flex items-center gap-2">
                   <img
                     src="https://arweave.net/muAW35Xu2H1yHkJxfcLzjaL-_ONmy1k4og8AX_dfmT0"
                     alt="Bloom Logo"
                     className="h-6 sm:h-6 w-auto object-contain transform translate-y-[-8px]"
                   />
-                </a>
+                </div>
               </div>
 
               {/* Navigation */}
@@ -322,14 +322,14 @@ export default function HomePage() {
           {/* Hero Section */}
           <section className="pt-8 sm:pt-12 md:pt-16 lg:pt-20 xl:pt-24">
             <div className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
-              <a href="/dashboard" className="block">
+              <div className="block">
                 <img
                   src="https://arweave.net/FmsDNjiVuS-_VcfY98o_mvWiJ49Y1i9X63PWV2D7zPM"
                   alt="Onboarding Onto Arweave Made Easy"
                   className="mx-auto max-w-full h-auto w-full max-w-3xl"
                   style={{ transform: "scale(0.75)" }}
                 />
-              </a>
+              </div>
               <p className="mt-6 text-white/90 max-w-2xl mx-auto text-base sm:text-lg md:text-xl leading-relaxed">
                 Create and manage Turbo credit faucets for the Arweave ecosystem.
               </p>
