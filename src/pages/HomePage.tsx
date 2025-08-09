@@ -320,9 +320,10 @@ export default function HomePage() {
                   style={{ transform: "scale(0.75)" }}
                 />
               </div>
-              <p className="mt-6 text-white/90 max-w-2xl mx-auto text-base sm:text-lg md:text-xl leading-relaxed">
-                Create and manage Turbo credit faucets for the Arweave ecosystem.
-              </p>
+              <p className="mt-1 text-white/90 max-w-2xl mx-auto text-base sm:text-lg md:text-xl leading-relaxed">
+              Create and manage Turbo credit faucets for the Arweave ecosystem.
+             </p>
+
               <div className="mt-8 sm:mt-10">
                 <button
                   onClick={handleGetStarted}
