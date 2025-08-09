@@ -100,12 +100,12 @@ export default function HomePage() {
           }}
         />
 
-        {/* Top Navigation - Improved responsive design */}
+        {/* Top Navigation - Fixed centering with proper layout */}
         <header className="relative z-10">
           <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
-            <div className="flex items-center justify-between">
+            <div className="grid grid-cols-3 items-center">
               {/* Left: Logo */}
-              <div className="flex items-center">
+              <div className="flex items-center justify-start">
                 <a href="/" className="flex items-center gap-2">
                   <img
                     src="https://arweave.net/muAW35Xu2H1yHkJxfcLzjaL-_ONmy1k4og8AX_dfmT0"
@@ -115,34 +115,36 @@ export default function HomePage() {
                 </a>
               </div>
 
-              {/* Center: Navigation links */}
-              <nav className="hidden lg:flex items-center gap-8 text-sm font-medium">
-                <a
-                  href="https://bloom-uploads.vercel.app/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-white/80 hover:text-white transition-colors duration-200"
-                >
-                  Uploads
-                </a>
-                <a
-                  href="https://prices.ardrive.io/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-white/80 hover:text-white transition-colors duration-200"
-                >
-                  Price Calculator
-                </a>
-                <button
-                  onClick={() => setShowContactModal(true)}
-                  className="text-white/80 hover:text-white transition-colors duration-200"
-                >
-                  Contact Us
-                </button>
+              {/* Center: Navigation links - Properly centered */}
+              <nav className="hidden lg:flex items-center justify-center">
+                <div className="flex items-center gap-8 text-sm font-medium">
+                  <a
+                    href="https://bloom-uploads.vercel.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white/80 hover:text-white transition-colors duration-200"
+                  >
+                    Uploads
+                  </a>
+                  <a
+                    href="https://prices.ardrive.io/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white/80 hover:text-white transition-colors duration-200"
+                  >
+                    Price Calculator
+                  </a>
+                  <button
+                    onClick={() => setShowContactModal(true)}
+                    className="text-white/80 hover:text-white transition-colors duration-200"
+                  >
+                    Contact Us
+                  </button>
+                </div>
               </nav>
 
               {/* Right: social icons group + Guides */}
-              <div className="flex items-center gap-4 sm:gap-6">
+              <div className="flex items-center justify-end gap-4 sm:gap-6">
                 {/* Social Icons Group */}
                 <div className="hidden sm:flex items-center gap-3">
                   <a
