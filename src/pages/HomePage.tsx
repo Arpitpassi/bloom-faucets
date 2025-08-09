@@ -259,7 +259,7 @@ export default function HomePage() {
                   <img
                     src="https://arweave.net/muAW35Xu2H1yHkJxfcLzjaL-_ONmy1k4og8AX_dfmT0"
                     alt="Bloom Logo"
-                    className="h-6 sm:h-6 w-auto object-contain transform translate-y-[-8px]"
+                    className="h-6 sm:h-6 w-auto object-contain transform translate-y-[-5px]"
                   />
                 </div>
               </div>
