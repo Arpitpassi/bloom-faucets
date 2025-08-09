@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useCallback, useMemo } from "react"
+import { useNavigate } from "react-router-dom"
 
 // Custom X.com Icon Component
 const XIcon = ({ className }: { className?: string }) => (
@@ -17,7 +18,7 @@ const DiscordIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 512 388.049" fill="currentColor">
     <path
       fillRule="nonzero"
-      d="M433.713 32.491A424.231 424.231 0 00328.061.005c-4.953 8.873-9.488 18.156-13.492 27.509a393.937 393.937 0 00-58.629-4.408c-19.594 0-39.284 1.489-58.637 4.37-3.952-9.33-8.543-18.581-13.525-27.476-36.435 6.212-72.045 17.196-105.676 32.555-66.867 98.92-84.988 195.368-75.928 290.446a425.967 425.967 0 00129.563 65.03c10.447-14.103 19.806-29.116 27.752-44.74a273.827 273.827 0 01-43.716-20.862c3.665-2.658 7.249-5.396 10.712-8.055 40.496 19.019 84.745 28.94 129.514 28.94 44.77 0 89.019-9.921 129.517-28.943 3.504 2.86 7.088 5.598 10.712 8.055a275.576 275.576 0 01-43.796 20.918 311.49 311.49 0 0027.752 44.705 424.235 424.235 0 00129.65-65.019l-.011.011c10.632-110.26-18.162-205.822-76.11-290.55zM170.948 264.529c-25.249 0-46.11-22.914-46.11-51.104 0-28.189 20.135-51.304 46.029-51.304 25.895 0 46.592 23.115 46.15 51.304-.443 28.19-20.336 51.104-46.069 51.104zm170.102 0c-25.29 0-46.069-22.914-46.069-51.104 0-28.189 20.135-51.304 46.069-51.304s46.472 23.115 46.029 51.304c-.443 28.19-20.296 51.104-20.336 51.104z"
+      d="M433.713 32.491A424.231 424.231 0 00328.061.005c-4.953 8.873-9.488 18.156-13.492 27.509a393.937 393.937 0 00-58.629-4.408c-19.594 0-39.284 1.489-58.637 4.37-3.952-9.33-8.543-18.581-13.525-27.476-36.435 6.212-72.045 17.196-105.676 32.555-66.867 98.92-84.988 195.368-75.928 290.446a425.967 425.967 0 00129.563 65.03c10.447-14.103 19.806-29.116 27.752-44.74a273.827 273.827 0 01-43.716-20.862c3.665-2.658 7.249-5.396 10.712-8.055 40.496 19.019 84.745 28.94 129.514 28.94 44.77 0 89.019-9.921 129.517-28.943 3.504 2.86 7.088 5.598 10.712 8.055a275.576 275.576 0 01-43.796 20.918 311.49 311.49 0 0027.752 44.705 424.235 424.235 0 00129.65-65.019l-.011.011c10.632-110.26-18.162-205.822-76.11-290.55zM170.948 264.529c-25.249 0-46.11-22.914-46.11-51.104 0-28.189 20.135-51.304 46.029-51.304 25.895 0 46.592 23.115 46.15 51.304-.443 28.19-20.336 51.104-46.069 51.104zm170.102 0c-25.29 0-46.069-22.914-46.069-51.104 0-28.189 20.135-51.304 46.069-51.304s46.472 23.115 46.029 51.304c-.443 28.19-20.296 51.104-46.029 51.104z"
     />
   </svg>
 )
@@ -118,7 +119,6 @@ const VideoToggle = ({
   onVideoChange: (video: "credits" | "setup") => void
 }) => (
   <div className="mx-auto mb-0 flex w-fit items-center rounded-full bg-white/15 backdrop-blur-md p-1.5 shadow-lg relative overflow-hidden">
-    {/* Animated background slider */}
     <div 
       className={`absolute top-1.5 bottom-1.5 bg-white rounded-full shadow-lg transition-all duration-500 ease-out ${
         activeVideo === "credits" 
@@ -156,14 +156,13 @@ export default function HomePage() {
   const [activeVideo, setActiveVideo] = useState<"credits" | "setup">("credits")
   const [activeModal, setActiveModal] = useState<ModalType>(null)
   const [copied, setCopied] = useState(false)
+  const navigate = useNavigate()
 
-  // Memoized video URLs
   const videos = useMemo(() => ({
-    credits: "https://www.youtube.com/embed/CrL-lNtN140",
-    setup: "https://www.youtube.com/embed/8Uw_eL7-XtI",
+    credits: "https://youtube.com/embed/OBVfwiCWVpQ",
+    setup: "https://youtube.com/embed/3cKWv34cd94",
   }), [])
 
-  // Memoized navigation links
   const navLinks = useMemo(() => [
     {
       href: "https://bloom-uploads.vercel.app/",
@@ -177,7 +176,6 @@ export default function HomePage() {
     }
   ], [])
 
-  // Memoized social links
   const socialLinks = useMemo(() => [
     {
       href: "https://discord.gg/9cJyqrJUHh",
@@ -191,10 +189,9 @@ export default function HomePage() {
     }
   ], [])
 
-  // Optimized event handlers with useCallback
   const handleGetStarted = useCallback(() => {
-    window.location.href = "/dashboard"
-  }, [])
+    navigate("/dashboard")
+  }, [navigate])
 
   const handleCopyEmail = useCallback(async () => {
     try {
@@ -238,7 +235,6 @@ export default function HomePage() {
       `}</style>
 
       <div className="relative min-h-screen text-white overflow-x-hidden">
-        {/* Background image */}
         <div
           className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
           style={{
@@ -249,22 +245,19 @@ export default function HomePage() {
           }}
         />
 
-        {/* Header */}
         <header className="relative z-10">
           <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
             <div className="grid grid-cols-3 items-center">
-              {/* Logo */}
               <div className="flex items-center justify-start">
                 <div className="flex items-center gap-2">
                   <img
                     src="https://arweave.net/muAW35Xu2H1yHkJxfcLzjaL-_ONmy1k4og8AX_dfmT0"
                     alt="Bloom Logo"
-                    className="h-6 sm:h-6 w-auto object-contain transform translate-y-[-5px]"
+                    className="h-6 sm:h-6 w-auto object-contain transform translate-y-[-6px]"
                   />
                 </div>
               </div>
 
-              {/* Navigation */}
               <nav className="hidden lg:flex items-center justify-center">
                 <div className="flex items-center gap-8 text-sm font-medium">
                   {navLinks.map((link) => (
@@ -286,7 +279,6 @@ export default function HomePage() {
                 </div>
               </nav>
 
-              {/* Social Icons & Guides */}
               <div className="flex items-center justify-end gap-4 sm:gap-6">
                 <div className="hidden sm:flex items-center gap-3">
                   {socialLinks.map((social) => {
@@ -317,9 +309,7 @@ export default function HomePage() {
           </div>
         </header>
 
-        {/* Main Content */}
         <main className="relative z-10">
-          {/* Hero Section */}
           <section className="pt-8 sm:pt-12 md:pt-16 lg:pt-20 xl:pt-24">
             <div className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
               <div className="block">
@@ -344,12 +334,10 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* Video Section */}
           <section className="mt-6 sm:mt-8 pb-12 sm:pb-16 lg:pb-20">
             <div className="mx-auto w-full max-w-5xl px-4 sm:px-6">
               <VideoToggle activeVideo={activeVideo} onVideoChange={setActiveVideo} />
 
-              {/* Video Player */}
               <div className="relative mt-4">
                 <div className="absolute inset-0 bg-blue-500/20 rounded-3xl blur-3xl transform scale-105"></div>
                 <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl backdrop-blur-sm">
@@ -371,7 +359,6 @@ export default function HomePage() {
           </section>
         </main>
 
-        {/* Modals */}
         <Modal
           isOpen={activeModal === 'guides'}
           onClose={closeModal}
