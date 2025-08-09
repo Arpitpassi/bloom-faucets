@@ -71,6 +71,22 @@ export default function HomePage() {
         ::-webkit-scrollbar-thumb:hover {
           background: rgba(255, 255, 255, 0.5);
         }
+
+        /* Notch shape for toggle */
+        .notch-toggle {
+          position: relative;
+          clip-path: polygon(
+            0 0,
+            25% 0,
+            30% 100%,
+            70% 100%,
+            75% 0,
+            100% 0,
+            100% 100%,
+            0% 100%
+          );
+          padding-bottom: 20px;
+        }
       `}</style>
       <div className="relative min-h-screen text-white overflow-x-hidden">
         {/* Background image - Fixed to prevent cropping */}
@@ -188,11 +204,11 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* Video Player Section - Better sizing and positioning */}
-          <section className="mt-12 sm:mt-16 md:mt-20 lg:mt-24 pb-12 sm:pb-16 lg:pb-20">
+          {/* Video Player Section - Reduced gap with top tabs */}
+          <section className="mt-6 sm:mt-8 pb-12 sm:pb-16 lg:pb-20">
             <div className="mx-auto w-full max-w-5xl px-4 sm:px-6">
-              {/* Video Toggle - Improved styling */}
-              <div className="mx-auto mb-6 flex w-fit items-center rounded-full bg-white/15 backdrop-blur-md p-1.5 shadow-lg">
+              {/* Video Toggle - Above the video */}
+              <div className="mx-auto mb-0 flex w-fit items-center rounded-full bg-white/15 backdrop-blur-md p-1.5 shadow-lg">
                 <button
                   onClick={() => setActiveVideo("credits")}
                   className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
@@ -201,7 +217,7 @@ export default function HomePage() {
                       : "text-white/80 hover:text-white hover:bg-white/10"
                   }`}
                 >
-                  Use Credits
+                  Credits
                 </button>
                 <button
                   onClick={() => setActiveVideo("setup")}
@@ -211,12 +227,12 @@ export default function HomePage() {
                       : "text-white/80 hover:text-white hover:bg-white/10"
                   }`}
                 >
-                  Setup Faucet
+                  Faucets
                 </button>
               </div>
 
-              {/* Video Player - Enhanced design and better responsive sizing */}
-              <div className="relative">
+              {/* Video Player Container */}
+              <div className="relative mt-4">
                 {/* Glow effect */}
                 <div className="absolute inset-0 bg-blue-500/20 rounded-3xl blur-3xl transform scale-105"></div>
                 
