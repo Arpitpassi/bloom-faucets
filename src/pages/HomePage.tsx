@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback, useMemo } from "react"
 
 // Custom X.com Icon Component
 const XIcon = ({ className }: { className?: string }) => (
@@ -22,32 +22,197 @@ const DiscordIcon = ({ className }: { className?: string }) => (
   </svg>
 )
 
-export default function HomePage() {
-  // Guides flow
-  const [showGuidesPicker, setShowGuidesPicker] = useState(false)
-  const [showPoolsGuide, setShowPoolsGuide] = useState(false)
-  const [showCreditsGuide, setShowCreditsGuide] = useState(false)
+// Reusable Modal Component
+const Modal = ({ 
+  isOpen, 
+  onClose, 
+  title, 
+  children, 
+  maxWidth = "max-w-lg" 
+}: {
+  isOpen: boolean
+  onClose: () => void
+  title: string
+  children: React.ReactNode
+  maxWidth?: string
+}) => {
+  if (!isOpen) return null
 
-  // Contact modal
-  const [showContactModal, setShowContactModal] = useState(false)
+  return (
+    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className={`bg-slate-800/95 backdrop-blur-xl text-white ${maxWidth} w-full rounded-3xl shadow-2xl p-8 relative border border-slate-600/50`}>
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-white/60 hover:text-white text-xl transition-colors duration-200"
+          aria-label="Close modal"
+        >
+          ✕
+        </button>
+        <h2 className="text-2xl font-bold mb-6">{title}</h2>
+        {children}
+      </div>
+    </div>
+  )
+}
+
+// Contact Modal Content Component
+const ContactModalContent = ({ 
+  onCopyEmail, 
+  copied 
+}: { 
+  onCopyEmail: () => void
+  copied: boolean 
+}) => (
+  <>
+    <p className="text-white/70 mb-4">For any inquiries or support, contact us at:</p>
+    <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-700/50">
+      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+      </svg>
+      <a href="mailto:nityaprotocol@gmail.com" className="underline font-medium flex-1">
+        nityaprotocol@gmail.com
+      </a>
+      <button
+        onClick={onCopyEmail}
+        className="text-white/60 hover:text-white transition-colors duration-200 px-2 py-1 rounded text-sm"
+        aria-label="Copy email address"
+      >
+        {copied ? "Copied!" : "Copy"}
+      </button>
+    </div>
+    {copied && <p className="mt-3 text-sm text-green-400 text-center">Email copied to clipboard!</p>}
+  </>
+)
+
+// Guides Picker Content Component
+const GuidesPickerContent = ({ 
+  onCreditsGuide, 
+  onPoolsGuide 
+}: {
+  onCreditsGuide: () => void
+  onPoolsGuide: () => void
+}) => (
+  <div className="flex flex-col sm:flex-row gap-4">
+    <button
+      onClick={onCreditsGuide}
+      className="flex-1 rounded-2xl bg-blue-600 text-white px-6 py-4 font-semibold hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
+    >
+      Use Shared Credits
+    </button>
+    <button
+      onClick={onPoolsGuide}
+      className="flex-1 rounded-2xl bg-slate-700 text-white px-6 py-4 font-semibold hover:bg-slate-600 transition-all duration-300 transform hover:scale-105 border border-slate-600/50 shadow-lg"
+    >
+      Setup Faucets
+    </button>
+  </div>
+)
+
+// Video Toggle Component
+const VideoToggle = ({ 
+  activeVideo, 
+  onVideoChange 
+}: {
+  activeVideo: "credits" | "setup"
+  onVideoChange: (video: "credits" | "setup") => void
+}) => (
+  <div className="mx-auto mb-0 flex w-fit items-center rounded-full bg-white/15 backdrop-blur-md p-1.5 shadow-lg relative overflow-hidden">
+    {/* Animated background slider */}
+    <div 
+      className={`absolute top-1.5 bottom-1.5 bg-white rounded-full shadow-lg transition-all duration-500 ease-out ${
+        activeVideo === "credits" 
+          ? "left-1.5 w-[calc(50%-0.375rem)]" 
+          : "left-1/2 w-[calc(50%-0.375rem)]"
+      }`}
+    />
+    
+    <button
+      onClick={() => onVideoChange("credits")}
+      className={`relative z-10 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 transform ${
+        activeVideo === "credits" 
+          ? "text-black scale-105" 
+          : "text-white/80 hover:text-white hover:scale-102"
+      }`}
+    >
+      Credits
+    </button>
+    <button
+      onClick={() => onVideoChange("setup")}
+      className={`relative z-10 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 transform ${
+        activeVideo === "setup" 
+          ? "text-black scale-105" 
+          : "text-white/80 hover:text-white hover:scale-102"
+      }`}
+    >
+      Faucet
+    </button>
+  </div>
+)
+
+type ModalType = 'guides' | 'contact' | 'credits' | 'pools' | null
+
+export default function HomePage() {
+  const [activeVideo, setActiveVideo] = useState<"credits" | "setup">("credits")
+  const [activeModal, setActiveModal] = useState<ModalType>(null)
   const [copied, setCopied] = useState(false)
 
-  // Video toggle
-  const [activeVideo, setActiveVideo] = useState<"credits" | "setup">("credits")
-  const videos = {
+  // Memoized video URLs
+  const videos = useMemo(() => ({
     credits: "https://www.youtube.com/embed/CrL-lNtN140",
     setup: "https://www.youtube.com/embed/8Uw_eL7-XtI",
-  }
+  }), [])
 
-  const handleGetStarted = () => {
+  // Memoized navigation links
+  const navLinks = useMemo(() => [
+    {
+      href: "https://bloom-uploads.vercel.app/",
+      text: "Uploads",
+      external: true
+    },
+    {
+      href: "https://prices.ardrive.io/",
+      text: "Price Calculator", 
+      external: true
+    }
+  ], [])
+
+  // Memoized social links
+  const socialLinks = useMemo(() => [
+    {
+      href: "https://discord.gg/9cJyqrJUHh",
+      icon: DiscordIcon,
+      label: "Discord"
+    },
+    {
+      href: "https://x.com/usebloom_x", 
+      icon: XIcon,
+      label: "X/Twitter"
+    }
+  ], [])
+
+  // Optimized event handlers with useCallback
+  const handleGetStarted = useCallback(() => {
     window.location.href = "/dashboard"
-  }
+  }, [])
 
-  const handleCopyEmail = async () => {
-    await navigator.clipboard.writeText("nityaprotocol@gmail.com")
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+  const handleCopyEmail = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText("nityaprotocol@gmail.com")
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (error) {
+      console.error('Failed to copy email:', error)
+    }
+  }, [])
+
+  const closeModal = useCallback(() => {
+    setActiveModal(null)
+  }, [])
+
+  const handleGuidesNavigation = useCallback((guide: 'credits' | 'pools') => {
+    setActiveModal(guide)
+  }, [])
 
   return (
     <>
@@ -57,7 +222,6 @@ export default function HomePage() {
           font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
         }
         
-        /* Custom scrollbar for better aesthetics */
         ::-webkit-scrollbar {
           width: 8px;
         }
@@ -71,25 +235,10 @@ export default function HomePage() {
         ::-webkit-scrollbar-thumb:hover {
           background: rgba(255, 255, 255, 0.5);
         }
-
-        /* Notch shape for toggle */
-        .notch-toggle {
-          position: relative;
-          clip-path: polygon(
-            0 0,
-            25% 0,
-            30% 100%,
-            70% 100%,
-            75% 0,
-            100% 0,
-            100% 100%,
-            0% 100%
-          );
-          padding-bottom: 20px;
-        }
       `}</style>
+
       <div className="relative min-h-screen text-white overflow-x-hidden">
-        {/* Background image - Fixed to prevent cropping */}
+        {/* Background image */}
         <div
           className="fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat"
           style={{
@@ -100,42 +249,36 @@ export default function HomePage() {
           }}
         />
 
-        {/* Top Navigation - Fixed centering with proper layout */}
+        {/* Header */}
         <header className="relative z-10">
           <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6">
             <div className="grid grid-cols-3 items-center">
-              {/* Left: Logo */}
+              {/* Logo */}
               <div className="flex items-center justify-start">
                 <a href="/" className="flex items-center gap-2">
                   <img
                     src="https://arweave.net/muAW35Xu2H1yHkJxfcLzjaL-_ONmy1k4og8AX_dfmT0"
                     alt="Bloom Logo"
-                    className="h-6 sm:h-6 w-auto object-contain"
+                    className="h-6 sm:h-6 w-auto object-contain transform translate-y-[-8px]"
                   />
                 </a>
               </div>
 
-              {/* Center: Navigation links - Properly centered */}
+              {/* Navigation */}
               <nav className="hidden lg:flex items-center justify-center">
                 <div className="flex items-center gap-8 text-sm font-medium">
-                  <a
-                    href="https://bloom-uploads.vercel.app/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-white/80 hover:text-white transition-colors duration-200"
-                  >
-                    Uploads
-                  </a>
-                  <a
-                    href="https://prices.ardrive.io/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-white/80 hover:text-white transition-colors duration-200"
-                  >
-                    Price Calculator
-                  </a>
+                  {navLinks.map((link) => (
+                    <a
+                      key={link.text}
+                      href={link.href}
+                      {...(link.external && { target: "_blank", rel: "noopener noreferrer" })}
+                      className="text-white/80 hover:text-white transition-colors duration-200"
+                    >
+                      {link.text}
+                    </a>
+                  ))}
                   <button
-                    onClick={() => setShowContactModal(true)}
+                    onClick={() => setActiveModal('contact')}
                     className="text-white/80 hover:text-white transition-colors duration-200"
                   >
                     Contact Us
@@ -143,33 +286,28 @@ export default function HomePage() {
                 </div>
               </nav>
 
-              {/* Right: social icons group + Guides */}
+              {/* Social Icons & Guides */}
               <div className="flex items-center justify-end gap-4 sm:gap-6">
-                {/* Social Icons Group */}
                 <div className="hidden sm:flex items-center gap-3">
-                  <a
-                    href="https://discord.gg/9cJyqrJUHh"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-white/80 hover:text-white transition-colors duration-200"
-                  >
-                    <DiscordIcon className="w-5 h-5" />
-                    <span className="sr-only">Discord</span>
-                  </a>
-                  <a
-                    href="https://x.com/usebloom_x"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-white/80 hover:text-white transition-colors duration-200"
-                  >
-                    <XIcon className="w-5 h-5" />
-                    <span className="sr-only">X/Twitter</span>
-                  </a>
+                  {socialLinks.map((social) => {
+                    const IconComponent = social.icon
+                    return (
+                      <a
+                        key={social.label}
+                        href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-white/80 hover:text-white transition-colors duration-200"
+                        aria-label={social.label}
+                      >
+                        <IconComponent className="w-5 h-5" />
+                      </a>
+                    )
+                  })}
                 </div>
 
-                {/* Guides Button */}
                 <button
-                  onClick={() => setShowGuidesPicker(true)}
+                  onClick={() => setActiveModal('guides')}
                   className="inline-flex items-center justify-center h-9 px-4 sm:px-5 rounded-full bg-white text-black text-sm font-semibold hover:bg-white/90 transition-colors duration-200"
                 >
                   Guides
@@ -179,8 +317,9 @@ export default function HomePage() {
           </div>
         </header>
 
-        {/* Hero Section - Reduced hero image size to 75% */}
+        {/* Main Content */}
         <main className="relative z-10">
+          {/* Hero Section */}
           <section className="pt-8 sm:pt-12 md:pt-16 lg:pt-20 xl:pt-24">
             <div className="mx-auto max-w-5xl px-4 sm:px-6 text-center">
               <a href="/dashboard" className="block">
@@ -188,12 +327,11 @@ export default function HomePage() {
                   src="https://arweave.net/FmsDNjiVuS-_VcfY98o_mvWiJ49Y1i9X63PWV2D7zPM"
                   alt="Onboarding Onto Arweave Made Easy"
                   className="mx-auto max-w-full h-auto w-full max-w-3xl"
-                  style={{ transform: "scale(0.95)" }}
+                  style={{ transform: "scale(0.75)" }}
                 />
               </a>
-              {/* Improved subtitle typography */}
               <p className="mt-6 text-white/90 max-w-2xl mx-auto text-base sm:text-lg md:text-xl leading-relaxed">
-                Creating and managing sponsored credit faucets for the Arweave ecosystem made easy.
+                Create and manage Turbo credit faucets for the Arweave ecosystem.
               </p>
               <div className="mt-8 sm:mt-10">
                 <button
@@ -206,48 +344,14 @@ export default function HomePage() {
             </div>
           </section>
 
-          {/* Video Player Section - Reduced gap with top tabs */}
+          {/* Video Section */}
           <section className="mt-6 sm:mt-8 pb-12 sm:pb-16 lg:pb-20">
             <div className="mx-auto w-full max-w-5xl px-4 sm:px-6">
-              {/* Video Toggle - Animated toggle button */}
-              <div className="mx-auto mb-0 flex w-fit items-center rounded-full bg-white/15 backdrop-blur-md p-1.5 shadow-lg relative overflow-hidden">
-                {/* Animated background slider */}
-                <div 
-                  className={`absolute top-1.5 bottom-1.5 bg-white rounded-full shadow-lg transition-all duration-500 ease-out ${
-                    activeVideo === "credits" 
-                      ? "left-1.5 w-[calc(50%-0.375rem)]" 
-                      : "left-1/2 w-[calc(50%-0.375rem)]"
-                  }`}
-                />
-                
-                <button
-                  onClick={() => setActiveVideo("credits")}
-                  className={`relative z-10 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 transform ${
-                    activeVideo === "credits" 
-                      ? "text-black scale-105" 
-                      : "text-white/80 hover:text-white hover:scale-102"
-                  }`}
-                >
-                  Credits
-                </button>
-                <button
-                  onClick={() => setActiveVideo("setup")}
-                  className={`relative z-10 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 transform ${
-                    activeVideo === "setup" 
-                      ? "text-black scale-105" 
-                      : "text-white/80 hover:text-white hover:scale-102"
-                  }`}
-                >
-                  Faucet
-                </button>
-              </div>
+              <VideoToggle activeVideo={activeVideo} onVideoChange={setActiveVideo} />
 
-              {/* Video Player Container */}
+              {/* Video Player */}
               <div className="relative mt-4">
-                {/* Glow effect */}
                 <div className="absolute inset-0 bg-blue-500/20 rounded-3xl blur-3xl transform scale-105"></div>
-                
-                {/* Main player container */}
                 <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl backdrop-blur-sm">
                   <div className="bg-gradient-to-br from-black/30 to-black/60 p-2 sm:p-4">
                     <div className="relative w-full pb-[56.25%] bg-black rounded-xl sm:rounded-2xl overflow-hidden">
@@ -267,104 +371,44 @@ export default function HomePage() {
           </section>
         </main>
 
-        {/* Guides Picker Modal - Enhanced design */}
-        {showGuidesPicker && (
-          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-slate-800/95 backdrop-blur-xl text-white max-w-lg w-full rounded-3xl shadow-2xl p-8 relative border border-slate-600/50">
-              <button
-                onClick={() => setShowGuidesPicker(false)}
-                className="absolute top-4 right-4 text-white/60 hover:text-white text-xl transition-colors duration-200"
-              >
-                ✕
-              </button>
-              <h2 className="text-2xl font-bold mb-6 text-center">Choose Your Guide</h2>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button
-                  onClick={() => {
-                    setShowGuidesPicker(false)
-                    setShowCreditsGuide(true)
-                  }}
-                  className="flex-1 rounded-2xl bg-blue-600 text-white px-6 py-4 font-semibold hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg"
-                >
-                  Use Shared Credits
-                </button>
-                <button
-                  onClick={() => {
-                    setShowGuidesPicker(false)
-                    setShowPoolsGuide(true)
-                  }}
-                  className="flex-1 rounded-2xl bg-slate-700 text-white px-6 py-4 font-semibold hover:bg-slate-600 transition-all duration-300 transform hover:scale-105 border border-slate-600/50 shadow-lg"
-                >
-                  Setup Faucets
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Modals */}
+        <Modal
+          isOpen={activeModal === 'guides'}
+          onClose={closeModal}
+          title="Choose Your Guide"
+        >
+          <GuidesPickerContent
+            onCreditsGuide={() => handleGuidesNavigation('credits')}
+            onPoolsGuide={() => handleGuidesNavigation('pools')}
+          />
+        </Modal>
 
-        {/* Contact Modal - Enhanced design */}
-        {showContactModal && (
-          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-slate-800/95 backdrop-blur-xl text-white max-w-md w-full rounded-3xl shadow-2xl p-8 relative border border-slate-600/50">
-              <button
-                onClick={() => setShowContactModal(false)}
-                className="absolute top-4 right-4 text-white/60 hover:text-white text-xl transition-colors duration-200"
-              >
-                ✕
-              </button>
-              <h3 className="text-xl font-semibold mb-4">Contact Us</h3>
-              <p className="text-white/70 mb-4">For any inquiries or support, contact us at:</p>
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-700/50">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                </svg>
-                <a href="mailto:nityaprotocol@gmail.com" className="underline font-medium flex-1">
-                  nityaprotocol@gmail.com
-                </a>
-                <button
-                  onClick={handleCopyEmail}
-                  className="text-white/60 hover:text-white transition-colors duration-200 px-2 py-1 rounded text-sm"
-                  aria-label="Copy email address"
-                >
-                  {copied ? "Copied!" : "Copy"}
-                </button>
-              </div>
-              {copied && <p className="mt-3 text-sm text-green-400 text-center">Email copied to clipboard!</p>}
-            </div>
-          </div>
-        )}
+        <Modal
+          isOpen={activeModal === 'contact'}
+          onClose={closeModal}
+          title="Contact Us"
+          maxWidth="max-w-md"
+        >
+          <ContactModalContent onCopyEmail={handleCopyEmail} copied={copied} />
+        </Modal>
 
-        {/* Placeholder for guide modals */}
-        {showPoolsGuide && (
-          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-slate-800/95 backdrop-blur-xl text-white max-w-2xl w-full rounded-3xl shadow-2xl p-8 relative border border-slate-600/50">
-              <button
-                onClick={() => setShowPoolsGuide(false)}
-                className="absolute top-4 right-4 text-white/60 hover:text-white text-xl"
-              >
-                ✕
-              </button>
-              <h2 className="text-2xl font-bold mb-4">Setup Pools Guide</h2>
-              <p className="text-white/80">Setup Pools Guide content would go here...</p>
-            </div>
-          </div>
-        )}
+        <Modal
+          isOpen={activeModal === 'credits'}
+          onClose={closeModal}
+          title="Use Shared Credits Guide"
+          maxWidth="max-w-2xl"
+        >
+          <p className="text-white/80">Use Shared Credits Guide content would go here...</p>
+        </Modal>
 
-        {showCreditsGuide && (
-          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-slate-800/95 backdrop-blur-xl text-white max-w-2xl w-full rounded-3xl shadow-2xl p-8 relative border border-slate-600/50">
-              <button
-                onClick={() => setShowCreditsGuide(false)}
-                className="absolute top-4 right-4 text-white/60 hover:text-white text-xl"
-              >
-                ✕
-              </button>
-              <h2 className="text-2xl font-bold mb-4">Use Shared Credits Guide</h2>
-              <p className="text-white/80">Use Shared Credits Guide content would go here...</p>
-            </div>
-          </div>
-        )}
+        <Modal
+          isOpen={activeModal === 'pools'}
+          onClose={closeModal}
+          title="Setup Pools Guide"
+          maxWidth="max-w-2xl"
+        >
+          <p className="text-white/80">Setup Pools Guide content would go here...</p>
+        </Modal>
       </div>
     </>
   )
