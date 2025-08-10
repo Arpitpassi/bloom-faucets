@@ -43,7 +43,7 @@ export default function EditPoolModal({ isOpen, pool, onClose, onEditPool }: Edi
               name="poolName"
               type="text"
               defaultValue={pool.name}
-              className="w-full p-3 bg-input text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
+              className="w-full p-3 bg-input border border-border text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
               required
             />
           </div>
@@ -54,7 +54,7 @@ export default function EditPoolModal({ isOpen, pool, onClose, onEditPool }: Edi
                 name="startTime"
                 type="datetime-local"
                 defaultValue={toDateTimeLocal(pool.startTime)}
-                className="w-full p-3 bg-input text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
+                className="w-full p-3 bg-input border border-border text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
                 required
               />
             </div>
@@ -64,7 +64,7 @@ export default function EditPoolModal({ isOpen, pool, onClose, onEditPool }: Edi
                 name="endTime"
                 type="datetime-local"
                 defaultValue={toDateTimeLocal(pool.endTime)}
-                className="w-full p-3 bg-input text-sm focus:ring-2 focus:ring-ring focus:focus:border-transparent"
+                className="w-full p-3 bg-input border border-border text-sm focus:ring-2 focus:ring-ring focus:focus:border-transparent"
                 required
               />
             </div>
@@ -80,7 +80,7 @@ export default function EditPoolModal({ isOpen, pool, onClose, onEditPool }: Edi
               min="0"
               pattern="^\d*(\.\d{0,6})?$"
               defaultValue={pool.usageCap}
-              className="w-full p-3 bg-input text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
+              className="w-full p-3 bg-input border border-border text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
               required
             />
           </div>
@@ -91,7 +91,7 @@ export default function EditPoolModal({ isOpen, pool, onClose, onEditPool }: Edi
               rows={4}
               defaultValue={pool.addresses.join("\n")}
               placeholder="Enter one Arweave address per line"
-              className="w-full p-3 bg-input text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
+              className="w-full p-3 bg-input text-sm border border-border focus:ring-2 focus:ring-ring focus:border-transparent"
             />
           </div>
           <div className="flex gap-4">

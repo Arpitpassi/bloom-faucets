@@ -2,6 +2,8 @@
 
 import { useState, useCallback, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
+import UseSharedCreditsGuideModal from "../components/UseSharedCreditsGuideModal"
+import SetupPoolsGuideModal from "../components/SetupPoolsGuideModal"
 
 // Custom X.com Icon Component
 const XIcon = ({ className }: { className?: string }) => (
@@ -380,23 +382,9 @@ export default function HomePage() {
           <ContactModalContent onCopyEmail={handleCopyEmail} copied={copied} />
         </Modal>
 
-        <Modal
-          isOpen={activeModal === 'credits'}
-          onClose={closeModal}
-          title="Use Shared Credits Guide"
-          maxWidth="max-w-2xl"
-        >
-          <p className="text-white/80">Use Shared Credits Guide content would go here...</p>
-        </Modal>
+        <UseSharedCreditsGuideModal isOpen={activeModal === 'credits'} onClose={closeModal} />
 
-        <Modal
-          isOpen={activeModal === 'pools'}
-          onClose={closeModal}
-          title="Setup Pools Guide"
-          maxWidth="max-w-2xl"
-        >
-          <p className="text-white/80">Setup Pools Guide content would go here...</p>
-        </Modal>
+        <SetupPoolsGuideModal isOpen={activeModal === 'pools'} onClose={closeModal} />
       </div>
     </>
   )

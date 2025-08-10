@@ -74,6 +74,9 @@ const config: Config = {
           "4": "hsl(var(--chart-4))", // Spring Wood
           "5": "hsl(var(--chart-5))", // Snow Drift
         },
+        // Custom colors for buttons
+        "custom-yellow": "#eab308", // Yellow for Sponsor Credits button
+        "custom-blue": "#3b82f6", // Blue for Edit Faucet button
       },
       borderRadius: {
         lg: "0px", // Removed rounded corners

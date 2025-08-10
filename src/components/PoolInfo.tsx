@@ -53,13 +53,13 @@ export default function PoolInfo({
             <div className="flex gap-4 pt-4 flex-wrap">
               <Button
                 onClick={onEditPool}
-                className="bg-primary text-primary-foreground px-6 py-2 text-sm font-medium hover:bg-primary/90 transition-colors"
+                className="bg-custom-blue text-white px-6 py-2 text-sm font-medium hover:bg-custom-blue/90 transition-colors" // Updated to custom-blue
               >
                 Edit Faucet
               </Button>
               <Button
                 onClick={onSponsorCredits}
-                className="bg-secondary text-secondary-foreground px-6 py-2 text-sm font-medium hover:bg-accent transition-colors"
+                className="bg-custom-yellow text-white px-6 py-2 text-sm font-medium hover:bg-custom-yellow/90 transition-colors" // Updated to custom-yellow
                 disabled={showTerminal} // Disable when terminal is active
               >
                 Sponsor Credits

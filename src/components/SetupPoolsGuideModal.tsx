@@ -1,6 +1,5 @@
 "use client"
 
-import { X } from "lucide-react"
 
 interface SetupPoolsGuideModalProps {
   isOpen: boolean
@@ -11,34 +10,33 @@ export default function SetupPoolsGuideModal({ isOpen, onClose }: SetupPoolsGuid
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-card max-w-4xl w-full max-h-[85vh] overflow-y-auto p-8 sm:p-10 relative rounded-xs border border-border">
+    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="bg-slate-800/95 backdrop-blur-xl text-white max-w-4xl w-full max-h-[85vh] overflow-y-auto p-8 sm:p-10 relative rounded-3xl shadow-2xl border border-slate-600/50">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-2xl font-bold hover:text-muted-foreground p-1 hover:bg-muted transition-colors rounded-xs"
+          className="absolute top-4 right-4 text-white/60 hover:text-white text-xl transition-colors duration-200"
+          aria-label="Close modal"
         >
-          <X className="w-6 h-6" />
+          ✕
         </button>
-        <h1 className="text-3xl font-bold mb-6 text-foreground">
-          Bloom Faucet Manager: Simple Guide to Create and Use a Faucet
-        </h1>
-        <p className="mb-6 text-muted-foreground">
+        <h1 className="text-3xl font-bold mb-6">Bloom Faucet Manager: Simple Guide to Create and Use a Faucet</h1>
+        <p className="mb-6 text-white/70">
           This guide provides straightforward instructions for creating and using a sponsored credit Faucet in the
           Arweave ecosystem using the Bloom Faucet Manager.
         </p>
-        <h2 className="text-xl font-semibold mt-8 mb-4 text-foreground">Prerequisites</h2>
-        <ul className="list-disc pl-6 mb-4 space-y-2 text-muted-foreground">
+        <h2 className="text-xl font-semibold mt-8 mb-4">Prerequisites</h2>
+        <ul className="list-disc pl-6 mb-4 space-y-2 text-white/70">
           <li>An Arweave-compatible wallet (Beacon or Wander) installed in your browser.</li>
         </ul>
-        <h2 className="text-xl font-semibold mt-8 mb-4 text-foreground">1. Access the Dashboard</h2>
-        <ul className="list-disc pl-6 mb-4 space-y-2 text-muted-foreground">
+        <h2 className="text-xl font-semibold mt-8 mb-4">1. Access the Dashboard</h2>
+        <ul className="list-disc pl-6 mb-4 space-y-2 text-white/70">
           <li>Open the Bloom Faucet Manager in your browser.</li>
           <li>
             On the homepage, click <strong>Get Started</strong> to go to the <strong>Dashboard</strong>.
           </li>
         </ul>
-        <h2 className="text-xl font-semibold mt-8 mb-4 text-foreground">2. Connect Your Wallet</h2>
-        <ul className="list-disc pl-6 mb-4 space-y-2 text-muted-foreground">
+        <h2 className="text-xl font-semibold mt-8 mb-4">2. Connect Your Wallet</h2>
+        <ul className="list-disc pl-6 mb-4 space-y-2 text-white/70">
           <li>
             On the dashboard, click <strong>Connect Wallet</strong> if not already connected.
           </li>
@@ -47,8 +45,8 @@ export default function SetupPoolsGuideModal({ isOpen, onClose }: SetupPoolsGuid
           </li>
           <li>Follow your wallet’s prompts to connect.</li>
         </ul>
-        <h2 className="text-xl font-semibold mt-8 mb-4 text-foreground">3. Create a Faucet</h2>
-        <ul className="list-disc pl-6 mb-4 space-y-2 text-muted-foreground">
+        <h2 className="text-xl font-semibold mt-8 mb-4">3. Create a Faucet</h2>
+        <ul className="list-disc pl-6 mb-4 space-y-2 text-white/70">
           <li>
             On the dashboard, in the left sidebar, click <strong>+ New Faucet</strong>.
           </li>
@@ -80,8 +78,8 @@ export default function SetupPoolsGuideModal({ isOpen, onClose }: SetupPoolsGuid
             To cancel, click <strong>Cancel</strong> or the <strong>X</strong> button.
           </li>
         </ul>
-        <h2 className="text-xl font-semibold mt-8 mb-4 text-foreground">4. Use a Faucet</h2>
-        <ul className="list-disc pl-6 mb-4 space-y-2 text-muted-foreground">
+        <h2 className="text-xl font-semibold mt-8 mb-4">4. Use a Faucet</h2>
+        <ul className="list-disc pl-6 mb-4 space-y-2 text-white/70">
           <li>
             <strong>View Faucet</strong>:
             <ul className="list-disc pl-6 mt-2 space-y-1">
@@ -151,13 +149,13 @@ export default function SetupPoolsGuideModal({ isOpen, onClose }: SetupPoolsGuid
             </ul>
           </li>
         </ul>
-        <h2 className="text-xl font-semibold mt-8 mb-4 text-foreground">5. Need Help?</h2>
-        <ul className="list-disc pl-6 mb-4 space-y-2 text-muted-foreground">
+        <h2 className="text-xl font-semibold mt-8 mb-4">5. Need Help?</h2>
+        <ul className="list-disc pl-6 mb-4 space-y-2 text-white/70">
           <li>
             Email{" "}
             <a
               href="https://mail.google.com/mail/u/0/#inbox?compose=GTvVlcSMSqVsmVCqFrJFNLRZsrWQMfmVkQdrKWJfLwJkfkpmtcBzFMsBqGWGFRhXrDqLqXtsfBpTm"
-              className="text-primary underline hover:text-primary/80"
+              className="text-blue-400 underline hover:text-blue-300"
             >
               nityaprotocol@gmail.com
             </a>{" "}
@@ -169,15 +167,15 @@ export default function SetupPoolsGuideModal({ isOpen, onClose }: SetupPoolsGuid
               href="https://discord.gg/9cJyqrJUHh"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary underline hover:text-primary/80"
+              className="text-blue-400 underline hover:text-blue-300"
             >
               Discord
             </a>{" "}
             for support.
           </li>
         </ul>
-        <div className="bg-destructive/10 border-l-4 border-destructive p-4 mt-8 rounded-xs">
-          <p className="font-semibold text-destructive">Note: This is a beta application. Read the Disclaimer.</p>
+        <div className="bg-red-500/20 border-l-4 border-red-500 p-4 mt-8 rounded-xl">
+          <p className="font-semibold text-red-400">Note: This is a beta application. Read the Disclaimer.</p>
         </div>
       </div>
     </div>

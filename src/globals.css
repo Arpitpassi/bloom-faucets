@@ -67,7 +67,7 @@ h6 {
     --accent-foreground: 0 0% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 85%;
+    --border: 0 0% 70%; /* Adjusted for better visibility */
     --input: 0 0% 98%;
     --ring: 0 0% 10%;
     --radius: 0.5rem;

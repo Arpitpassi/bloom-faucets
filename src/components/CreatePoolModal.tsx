@@ -29,7 +29,7 @@ export default function CreatePoolModal({ isOpen, onClose, onCreatePool }: Creat
             <Input
               name="poolName"
               type="text"
-              className="w-full p-3 border border-input bg-input text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
+              className="w-full p-3 border border-border bg-input text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
               required
             />
           </div>
@@ -39,7 +39,7 @@ export default function CreatePoolModal({ isOpen, onClose, onCreatePool }: Creat
               <Input
                 name="startTime"
                 type="datetime-local"
-                className="w-full p-3 border border-input bg-input text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
+                className="w-full p-3 border border-border bg-input text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
                 required
               />
             </div>
@@ -48,7 +48,7 @@ export default function CreatePoolModal({ isOpen, onClose, onCreatePool }: Creat
               <Input
                 name="endTime"
                 type="datetime-local"
-                className="w-full p-3 border border-input bg-input text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
+                className="w-full p-3 border border-border bg-input text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
                 required
               />
             </div>
@@ -63,7 +63,7 @@ export default function CreatePoolModal({ isOpen, onClose, onCreatePool }: Creat
               step="0.000001"
               min="0"
               pattern="^\d*(\.\d{0,6})?$"
-              className="w-full p-3 border border-input bg-input text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
+              className="w-full p-3 border border-border bg-input text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
               required
             />
           </div>
@@ -73,7 +73,7 @@ export default function CreatePoolModal({ isOpen, onClose, onCreatePool }: Creat
               name="addresses"
               rows={4}
               placeholder="Enter one Arweave address per line"
-              className="w-full p-3 border border-input bg-input text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
+              className="w-full p-3 border border-border bg-input text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
             />
           </div>
           <div className="flex gap-4">
