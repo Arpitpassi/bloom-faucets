@@ -49,11 +49,11 @@ export default function PoolActionsModal({
             value={revokeAddress}
             onChange={(e) => setRevokeAddress(e.target.value)}
             placeholder="Enter wallet address to revoke"
-            className="w-full p-3 bg-input text-sm focus:ring-2 focus:ring-ring focus:border-transparent"
+            className="w-full p-3 bg-input text-sm border border-border focus:ring-2 focus:ring-ring focus:border-transparent"
           />
           <Button
             onClick={() => onRevokeAccess(revokeAddress)}
-            className="w-full bg-destructive text-destructive-foreground p-3 text-sm font-medium hover:bg-destructive/90 transition-colors"
+            className="w-full bg-orange-500 text-white p-3 text-sm font-medium hover:bg-orange-600 transition-colors"
           >
             Revoke Access
           </Button>
@@ -62,7 +62,7 @@ export default function PoolActionsModal({
           <h4 className="text-sm font-semibold text-muted-foreground">DELETE FAUCET</h4>
           <Button
             onClick={onDeletePool}
-            className="w-full bg-destructive text-destructive-foreground p-3 text-sm font-medium hover:bg-destructive/90 transition-colors"
+            className="w-full bg-red-500 text-white p-3 text-sm font-medium hover:bg-red-600 transition-colors"
           >
             Delete Faucet
           </Button>

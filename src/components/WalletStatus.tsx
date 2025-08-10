@@ -34,7 +34,7 @@ export default function WalletStatus({ connected, address, onCopyAddress, onDisc
       </div>
       <Button
         onClick={onDisconnect}
-        className="bg-destructive text-destructive-foreground px-4 py-2 text-xs font-semibold hover:bg-destructive/90 transition-colors focus:ring-2 focus:ring-destructive focus:ring-offset-1"
+        className="bg-red-500 text-white px-4 py-2 text-xs font-semibold hover:bg-red-600 transition-colors focus:ring-2 focus:ring-red-500 focus:ring-offset-1"
       >
         Disconnect
       </Button>
